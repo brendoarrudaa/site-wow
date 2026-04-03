@@ -19,7 +19,11 @@
     "suggestions": "Suggestions",
     "bugs": "Bug Report",
     "more": "More",
-    "playNow": "Play Now"
+    "playNow": "Play Now",
+    "register": "Create Account",
+    "categoryServer": "Server",
+    "categoryCommunity": "Community",
+    "categorySupport": "Support"
   },
   "common": {
     "joinDiscord": "Join Discord",
@@ -237,6 +241,27 @@
       "title": "Privacy Policy",
       "subtitle": "How the server handles your information.",
       "seoDescription": "Learn how Azeroth Legacy collects, uses and protects your information."
+    },
+    "register": {
+      "title": "Create Account",
+      "subtitle": "Enter Northrend and begin your journey.",
+      "description": "Create your account on Azeroth Legacy and enter Northrend.",
+      "username": "Username",
+      "usernamePlaceholder": "Your in-game name",
+      "email": "E-mail",
+      "password": "Password",
+      "passwordPlaceholder": "Minimum 6 characters",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Repeat your password",
+      "agreePrefix": "I have read and accept the",
+      "agreeLink": "server rules",
+      "submit": "Create Account",
+      "errorPasswordMismatch": "Passwords do not match.",
+      "errorMustAgree": "You must accept the rules to continue.",
+      "successTitle": "Registration Received!",
+      "successDesc": "The registration system will be activated soon. Keep an eye on Discord!",
+      "alreadyHaveAccount": "Already have an account?",
+      "seeHowToPlay": "See how to play"
     }
   }
 }

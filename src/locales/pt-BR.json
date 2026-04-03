@@ -19,7 +19,11 @@
     "suggestions": "Sugestões",
     "bugs": "Bugs",
     "more": "Mais",
-    "playNow": "Jogar Agora"
+    "playNow": "Jogar Agora",
+    "register": "Criar Conta",
+    "categoryServer": "Servidor",
+    "categoryCommunity": "Comunidade",
+    "categorySupport": "Suporte"
   },
   "common": {
     "joinDiscord": "Entrar no Discord",
@@ -237,6 +241,27 @@
       "title": "Política de Privacidade",
       "subtitle": "Como o servidor trata suas informações. Última atualização: abril de 2026.",
       "seoDescription": "Saiba como o Azeroth Legacy coleta, usa e protege suas informações."
+    },
+    "register": {
+      "title": "Criar Conta",
+      "subtitle": "Entre em Northrend e comece sua jornada.",
+      "description": "Crie sua conta no Azeroth Legacy e entre em Northrend.",
+      "username": "Nome de Usuário",
+      "usernamePlaceholder": "Seu nome no jogo",
+      "email": "E-mail",
+      "password": "Senha",
+      "passwordPlaceholder": "Mínimo 6 caracteres",
+      "confirmPassword": "Confirmar Senha",
+      "confirmPasswordPlaceholder": "Repita a senha",
+      "agreePrefix": "Li e aceito as",
+      "agreeLink": "regras do servidor",
+      "submit": "Criar Conta",
+      "errorPasswordMismatch": "As senhas não coincidem.",
+      "errorMustAgree": "Aceite as regras para continuar.",
+      "successTitle": "Cadastro Recebido!",
+      "successDesc": "O sistema de cadastro será ativado em breve. Fique atento ao Discord!",
+      "alreadyHaveAccount": "Já tem uma conta?",
+      "seeHowToPlay": "Veja como jogar"
     }
   }
 }
