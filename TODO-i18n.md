@@ -11,8 +11,9 @@ Basta substituir as strings literais por `t("chave")` e importar `useTranslation
 
 | Arquivo | Chaves a usar |
 |---|---|
-| `src/pages/cadastro.tsx` | `register.*` — tabs login/registro |
-| `src/pages/dashboard.tsx` | `dashboard.*` — chaves ainda não criadas nos locales |
+| `src/pages/cadastro.tsx` | `register.*` — formulário integrado com API real; etapa de verificação de e-mail implementada; i18n pendente |
+| `src/pages/dashboard.tsx` | `dashboard.*` — integrado com sessão real e personagens do banco; chaves ainda não criadas nos locales |
+| `src/pages/recuperar-senha.tsx` | `account.resetPassword.*` — página nova, chaves não criadas nos locales |
 | `src/pages/como-jogar.tsx` | `pages.howToPlay.*` |
 | `src/pages/download.tsx` | `pages.download.*` |
 | `src/pages/rates.tsx` | `pages.rates.*` |
@@ -37,6 +38,16 @@ Basta substituir as strings literais por `t("chave")` e importar `useTranslation
 | `src/components/CTASection/index.tsx` | `cta.*` |
 | `src/components/forms/SuggestionForm.tsx` | `forms.suggestion.*` |
 | `src/components/forms/BugReportForm.tsx` | `forms.bug.*` |
+
+## Novos componentes/páginas sem i18n (criados no backend WoW)
+
+Estes arquivos foram criados recentemente e **não têm nenhuma string traduzida** ainda.
+Precisam de chaves novas nos locales antes de aplicar `t()`.
+
+| Arquivo | Chaves sugeridas |
+|---|---|
+| `src/pages/recuperar-senha.tsx` | `account.resetPassword.*` |
+| Etapa de verificação em `cadastro.tsx` | `register.verify.*` |
 
 ## Já traduzidos
 

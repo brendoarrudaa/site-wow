@@ -9,6 +9,7 @@ Site oficial do servidor **Azeroth Legacy** (WoW WotLK 3.3.5a), construído com 
 - [Algolia](https://www.algolia.com/) — busca full-text no blog
 - [iron-session](https://github.com/vvo/iron-session) — sessões seguras via cookie criptografado
 - [mysql2](https://github.com/sidorares/node-mysql2) — conexão com o banco do servidor WoW
+- [Resend](https://resend.com) — envio de e-mail transacional (verificação de cadastro)
 - [Vercel](https://vercel.com) — hospedagem e deploy automático
 
 ---
@@ -67,6 +68,61 @@ DB_PASSWORD=password
 # Sessão — troque por uma string aleatória longa em produção (mín. 32 chars)
 SESSION_SECRET=troque-por-uma-chave-secreta-de-32-chars-ou-mais
 ```
+
+---
+
+## Verificação de e-mail no cadastro
+
+O cadastro utiliza confirmação por código antes de ativar a conta no banco do jogo.
+
+### Fluxo
+
+```
+1. Usuário preenche username, e-mail e senha
+         ↓
+2. POST /api/account/register
+   - Valida dados e verifica duplicatas ativas
+   - Gera código de 6 dígitos (crypto.randomInt)
+   - Salva apenas o SHA-256 do código (nunca o código puro)
+   - Expira em 10 minutos, cooldown de reenvio de 60s
+   - Envia e-mail via Resend com o código em destaque
+   - Retorna 202 (pendente) — conta NÃO criada ainda
+         ↓
+3. Usuário digita o código na tela de verificação
+         ↓
+4. POST /api/account/verify-code
+   - Compara hash do código submetido (timingSafeEqual)
+   - Verifica expiração e número de tentativas (máx. 5)
+   - Se correto: INSERT na account + criação de sessão
+   - Se incorreto: incrementa tentativas; ao atingir 5, apaga pendência
+         ↓
+5. Usuário redirecionado para /dashboard
+```
+
+### Reenvio
+
+- `POST /api/account/resend-code` — disponível após 60s de cooldown
+- Gera novo código, invalida o anterior, reseta tentativas
+- Rate limit: 5 reenvios/15min por IP
+
+### Configurar Resend
+
+1. Crie uma conta em [resend.com](https://resend.com)
+2. Gere uma API Key
+3. Adicione ao `.env`:
+   ```env
+   RESEND_API_KEY=re_...
+   EMAIL_FROM=onboarding@resend.dev   # ou seu domínio verificado
+   APP_NAME=Azeroth Legacy
+   ```
+4. Em desenvolvimento, se `RESEND_API_KEY` não estiver definido, o código é impresso no console do servidor.
+
+### Tabelas envolvidas
+
+| Tabela | Banco | Propósito |
+|---|---|---|
+| `account_pending_verifications` | `acore_auth` | Armazena hash do código + dados do cadastro pendente |
+| `account` | `acore_auth` | Conta real — criada somente após verificação |
 
 ---
 
