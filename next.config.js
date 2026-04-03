@@ -93,12 +93,6 @@ module.exports = {
     return [
       { source: '/admin', destination: '/admin/index.html' },
       { source: '/config.yml', destination: '/admin/config.yml' },
-      { source: '/js/', destination: 'https://movisul.com/' },
-      { source: '/jekyll/', destination: 'https://movisul.com/' },
-      { source: '/svg/', destination: 'https://movisul.com/' },
-      { source: '/dev/', destination: 'https://movisul.com/' },
-      { source: '/tags/', destination: 'https://movisul.com/' },
-      { source: '/page/:slug*', destination: 'https://movisul.com/' }
     ]
   },
   async headers() {

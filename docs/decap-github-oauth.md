@@ -21,15 +21,15 @@ O client_secret nunca é exposto ao browser.
 |---|---|
 | `OAUTH_CLIENT_ID` | Client ID do GitHub OAuth App |
 | `OAUTH_CLIENT_SECRET` | Client Secret do GitHub OAuth App |
-| `NEXT_PUBLIC_SITE_URL` | `https://site-movisul.vercel.app` |
+| `NEXT_PUBLIC_SITE_URL` | `https://azerothlegacy.com` |
 
 ## Configurar o GitHub OAuth App
 
 1. Acesse <https://github.com/settings/developers> → **OAuth Apps** → **New OAuth App**
 2. Preencha:
-   - **Application name**: Movisul CMS
-   - **Homepage URL**: `https://site-movisul.vercel.app`
-   - **Authorization callback URL**: `https://site-movisul.vercel.app/api/auth/callback`
+   - **Application name**: Azeroth Legacy CMS
+   - **Homepage URL**: `https://azerothlegacy.com`
+   - **Authorization callback URL**: `https://azerothlegacy.com/api/auth/callback`
 3. Copie o **Client ID** e gere um **Client Secret**
 4. Adicione ambos como variáveis de ambiente na Vercel
 

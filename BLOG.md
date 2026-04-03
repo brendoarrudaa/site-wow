@@ -113,7 +113,7 @@ Use listas para facilitar a leitura:
 ## Conclusão
 
 Resuma o que foi abordado em 2 a 3 frases.
-Finalize com uma chamada para ação — convide o leitor a entrar em contato com a Movisul.
+Finalize com uma chamada para ação — convide o leitor a participar do servidor Azeroth Legacy.
 ```
 
 ### Boas práticas de formatação
@@ -168,13 +168,12 @@ O envio dos eventos S-2210, S-2220 e S-2240 exige documentação atualizada e pr
 O Programa de Gerenciamento de Riscos (PGR) substitui o antigo PPRA e exige revisão anual.
 Manter o documento desatualizado gera autuações e impede o envio correto ao eSocial.
 
-## 3. Como a Movisul pode ajudar
+## 3. Como o Azeroth Legacy pode ajudar
 
-Nossa equipe cuida de toda a documentação, laudos e envios ao governo.
-Você foca no seu negócio — nós garantimos a conformidade.
+Nossa equipe mantém o servidor atualizado e disponível para que você foque na aventura.
 
 ## Conclusão
 
-Não espere a fiscalização chegar.
-Entre em contato com a Movisul e regularize sua empresa com segurança e agilidade.
+Não espere mais para começar sua jornada.
+Entre no servidor Azeroth Legacy e vivencie o melhor do WotLK.
 ```
