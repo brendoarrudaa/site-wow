@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { CheckCircle } from "lucide-react";
 
 const categories = [
@@ -41,7 +39,7 @@ const SuggestionForm = () => {
     <form onSubmit={handleSubmit} className="card-fantasy p-6 md:p-8 space-y-5">
       <div>
         <label className="block text-sm font-medium text-foreground mb-2">Título da Sugestão *</label>
-        <Input placeholder="Ex: Adicionar evento semanal de PvP" required />
+        <input className="input input-bordered w-full" placeholder="Ex: Adicionar evento semanal de PvP" required />
       </div>
 
       <div>
@@ -66,17 +64,17 @@ const SuggestionForm = () => {
 
       <div>
         <label className="block text-sm font-medium text-foreground mb-2">Descrição *</label>
-        <Textarea placeholder="Descreva sua sugestão com o máximo de detalhes possível..." rows={5} required />
+        <textarea className="textarea textarea-bordered w-full" placeholder="Descreva sua sugestão com o máximo de detalhes possível..." rows={5} required />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-foreground mb-2">Seu Nome (opcional)</label>
-          <Input placeholder="Como quer ser chamado" />
+          <input className="input input-bordered w-full" placeholder="Como quer ser chamado" />
         </div>
         <div>
           <label className="block text-sm font-medium text-foreground mb-2">Discord (opcional)</label>
-          <Input placeholder="usuario#1234" />
+          <input className="input input-bordered w-full" placeholder="usuario#1234" />
         </div>
       </div>
 

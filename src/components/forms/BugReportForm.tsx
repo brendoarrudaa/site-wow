@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { CheckCircle } from "lucide-react";
 
 const areas = [
@@ -63,22 +61,22 @@ const BugReportForm = () => {
 
       <div>
         <label className="block text-sm font-medium text-foreground mb-2">Descrição do Bug *</label>
-        <Textarea placeholder="Descreva o bug com o máximo de detalhes..." rows={4} required />
+        <textarea className="textarea textarea-bordered w-full" placeholder="Descreva o bug com o máximo de detalhes..." rows={4} required />
       </div>
 
       <div>
         <label className="block text-sm font-medium text-foreground mb-2">Passos para Reproduzir *</label>
-        <Textarea placeholder="1. Vá até...\n2. Use a spell...\n3. Observe que..." rows={4} required />
+        <textarea className="textarea textarea-bordered w-full" placeholder="1. Vá até...\n2. Use a spell...\n3. Observe que..." rows={4} required />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-foreground mb-2">Personagem (opcional)</label>
-          <Input placeholder="Nome do personagem" />
+          <input className="input input-bordered w-full" placeholder="Nome do personagem" />
         </div>
         <div>
           <label className="block text-sm font-medium text-foreground mb-2">Print / Link (opcional)</label>
-          <Input placeholder="URL do print ou vídeo" />
+          <input className="input input-bordered w-full" placeholder="URL do print ou vídeo" />
         </div>
       </div>
 

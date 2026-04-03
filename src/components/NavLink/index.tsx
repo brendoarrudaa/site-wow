@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { forwardRef, AnchorHTMLAttributes } from "react";
-import { cn } from "@/lib/utils";
 
 interface NavLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   href: string;
@@ -17,7 +16,7 @@ const NavLink = forwardRef<HTMLAnchorElement, NavLinkProps>(
       <Link
         ref={ref}
         href={href}
-        className={cn(className, isActive && activeClassName)}
+        className={[className, isActive && activeClassName].filter(Boolean).join(" ")}
         {...props}
       >
         {children}

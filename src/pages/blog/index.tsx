@@ -5,7 +5,6 @@ import SEO from "@/components/SEO";
 import PageHeader from "@/components/PageHeader";
 import { blogPosts } from "@/data/blog-posts";
 import { Calendar, Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
 
 const Blog = () => {
   const [search, setSearch] = useState("");
@@ -36,11 +35,11 @@ const Blog = () => {
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
+              <input
+                className="input input-bordered w-full pl-10"
                 placeholder="Buscar no blog..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-10"
               />
             </div>
             <div className="flex flex-wrap gap-2">
