@@ -25,10 +25,10 @@ const Blog = () => {
     <Layout>
       <SEO
         title="Blog"
-        description="Notícias, changelogs, guias e atualizações do Realm of Shadows. Fique por dentro de tudo que acontece no servidor."
+        description="Notícias, changelogs, guias e atualizações do Azeroth Legacy. Fique por dentro de tudo que acontece no servidor."
         path="/blog"
       />
-      <PageHeader title="Blog" subtitle="Notícias, changelogs, guias e tudo que acontece no Realm of Shadows." />
+      <PageHeader title="Blog" subtitle="Notícias, changelogs, guias e tudo que acontece no Azeroth Legacy." />
 
       <section className="page-section">
         <div className="page-container">
