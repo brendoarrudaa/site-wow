@@ -1,9 +1,9 @@
 {
-  "name": "movisul-blog",
+  "name": "azeroth-legacy",
   "private": true,
-  "description": "Site and blog - Movisul.com",
-  "version": "3.1.0",
-  "author": "Movisul",
+  "description": "Site oficial do servidor Azeroth Legacy - WotLK 3.3.5a",
+  "version": "1.0.0",
+  "author": "Azeroth Legacy",
   "dependencies": {
     "algoliasearch": "^5.49.2",
     "daisyui": "^5.5.19",
