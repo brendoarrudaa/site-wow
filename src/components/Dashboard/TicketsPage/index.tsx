@@ -1,32 +1,69 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
-  MessageSquare, Plus, Clock, CheckCircle, AlertCircle,
-  Send, Bug, User, Shield, AlertTriangle, Lightbulb,
-  HelpCircle, X,
+  MessageSquare,
+  Plus,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  Send,
+  Bug,
+  User,
+  Shield,
+  AlertTriangle,
+  Lightbulb,
+  HelpCircle,
+  X,
+  Loader2,
 } from "lucide-react"
-import { mockTickets, Ticket } from "@/lib/mock-data"
 
-const categoryConfig = {
-  bug:        { label: "Bug Report",  Icon: Bug,          color: "text-error" },
-  account:    { label: "Conta",       Icon: User,         color: "text-info" },
-  character:  { label: "Personagem",  Icon: Shield,       color: "text-secondary" },
-  report:     { label: "Denúncia",    Icon: AlertTriangle, color: "text-warning" },
-  suggestion: { label: "Sugestão",    Icon: Lightbulb,    color: "text-primary" },
-  other:      { label: "Outro",       Icon: HelpCircle,   color: "text-base-content/50" },
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface Ticket {
+  id: number
+  category: string
+  priority: string
+  subject: string
+  status: string
+  created_at: string
+  updated_at: string
+  messageCount: number
 }
 
-const statusConfig = {
-  open:        { label: "Aberto",       cls: "badge-outline text-warning border-warning" },
+interface TicketMessage {
+  author: string
+  content: string
+  isStaff: boolean
+  date: string
+}
+
+// ─── Config ───────────────────────────────────────────────────────────────────
+
+const categoryConfig: Record<
+  string,
+  { label: string; Icon: React.ComponentType<{ className?: string }>; color: string }
+> = {
+  bug:        { label: "Bug Report",  Icon: Bug,            color: "text-error" },
+  account:    { label: "Conta",       Icon: User,           color: "text-info" },
+  character:  { label: "Personagem",  Icon: Shield,         color: "text-secondary" },
+  report:     { label: "Denúncia",    Icon: AlertTriangle,  color: "text-warning" },
+  suggestion: { label: "Sugestão",    Icon: Lightbulb,      color: "text-primary" },
+  other:      { label: "Outro",       Icon: HelpCircle,     color: "text-base-content/50" },
+}
+
+const statusConfig: Record<string, { label: string; cls: string }> = {
+  open:          { label: "Aberto",       cls: "badge-outline text-warning border-warning" },
   "in-progress": { label: "Em Progresso", cls: "badge-primary" },
-  resolved:    { label: "Resolvido",    cls: "badge-outline text-success border-success" },
-  closed:      { label: "Fechado",      cls: "badge-ghost" },
+  resolved:      { label: "Resolvido",    cls: "badge-outline text-success border-success" },
+  closed:        { label: "Fechado",      cls: "badge-ghost" },
 }
 
-const priorityConfig = {
-  low:    { label: "Baixa",  cls: "bg-base-200 text-base-content/50" },
-  medium: { label: "Média",  cls: "bg-warning/20 text-warning" },
-  high:   { label: "Alta",   cls: "bg-error/20 text-error" },
+const priorityConfig: Record<string, { label: string; cls: string }> = {
+  low:    { label: "Baixa", cls: "bg-base-200 text-base-content/50" },
+  medium: { label: "Média", cls: "bg-warning/20 text-warning" },
+  high:   { label: "Alta",  cls: "bg-error/20 text-error" },
 }
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
 
 const TicketCard = ({
   ticket,
@@ -37,9 +74,14 @@ const TicketCard = ({
   selected: boolean
   onClick: () => void
 }) => {
-  const cat = categoryConfig[ticket.category]
-  const status = statusConfig[ticket.status]
-  const priority = priorityConfig[ticket.priority]
+  const cat = categoryConfig[ticket.category] ?? categoryConfig.other
+  const status = statusConfig[ticket.status] ?? statusConfig.open
+  const priority = priorityConfig[ticket.priority] ?? priorityConfig.medium
+
+  const formatDate = (d: string) => {
+    const date = new Date(d)
+    return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" })
+  }
 
   return (
     <div
@@ -50,7 +92,9 @@ const TicketCard = ({
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
-          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-base-200 ${cat.color}`}>
+          <div
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-base-200 ${cat.color}`}
+          >
             <cat.Icon className="h-5 w-5" />
           </div>
           <div className="min-w-0">
@@ -58,16 +102,18 @@ const TicketCard = ({
             <div className="mt-1 flex flex-wrap items-center gap-2">
               <span className="text-xs text-base-content/40">#{ticket.id}</span>
               <span className={`badge badge-sm ${status.cls}`}>{status.label}</span>
-              <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${priority.cls}`}>
+              <span
+                className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${priority.cls}`}
+              >
                 {priority.label}
               </span>
             </div>
           </div>
         </div>
         <div className="shrink-0 text-right">
-          <p className="text-xs text-base-content/40">{ticket.updatedAt}</p>
+          <p className="text-xs text-base-content/40">{formatDate(ticket.updated_at)}</p>
           <p className="mt-1 text-xs text-base-content/40">
-            {ticket.messages.length} {ticket.messages.length === 1 ? "msg" : "msgs"}
+            {ticket.messageCount} {ticket.messageCount === 1 ? "msg" : "msgs"}
           </p>
         </div>
       </div>
@@ -75,51 +121,129 @@ const TicketCard = ({
   )
 }
 
-const TicketDetail = ({ ticket }: { ticket: Ticket }) => {
-  const cat = categoryConfig[ticket.category]
-  const status = statusConfig[ticket.status]
-  const canReply = ticket.status === "open" || ticket.status === "in-progress"
+// ─── Detail panel ─────────────────────────────────────────────────────────────
+
+const TicketDetail = ({
+  ticket,
+  onReply,
+}: {
+  ticket: Ticket
+  onReply: () => void
+}) => {
+  const [messages, setMessages] = useState<TicketMessage[]>([])
+  const [loading, setLoading] = useState(true)
+  const [reply, setReply] = useState("")
+  const [sending, setSending] = useState(false)
+  const [status, setStatus] = useState(ticket.status)
+
+  const cat = categoryConfig[ticket.category] ?? categoryConfig.other
+  const statusCfg = statusConfig[status] ?? statusConfig.open
+  const canReply = status === "open" || status === "in-progress"
+
+  useEffect(() => {
+    setLoading(true)
+    fetch(`/api/account/ticket-messages?ticketId=${ticket.id}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.messages) setMessages(data.messages)
+        if (data.status) setStatus(data.status)
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [ticket.id])
+
+  const handleSend = async () => {
+    if (!reply.trim() || sending) return
+    setSending(true)
+    try {
+      const res = await fetch("/api/account/ticket-messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ticketId: ticket.id, content: reply }),
+      })
+      if (res.ok) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            author: "Você",
+            content: reply.trim(),
+            isStaff: false,
+            date: new Date().toISOString(),
+          },
+        ])
+        setReply("")
+        onReply()
+      }
+    } catch {}
+    setSending(false)
+  }
+
+  const formatDate = (d: string) => {
+    const date = new Date(d)
+    return date.toLocaleString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+  }
 
   return (
     <div className="space-y-4">
       <div className="flex items-start gap-3">
-        <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-base-200 ${cat.color}`}>
+        <div
+          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-base-200 ${cat.color}`}
+        >
           <cat.Icon className="h-6 w-6" />
         </div>
         <div>
           <h3 className="font-bold">{ticket.subject}</h3>
           <div className="mt-1 flex items-center gap-2">
             <span className="text-sm text-base-content/40">#{ticket.id}</span>
-            <span className={`badge badge-sm ${status.cls}`}>{status.label}</span>
+            <span className={`badge badge-sm ${statusCfg.cls}`}>{statusCfg.label}</span>
           </div>
         </div>
       </div>
 
-      <div className="max-h-72 space-y-4 overflow-y-auto rounded-lg border border-base-300 p-4">
-        {ticket.messages.map((msg, i) => (
-          <div key={i} className={`flex gap-3 ${msg.isStaff ? "flex-row-reverse" : ""}`}>
-            <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-              msg.isStaff ? "bg-primary text-primary-content" : "bg-base-300"
-            }`}>
-              {msg.author.slice(0, 2).toUpperCase()}
-            </div>
-            <div className={`flex-1 ${msg.isStaff ? "text-right" : ""}`}>
-              <div className={`inline-block rounded-lg p-3 text-left ${
-                msg.isStaff ? "bg-primary/10" : "bg-base-200"
-              }`}>
-                <div className="mb-1 flex items-center gap-2">
-                  <span className="text-sm font-medium">{msg.author}</span>
-                  {msg.isStaff && (
-                    <span className="badge badge-outline badge-xs border-primary text-primary">Staff</span>
-                  )}
+      {loading ? (
+        <div className="flex items-center justify-center py-8 text-base-content/30">
+          <Loader2 className="h-5 w-5 animate-spin" />
+        </div>
+      ) : (
+        <div className="max-h-72 space-y-4 overflow-y-auto rounded-lg border border-base-300 p-4">
+          {messages.map((msg, i) => (
+            <div key={i} className={`flex gap-3 ${msg.isStaff ? "flex-row-reverse" : ""}`}>
+              <div
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                  msg.isStaff ? "bg-primary text-primary-content" : "bg-base-300"
+                }`}
+              >
+                {msg.author.slice(0, 2).toUpperCase()}
+              </div>
+              <div className={`flex-1 ${msg.isStaff ? "text-right" : ""}`}>
+                <div
+                  className={`inline-block rounded-lg p-3 text-left ${
+                    msg.isStaff ? "bg-primary/10" : "bg-base-200"
+                  }`}
+                >
+                  <div className="mb-1 flex items-center gap-2">
+                    <span className="text-sm font-medium">{msg.author}</span>
+                    {msg.isStaff && (
+                      <span className="badge badge-outline badge-xs border-primary text-primary">
+                        Staff
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                  <p className="mt-1 text-[10px] text-base-content/40">
+                    {formatDate(msg.date)}
+                  </p>
                 </div>
-                <p className="text-sm">{msg.content}</p>
-                <p className="mt-1 text-[10px] text-base-content/40">{msg.date}</p>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {canReply && (
         <div className="flex gap-2">
@@ -127,9 +251,20 @@ const TicketDetail = ({ ticket }: { ticket: Ticket }) => {
             type="text"
             placeholder="Digite sua resposta..."
             className="input input-bordered input-sm flex-1 text-sm"
+            value={reply}
+            onChange={(e) => setReply(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSend()}
           />
-          <button className="btn btn-primary btn-sm btn-square">
-            <Send className="h-4 w-4" />
+          <button
+            className="btn btn-primary btn-sm btn-square"
+            onClick={handleSend}
+            disabled={sending || !reply.trim()}
+          >
+            {sending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4" />
+            )}
           </button>
         </div>
       )}
@@ -137,36 +272,110 @@ const TicketDetail = ({ ticket }: { ticket: Ticket }) => {
   )
 }
 
+// ─── Main ─────────────────────────────────────────────────────────────────────
+
 const TicketsPage = () => {
+  const [tickets, setTickets] = useState<Ticket[]>([])
+  const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState<Ticket | null>(null)
   const [filter, setFilter] = useState("all")
   const [newTicketOpen, setNewTicketOpen] = useState(false)
 
-  const filtered = mockTickets.filter((t) => {
+  // New ticket form
+  const [newCategory, setNewCategory] = useState("other")
+  const [newPriority, setNewPriority] = useState("medium")
+  const [newSubject, setNewSubject] = useState("")
+  const [newMessage, setNewMessage] = useState("")
+  const [creating, setCreating] = useState(false)
+  const [createError, setCreateError] = useState("")
+
+  const loadTickets = () => {
+    fetch("/api/account/tickets")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.tickets) setTickets(data.tickets)
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    loadTickets()
+  }, [])
+
+  const filtered = tickets.filter((t) => {
     if (filter === "open") return t.status === "open" || t.status === "in-progress"
     if (filter === "closed") return t.status === "resolved" || t.status === "closed"
     return true
   })
 
-  const openCount = mockTickets.filter(
+  const openCount = tickets.filter(
     (t) => t.status === "open" || t.status === "in-progress"
   ).length
-  const closedCount = mockTickets.filter(
+  const closedCount = tickets.filter(
     (t) => t.status === "resolved" || t.status === "closed"
   ).length
+
+  const handleCreate = async () => {
+    setCreateError("")
+    if (!newSubject.trim()) {
+      setCreateError("Informe o assunto.")
+      return
+    }
+    if (newMessage.trim().length < 10) {
+      setCreateError("A mensagem deve ter pelo menos 10 caracteres.")
+      return
+    }
+
+    setCreating(true)
+    try {
+      const res = await fetch("/api/account/tickets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          category: newCategory,
+          priority: newPriority,
+          subject: newSubject.trim(),
+          message: newMessage.trim(),
+        }),
+      })
+      const data = await res.json()
+
+      if (!res.ok) {
+        setCreateError(data.error || "Erro ao criar ticket.")
+        return
+      }
+
+      setNewTicketOpen(false)
+      setNewSubject("")
+      setNewMessage("")
+      setNewCategory("other")
+      setNewPriority("medium")
+      loadTickets()
+    } catch {
+      setCreateError("Erro de conexão.")
+    } finally {
+      setCreating(false)
+    }
+  }
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold font-serif glow-text">Tickets de Suporte</h1>
+          <h1 className="text-2xl font-bold font-serif glow-text">
+            Tickets de Suporte
+          </h1>
           <p className="text-sm text-base-content/60">
             Abra e acompanhe seus pedidos de suporte
           </p>
         </div>
         <button
-          onClick={() => setNewTicketOpen(true)}
+          onClick={() => {
+            setNewTicketOpen(true)
+            setCreateError("")
+          }}
           className="btn btn-primary btn-sm gap-2"
         >
           <Plus className="h-4 w-4" />
@@ -177,17 +386,38 @@ const TicketsPage = () => {
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-3">
         {[
-          { label: "Abertos", value: openCount, icon: Clock, color: "bg-warning/10 text-warning" },
-          { label: "Resolvidos", value: closedCount, icon: CheckCircle, color: "bg-success/10 text-success" },
-          { label: "Total", value: mockTickets.length, icon: MessageSquare, color: "bg-primary/10 text-primary" },
+          {
+            label: "Abertos",
+            value: openCount,
+            icon: Clock,
+            color: "bg-warning/10 text-warning",
+          },
+          {
+            label: "Resolvidos",
+            value: closedCount,
+            icon: CheckCircle,
+            color: "bg-success/10 text-success",
+          },
+          {
+            label: "Total",
+            value: tickets.length,
+            icon: MessageSquare,
+            color: "bg-primary/10 text-primary",
+          },
         ].map(({ label, value, icon: Icon, color }) => (
           <div key={label} className="card-fantasy flex items-center gap-4 p-4">
-            <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg ${color}`}>
+            <div
+              className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg ${color}`}
+            >
               <Icon className="h-6 w-6" />
             </div>
             <div>
               <p className="text-sm text-base-content/60">{label}</p>
-              <p className="text-2xl font-bold">{value}</p>
+              {loading ? (
+                <Loader2 className="h-5 w-5 animate-spin text-base-content/20" />
+              ) : (
+                <p className="text-2xl font-bold">{value}</p>
+              )}
             </div>
           </div>
         ))}
@@ -210,7 +440,11 @@ const TicketsPage = () => {
             </select>
           </div>
           <div className="space-y-3 p-4">
-            {filtered.length > 0 ? (
+            {loading ? (
+              <div className="flex items-center justify-center py-10 text-base-content/30">
+                <Loader2 className="h-6 w-6 animate-spin" />
+              </div>
+            ) : filtered.length > 0 ? (
               filtered.map((t) => (
                 <TicketCard
                   key={t.id}
@@ -224,7 +458,9 @@ const TicketsPage = () => {
                 <MessageSquare className="h-10 w-10 text-base-content/20" />
                 <p className="mt-2 font-medium">Nenhum ticket encontrado</p>
                 <p className="text-sm text-base-content/50">
-                  {filter === "open" ? "Você não tem tickets abertos" : "Nenhum ticket no filtro"}
+                  {filter === "all"
+                    ? 'Clique em "Novo Ticket" para abrir um chamado'
+                    : "Nenhum ticket neste filtro"}
                 </p>
               </div>
             )}
@@ -238,7 +474,7 @@ const TicketsPage = () => {
             Selecione um ticket para ver os detalhes
           </p>
           {selected ? (
-            <TicketDetail ticket={selected} />
+            <TicketDetail ticket={selected} onReply={loadTickets} />
           ) : (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <AlertCircle className="h-12 w-12 text-base-content/20" />
@@ -254,7 +490,10 @@ const TicketsPage = () => {
       {/* New ticket modal */}
       {newTicketOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="fixed inset-0 bg-black/50" onClick={() => setNewTicketOpen(false)} />
+          <div
+            className="fixed inset-0 bg-black/50"
+            onClick={() => setNewTicketOpen(false)}
+          />
           <div className="relative z-50 w-full max-w-lg rounded-lg border border-base-300 bg-base-100 p-6 shadow-xl">
             <button
               className="btn btn-ghost btn-xs btn-square absolute right-3 top-3"
@@ -268,47 +507,87 @@ const TicketsPage = () => {
             </p>
             <div className="space-y-4">
               <div className="space-y-1">
-                <label className="text-xs font-medium text-base-content/60">Categoria</label>
-                <select className="select select-bordered select-sm w-full">
-                  <option value="">Selecione a categoria</option>
+                <label className="text-xs font-medium text-base-content/60">
+                  Categoria
+                </label>
+                <select
+                  className="select select-bordered select-sm w-full"
+                  value={newCategory}
+                  onChange={(e) => setNewCategory(e.target.value)}
+                >
                   {Object.entries(categoryConfig).map(([key, cfg]) => (
-                    <option key={key} value={key}>{cfg.label}</option>
+                    <option key={key} value={key}>
+                      {cfg.label}
+                    </option>
                   ))}
                 </select>
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-medium text-base-content/60">Prioridade</label>
-                <select className="select select-bordered select-sm w-full" defaultValue="medium">
+                <label className="text-xs font-medium text-base-content/60">
+                  Prioridade
+                </label>
+                <select
+                  className="select select-bordered select-sm w-full"
+                  value={newPriority}
+                  onChange={(e) => setNewPriority(e.target.value)}
+                >
                   <option value="low">Baixa</option>
                   <option value="medium">Média</option>
                   <option value="high">Alta</option>
                 </select>
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-medium text-base-content/60">Assunto</label>
+                <label className="text-xs font-medium text-base-content/60">
+                  Assunto
+                </label>
                 <input
                   type="text"
                   placeholder="Resumo do problema"
                   className="input input-bordered input-sm w-full"
+                  value={newSubject}
+                  onChange={(e) => setNewSubject(e.target.value)}
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-medium text-base-content/60">Descrição</label>
+                <label className="text-xs font-medium text-base-content/60">
+                  Descrição
+                </label>
                 <textarea
                   placeholder="Descreva detalhadamente seu problema..."
                   className="textarea textarea-bordered w-full text-sm"
                   rows={4}
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
                 />
               </div>
             </div>
+
+            {createError && (
+              <div className="mt-3 flex items-center gap-2 rounded-lg border border-error/50 bg-error/10 p-2 text-sm text-error">
+                <AlertTriangle className="h-4 w-4 shrink-0" />
+                {createError}
+              </div>
+            )}
+
             <div className="mt-6 flex justify-end gap-2">
               <button
                 className="btn btn-ghost btn-sm"
                 onClick={() => setNewTicketOpen(false)}
+                disabled={creating}
               >
                 Cancelar
               </button>
-              <button className="btn btn-primary btn-sm">Enviar Ticket</button>
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={handleCreate}
+                disabled={creating}
+              >
+                {creating ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  "Enviar Ticket"
+                )}
+              </button>
             </div>
           </div>
         </div>

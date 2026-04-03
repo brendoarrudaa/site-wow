@@ -8,7 +8,7 @@ import { sessionOptions } from '@/lib/session'
 const Tickets = () => {
   return (
     <>
-      <SEO title="Tickets" description="Seus tickets de suporte no servidor Frostmourne." path="/dashboard/tickets" />
+      <SEO title="Tickets" description="Seus tickets de suporte no Azeroth Legacy." path="/dashboard/tickets" />
       <DashboardLayout>
         <TicketsPage />
       </DashboardLayout>
