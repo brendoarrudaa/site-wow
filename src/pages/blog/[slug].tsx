@@ -1,34 +1,36 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { GetStaticPaths, GetStaticProps } from "next";
 import Layout from "@/components/Layout/Layout";
 import SEO from "@/components/SEO";
-import { getPostBySlug, blogPosts } from "@/data/blog-posts";
+import { getAllPosts, getPostBySlug, type Post } from "@/lib/posts";
 import { Calendar, ArrowLeft } from "lucide-react";
 import CTASection from "@/components/CTASection";
 
-const BlogPostPage = () => {
-  const router = useRouter();
-  const { slug } = router.query;
-  const post = typeof slug === "string" ? getPostBySlug(slug) : undefined;
+type Props = { post: Post; recommended: Post[] };
 
-  if (!post) {
-    return (
-      <Layout>
-        <SEO title="Post não encontrado" noindex />
-        <div className="page-container py-24 text-center">
-          <h1 className="text-2xl font-serif font-bold text-foreground mb-4">Post não encontrado</h1>
-          <Link href="/blog" className="btn btn-outline border-gold text-gold hover:bg-gold hover:text-black hover:border-gold">
-            Voltar ao Blog
-          </Link>
-        </div>
-      </Layout>
-    );
-  }
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await getAllPosts();
+  return {
+    paths: posts.map((p) => ({ params: { slug: p.slug } })),
+    fallback: false,
+  };
+};
 
-  const recommended = post.recommended
-    ?.map((s) => blogPosts.find((p) => p.slug === s))
-    .filter(Boolean);
+export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
+  const slug = params?.slug as string;
+  const post = await getPostBySlug(slug);
 
+  if (!post) return { notFound: true };
+
+  const allPosts = await getAllPosts();
+  const recommended = (post.recommended ?? [])
+    .map((s) => allPosts.find((p) => p.slug === s))
+    .filter((p): p is Post => Boolean(p));
+
+  return { props: { post, recommended }, revalidate: 60 };
+};
+
+const BlogPostPage = ({ post, recommended }: Props) => {
   return (
     <Layout>
       <SEO
@@ -79,25 +81,23 @@ const BlogPostPage = () => {
           </div>
         </div>
 
-        {recommended && recommended.length > 0 && (
+        {recommended.length > 0 && (
           <section className="page-section bg-card/30">
             <div className="page-container max-w-3xl">
               <h2 className="text-2xl font-serif font-bold text-foreground mb-6">Posts Recomendados</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {recommended.map((rec) =>
-                  rec ? (
-                    <Link
-                      key={rec.slug}
-                      href={`/blog/${rec.slug}`}
-                      className="card-fantasy-hover p-5 group"
-                    >
-                      <h3 className="font-serif font-semibold text-foreground group-hover:text-primary transition-colors">
-                        {rec.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{rec.excerpt}</p>
-                    </Link>
-                  ) : null
-                )}
+                {recommended.map((rec) => (
+                  <Link
+                    key={rec.slug}
+                    href={`/blog/${rec.slug}`}
+                    className="card-fantasy-hover p-5 group"
+                  >
+                    <h3 className="font-serif font-semibold text-foreground group-hover:text-primary transition-colors">
+                      {rec.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{rec.excerpt}</p>
+                  </Link>
+                ))}
               </div>
             </div>
           </section>

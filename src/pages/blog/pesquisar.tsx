@@ -1,12 +1,20 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { GetStaticProps } from "next";
 import Layout from "@/components/Layout/Layout";
 import SEO from "@/components/SEO";
-import { blogPosts } from "@/data/blog-posts";
+import { getAllPosts, type Post } from "@/lib/posts";
 import { Calendar, Search, ArrowLeft } from "lucide-react";
 
-const SearchPage = () => {
+type Props = { posts: Post[] };
+
+export const getStaticProps: GetStaticProps<Props> = async () => {
+  const posts = await getAllPosts();
+  return { props: { posts }, revalidate: 60 };
+};
+
+const SearchPage = ({ posts }: Props) => {
   const router = useRouter();
   const [search, setSearch] = useState("");
 
@@ -17,7 +25,7 @@ const SearchPage = () => {
   }, [router.query.q]);
 
   const filtered = search.trim()
-    ? blogPosts.filter(
+    ? posts.filter(
         (post) =>
           post.title.toLowerCase().includes(search.toLowerCase()) ||
           post.excerpt.toLowerCase().includes(search.toLowerCase()) ||
@@ -68,7 +76,7 @@ const SearchPage = () => {
 
           {search.trim() !== "" && filtered.length === 0 && (
             <p className="text-center text-muted-foreground py-12">
-              Nenhum post encontrado para <strong className="text-foreground">"{search}"</strong>.
+              Nenhum post encontrado para <strong className="text-foreground">&quot;{search}&quot;</strong>.
             </p>
           )}
 
@@ -76,7 +84,7 @@ const SearchPage = () => {
             <>
               <p className="text-sm text-muted-foreground mb-4">
                 {filtered.length} {filtered.length === 1 ? "resultado" : "resultados"} para{" "}
-                <strong className="text-foreground">"{search}"</strong>
+                <strong className="text-foreground">&quot;{search}&quot;</strong>
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {filtered.map((post) => (

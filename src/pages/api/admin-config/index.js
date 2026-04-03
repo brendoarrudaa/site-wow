@@ -1,7 +1,7 @@
-const REPO = 'brendoarrudaa/site-movisul'
+const REPO = 'brendoarrudaa/site-wow'
 const BRANCH = 'main'
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || 'https://site-movisul.vercel.app'
+  process.env.NEXT_PUBLIC_SITE_URL || 'https://azerothlegacy.com.br'
 
 const SHARED_CONFIG = `
 locale: pt
@@ -16,53 +16,35 @@ slug:
 collections:
   - name: posts
     label: Posts
+    label_singular: Post
     folder: posts
     create: true
     slug: "{{slug}}"
     fields:
-      - { label: "Layout", name: "layout", widget: "hidden", default: "post" }
-      - { label: "Data", name: "date", widget: "datetime", format: "YYYY-MM-DD HH:mm:ss" }
-      - { label: "Imagem", name: "image", widget: "image", required: false }
-      - { label: "Titulo", name: "title", widget: "string" }
-      - { label: "Descricao", name: "description", widget: "string" }
+      - { label: "Título", name: "title", widget: "string" }
+      - { label: "Data", name: "date", widget: "datetime", format: "YYYY-MM-DD" }
+      - { label: "Excerpt", name: "excerpt", widget: "text" }
       - label: "Categoria"
-        name: "main-class"
+        name: "category"
         widget: "select"
         options:
-          - sst
-          - gestao-riscos
-          - laudos
-          - esocial
-          - seguranca
-          - treinamentos
-          - saude-ocupacional
-          - prevencao
-      - label: "Cor"
-        name: "color"
+          - Atualização
+          - Evento
+          - Guia
+          - Changelog
+          - Comunidade
+          - Outro
+      - label: "Cor de Capa"
+        name: "coverColor"
         widget: "select"
         options:
-          - { label: "SST", value: "#0f4c81" }
-          - { label: "Gestao de Riscos", value: "#1a6fa8" }
-          - { label: "Laudos Tecnicos", value: "#2a9d6e" }
-          - { label: "eSocial", value: "#1d7a55" }
-          - { label: "Seguranca", value: "#e67e22" }
-          - { label: "Treinamentos", value: "#8e44ad" }
-          - { label: "Saude Ocupacional", value: "#c0392b" }
-          - { label: "Prevencao", value: "#d35400" }
-      - { label: "Tags", name: "tags", widget: "list", default: [""] }
-      - label: "Categoria Label"
-        name: "categories"
-        widget: "select"
-        options:
-          - SST
-          - Gestao de Riscos
-          - Laudos Tecnicos
-          - eSocial
-          - Seguranca
-          - Treinamentos
-          - Saude Ocupacional
-          - Prevencao
-      - { label: "Conteudo", name: "body", widget: "markdown" }
+          - { label: "Ouro", value: "from-yellow-900/40 to-yellow-800/20" }
+          - { label: "Gelo", value: "from-blue-900/40 to-blue-800/20" }
+          - { label: "Sombra", value: "from-purple-900/40 to-purple-800/20" }
+          - { label: "Natureza", value: "from-green-900/40 to-green-800/20" }
+          - { label: "Fogo", value: "from-red-900/40 to-red-800/20" }
+      - { label: "Imagem", name: "image", widget: "image", required: false }
+      - { label: "Conteúdo", name: "body", widget: "markdown" }
 `.trimStart()
 
 function buildConfig() {

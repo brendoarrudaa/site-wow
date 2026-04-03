@@ -1,18 +1,26 @@
 import { useState } from "react";
 import Link from "next/link";
+import { GetStaticProps } from "next";
 import Layout from "@/components/Layout/Layout";
 import SEO from "@/components/SEO";
 import PageHeader from "@/components/PageHeader";
-import { blogPosts } from "@/data/blog-posts";
+import { getAllPosts, type Post } from "@/lib/posts";
 import { Calendar, Search } from "lucide-react";
 
-const Blog = () => {
+type Props = { posts: Post[] };
+
+export const getStaticProps: GetStaticProps<Props> = async () => {
+  const posts = await getAllPosts();
+  return { props: { posts }, revalidate: 60 };
+};
+
+const Blog = ({ posts }: Props) => {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
-  const categories = [...new Set(blogPosts.map((p) => p.category))];
+  const categories = [...new Set(posts.map((p) => p.category))];
 
-  const filtered = blogPosts.filter((post) => {
+  const filtered = posts.filter((post) => {
     const matchesSearch =
       !search ||
       post.title.toLowerCase().includes(search.toLowerCase()) ||
