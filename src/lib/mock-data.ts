@@ -1,3 +1,14 @@
+// Tipo retornado pela API real /api/account/characters
+export interface RealCharacter {
+  guid: number
+  name: string
+  race: string
+  class: string
+  level: number
+  gold: number
+  online: boolean
+}
+
 export type CharacterClass =
   | "Death Knight"
   | "Druid"
