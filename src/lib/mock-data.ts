@@ -50,9 +50,10 @@ export interface User {
 
 export interface Ticket {
   id: string
-  title: string
+  subject: string
   status: "open" | "in-progress" | "closed"
   createdAt: string
+  updatedAt: string
 }
 
 export interface RankingPlayer {
@@ -127,9 +128,9 @@ export const mockUser: User = {
 }
 
 export const mockTickets: Ticket[] = [
-  { id: "1", title: "Item não recebido após compra", status: "open", createdAt: "2024-01-10" },
-  { id: "2", title: "Bug no dungeon ICC", status: "in-progress", createdAt: "2024-01-08" },
-  { id: "3", title: "Problema de login", status: "closed", createdAt: "2024-01-05" },
+  { id: "1", subject: "Item não recebido após compra", status: "open", createdAt: "2024-01-10", updatedAt: "2024-01-11" },
+  { id: "2", subject: "Bug no dungeon ICC", status: "in-progress", createdAt: "2024-01-08", updatedAt: "2024-01-09" },
+  { id: "3", subject: "Problema de login", status: "closed", createdAt: "2024-01-05", updatedAt: "2024-01-06" },
 ]
 
 export const mockRankingArena: RankingPlayer[] = [
