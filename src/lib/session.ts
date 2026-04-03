@@ -1,5 +1,15 @@
 import type { SessionOptions } from 'iron-session'
 
+declare module 'iron-session' {
+  interface IronSessionData {
+    user?: {
+      id: number
+      username: string
+      email: string
+    }
+  }
+}
+
 export const sessionOptions: SessionOptions = {
   password: process.env.SESSION_SECRET ?? 'fallback-dev-secret-32-chars-minimum!!',
   cookieName: 'wow_session',
