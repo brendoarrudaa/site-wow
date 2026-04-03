@@ -1,12 +1,15 @@
 ---
 title: "Azeroth Legacy: O Servidor Que a Comunidade Merece"
-excerpt: "Conheça o projeto que está trazendo WotLK de volta com qualidade, dedicação e respeito pelo jogo. Saiba o que esperar e como participar desde o início."
-date: "2025-05-01"
-category: "Anúncio"
-coverColor: "from-gold/20 to-accent/10"
+date: 2025-05-01
+excerpt: Conheça o projeto que está trazendo WotLK de volta com qualidade,
+  dedicação e respeito pelo jogo. Saiba o que esperar e como participar desde o
+  início.
+category: Anúncio
+coverColor: from-gold/20 to-accent/10
 recommended:
   - rates-explicadas
   - guia-rapido-novos-jogadores
+image: /assets/img-blog/esocial-erros-multas.png
 ---
 
 ## Um servidor construído com propósito
