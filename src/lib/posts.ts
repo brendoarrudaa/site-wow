@@ -14,7 +14,7 @@ export type Post = {
   date: string;
   category: string;
   coverColor: string;
-  image?: string;
+  image?: string | null;
   content: string;
   recommended?: string[];
 };
@@ -42,7 +42,7 @@ export async function getAllPosts(): Promise<Post[]> {
         date: String(data.date ?? ""),
         category: data.category ?? "",
         coverColor: data.coverColor ?? "from-gold/20 to-accent/10",
-        image: data.image ?? undefined,
+        image: data.image ?? null,
         content: html.toString(),
         recommended: data.recommended ?? [],
       } satisfies Post;
