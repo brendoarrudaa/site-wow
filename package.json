@@ -1,0 +1,71 @@
+{
+  "name": "movisul-blog",
+  "private": true,
+  "description": "Site and blog - Movisul.com",
+  "version": "3.1.0",
+  "author": "Movisul",
+  "dependencies": {
+    "algoliasearch": "^5.49.2",
+    "daisyui": "^5.5.19",
+    "date-fns": "^4.1.0",
+    "decap-cms-locales": "^3.5.1",
+    "gray-matter": "^4.0.3",
+    "lucide-react": "^1.7.0",
+    "next": "^16.2.0",
+    "next-seo": "^7.2.0",
+    "nextjs-progressbar": "^0.0.16",
+    "preact": "^10.29.0",
+    "prismjs": "^1.30.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-infinite-scroll-component": "^6.1.1",
+    "react-instantsearch": "^7.28.0",
+    "react-slick": "^0.31.0",
+    "rehype-autolink-headings": "^7.1.0",
+    "rehype-sanitize": "^6.0.0",
+    "rehype-slug": "^6.0.0",
+    "rehype-stringify": "^10.0.1",
+    "remark": "^15.0.1",
+    "remark-oembed": "^1.2.2",
+    "remark-rehype": "^11.1.1",
+    "slick-carousel": "^1.8.1",
+    "slugify": "^1.6.8",
+    "styled-components": "^6.3.11",
+    "styled-icons": "^10.47.1",
+    "styled-media-query": "^2.1.2",
+    "zdog": "^1.1.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.2",
+    "concurrently": "^9.2.1",
+    "decap-server": "^3.0.0",
+    "eslint": "^10.0.3",
+    "eslint-config-next": "^16.2.0",
+    "globby": "^16.1.1",
+    "postcss": "^8.5.8",
+    "prettier": "^3.8.1",
+    "sitemap": "^9.0.1",
+    "tailwindcss": "^4.2.2"
+  },
+  "keywords": [
+    "nextjs",
+    "frontend",
+    "blog"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev --webpack",
+    "cms": "decap-server",
+    "dev:cms": "npx concurrently \"npm run dev\" \"npm run cms\"",
+    "build": "next build --webpack",
+    "start": "next start",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendoarrudaa/site-movisul"
+  },
+  "bugs": {
+    "url": "https://github.com/brendoarrudaa/site-movisul/issues"
+  }
+}

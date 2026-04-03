@@ -1,0 +1,46 @@
+@import 'tailwindcss';
+@variant dark (&:where(.dark, .dark *));
+
+@plugin 'daisyui' {
+  themes: movisul --default;
+}
+
+@plugin 'daisyui/theme' {
+  name: 'movisul';
+  default: true;
+  --color-primary: #0f4c81;
+  --color-secondary: #2a9d6e;
+  --color-accent: #34c785;
+  --color-neutral: #2d3748;
+  --color-base-100: #ffffff;
+  --color-base-200: #f7fafc;
+  --color-base-300: #edf2f7;
+  --color-info: #3182ce;
+  --color-success: #38a169;
+  --color-warning: #ecc94b;
+  --color-error: #e53e3e;
+}
+
+@font-face {
+  font-family: 'Sora';
+  src: url('/assets/fonts/Sora-Light.ttf');
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Sora';
+  src: url('/assets/fonts/Sora-Regular.ttf');
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: 'Sora';
+  src: url('/assets/fonts/Sora-Bold.ttf');
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: 'Sora';
+  src: url('/assets/fonts/Sora-ExtraBold.ttf');
+  font-weight: 800;
+}

@@ -1,0 +1,10 @@
+# robotstxt.org/
+
+User-agent: *
+Allow: /
+
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+
+Sitemap: https://movisul.com/sitemap.xml
