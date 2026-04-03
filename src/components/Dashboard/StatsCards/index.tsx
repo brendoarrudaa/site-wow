@@ -1,56 +1,44 @@
-import { Swords, Trophy, Coins, Clock } from "lucide-react"
-import { User } from "@/lib/mock-data"
+import { Swords, Trophy, Coins, Loader2 } from "lucide-react"
+import { RealCharacter } from "@/components/Dashboard/DashboardPage"
 
 interface StatsCardsProps {
-  user: User
+  characters: RealCharacter[]
+  loading: boolean
 }
 
-const StatsCards = ({ user }: StatsCardsProps) => {
-  const totalGold = user.characters.reduce((sum, char) => sum + char.gold, 0)
-  const highestLevel = Math.max(...user.characters.map((char) => char.level))
-
-  const totalMinutes = user.characters.reduce((sum, char) => {
-    const match = char.playedTime.match(/(\d+)d\s*(\d+)h\s*(\d+)m/)
-    if (!match) return sum
-    return (
-      sum +
-      parseInt(match[1]) * 24 * 60 +
-      parseInt(match[2]) * 60 +
-      parseInt(match[3])
-    )
-  }, 0)
-
-  const totalDays = Math.floor(totalMinutes / (24 * 60))
-  const totalHours = Math.floor((totalMinutes % (24 * 60)) / 60)
+const StatsCards = ({ characters, loading }: StatsCardsProps) => {
+  const totalGold = characters.reduce((sum, c) => sum + c.gold, 0)
+  const highestLevel = characters.length > 0 ? Math.max(...characters.map((c) => c.level)) : 0
+  const onlineCount = characters.filter((c) => c.online).length
 
   const stats = [
     {
       label: "Personagens",
-      value: user.characters.length.toString(),
+      value: characters.length.toString(),
       icon: Swords,
       colorIcon: "text-primary",
       colorBg: "bg-primary/10",
     },
     {
       label: "Maior Level",
-      value: highestLevel.toString(),
+      value: highestLevel > 0 ? highestLevel.toString() : "—",
       icon: Trophy,
       colorIcon: "text-primary",
       colorBg: "bg-primary/10",
     },
     {
       label: "Gold Total",
-      value: totalGold.toLocaleString(),
+      value: totalGold.toLocaleString() + "g",
       icon: Coins,
       colorIcon: "text-primary",
       colorBg: "bg-primary/10",
     },
     {
-      label: "Tempo Jogado",
-      value: `${totalDays}d ${totalHours}h`,
-      icon: Clock,
-      colorIcon: "text-secondary",
-      colorBg: "bg-secondary/10",
+      label: "Online Agora",
+      value: onlineCount.toString(),
+      icon: Swords,
+      colorIcon: "text-success",
+      colorBg: "bg-success/10",
     },
   ]
 
@@ -66,7 +54,11 @@ const StatsCards = ({ user }: StatsCardsProps) => {
             </div>
             <div>
               <p className="text-sm text-base-content/60">{stat.label}</p>
-              <p className="text-2xl font-bold">{stat.value}</p>
+              {loading ? (
+                <Loader2 className="h-5 w-5 animate-spin text-base-content/30" />
+              ) : (
+                <p className="text-2xl font-bold">{stat.value}</p>
+              )}
             </div>
           </div>
         </div>

@@ -1,9 +1,52 @@
 import Link from "next/link"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/router"
-import { Bell, LogOut, ShoppingBag, Swords, Trophy, MessageSquare } from "lucide-react"
-import { mockUser, mockTickets, mockShopItems } from "@/lib/mock-data"
+import {
+  Bell,
+  LogOut,
+  ShoppingBag,
+  Swords,
+  Trophy,
+  MessageSquare,
+  Loader2,
+} from "lucide-react"
+import { mockTickets, mockShopItems } from "@/lib/mock-data"
 import StatsCards from "@/components/Dashboard/StatsCards"
-import CharacterCard from "@/components/Dashboard/CharacterCard"
+import ServerStatusBadge from "@/components/Dashboard/ServerStatusBadge"
+
+export interface RealCharacter {
+  guid: number
+  name: string
+  race: string
+  class: string
+  level: number
+  gold: number
+  silver: number
+  copper: number
+  online: boolean
+}
+
+const CLASS_COLORS: Record<string, string> = {
+  "Death Knight": "text-red-500",
+  Druid: "text-orange-400",
+  Hunter: "text-green-400",
+  Mage: "text-cyan-400",
+  Paladin: "text-pink-400",
+  Priest: "text-white",
+  Rogue: "text-yellow-400",
+  Shaman: "text-blue-400",
+  Warlock: "text-purple-400",
+  Warrior: "text-amber-600",
+}
+
+const HORDE_RACES = new Set([
+  "Orc",
+  "Morto-Vivo",
+  "Tauren",
+  "Troll",
+  "Elfo Sangrento",
+  "Goblin",
+])
 
 const rarityLabel: Record<string, string> = {
   legendary: "Lendário",
@@ -28,10 +71,23 @@ interface DashboardPageProps {
 
 const DashboardPage = ({ username, email }: DashboardPageProps) => {
   const router = useRouter()
+  const [characters, setCharacters] = useState<RealCharacter[]>([])
+  const [loading, setLoading] = useState(true)
+
   const featuredItems = mockShopItems.filter((item) => item.featured).slice(0, 3)
   const openTickets = mockTickets.filter(
     (t) => t.status === "open" || t.status === "in-progress"
   )
+
+  useEffect(() => {
+    fetch("/api/account/characters")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.characters) setCharacters(data.characters)
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
 
   const handleLogout = async () => {
     await fetch("/api/account/logout", { method: "POST" })
@@ -50,13 +106,12 @@ const DashboardPage = ({ username, email }: DashboardPageProps) => {
             <h1 className="text-2xl font-bold font-serif glow-text">
               Bem-vindo, <span className="text-primary">{username}</span>
             </h1>
-            <p className="text-sm text-base-content/60">
-              Gerencie seus personagens e aproveite o servidor
-            </p>
+            <p className="text-sm text-base-content/60">{email}</p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
+          <ServerStatusBadge />
           <div className="relative">
             <button className="btn btn-ghost btn-sm btn-square">
               <Bell className="h-4 w-4" />
@@ -67,10 +122,7 @@ const DashboardPage = ({ username, email }: DashboardPageProps) => {
               </span>
             )}
           </div>
-          <button
-            onClick={handleLogout}
-            className="btn btn-outline btn-sm gap-2"
-          >
+          <button onClick={handleLogout} className="btn btn-outline btn-sm gap-2">
             <LogOut className="h-4 w-4" />
             Sair
           </button>
@@ -78,22 +130,103 @@ const DashboardPage = ({ username, email }: DashboardPageProps) => {
       </div>
 
       {/* Stats */}
-      <StatsCards user={mockUser} />
+      <StatsCards characters={characters} loading={loading} />
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Characters — 2 cols */}
         <div className="space-y-4 lg:col-span-2">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold font-serif">Seus Personagens</h2>
-            <span className="badge badge-ghost text-xs">
-              {mockUser.characters.length} personagens
-            </span>
+            {!loading && (
+              <span className="badge badge-ghost text-xs">
+                {characters.length} {characters.length === 1 ? "personagem" : "personagens"}
+              </span>
+            )}
           </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            {mockUser.characters.map((character) => (
-              <CharacterCard key={character.id} character={character} />
-            ))}
-          </div>
+
+          {loading ? (
+            <div className="flex items-center justify-center py-12 text-base-content/40">
+              <Loader2 className="h-6 w-6 animate-spin mr-2" />
+              Carregando personagens…
+            </div>
+          ) : characters.length === 0 ? (
+            <div className="card border border-dashed border-base-300 bg-base-100 p-8 text-center text-base-content/40">
+              <Swords className="mx-auto mb-2 h-10 w-10 opacity-30" />
+              <p className="text-sm">Nenhum personagem encontrado.</p>
+              <p className="mt-1 text-xs">Entre no jogo e crie seu primeiro personagem!</p>
+            </div>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2">
+              {characters.map((character) => {
+                const classColor = CLASS_COLORS[character.class] ?? "text-base-content"
+                const accentBg = classColor.replace("text-", "bg-")
+                const faction = HORDE_RACES.has(character.race) ? "Horda" : "Aliança"
+
+                return (
+                  <div
+                    key={character.guid}
+                    className="card relative overflow-hidden border border-base-300 bg-base-100 transition-all hover:border-primary/50"
+                  >
+                    {/* Class color accent bar */}
+                    <div className={`absolute left-0 top-0 h-full w-1 ${accentBg}`} />
+
+                    <div className="card-body p-4 pl-5">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-bold">{character.name}</h3>
+                            {character.online && (
+                              <span className="inline-flex h-2 w-2 rounded-full bg-success" title="Online" />
+                            )}
+                          </div>
+                          <p className={`text-sm ${classColor}`}>
+                            {character.class} — {character.race}
+                          </p>
+                        </div>
+
+                        <span
+                          className={`badge badge-outline text-xs ${
+                            faction === "Horda"
+                              ? "border-red-500 text-red-500"
+                              : "border-blue-500 text-blue-500"
+                          }`}
+                        >
+                          {faction}
+                        </span>
+                      </div>
+
+                      <div className="mt-4 space-y-3">
+                        {/* Level progress */}
+                        <div>
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-base-content/60">Level</span>
+                            <span className="font-medium">{character.level} / 80</span>
+                          </div>
+                          <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-base-300">
+                            <div
+                              className="h-full bg-primary transition-all"
+                              style={{ width: `${(character.level / 80) * 100}%` }}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Gold */}
+                        <div className="flex items-center gap-2 text-sm">
+                          <span className="text-base-content/60">Gold</span>
+                          <span className="ml-auto font-medium text-primary">
+                            {character.gold.toLocaleString()}g{" "}
+                            <span className="text-base-content/40 text-xs">
+                              {character.silver}s {character.copper}c
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </div>
 
         {/* Sidebar panel — 1 col */}

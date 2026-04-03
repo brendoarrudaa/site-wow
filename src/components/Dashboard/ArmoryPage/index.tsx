@@ -1,173 +1,170 @@
-import { useState } from "react"
-import { Shield, Swords, Heart, Zap, Target, Award, Clock, Trophy, Star, Flame, ChevronDown } from "lucide-react"
-import { mockUser, classColors, Character } from "@/lib/mock-data"
+import { useEffect, useState } from "react"
+import {
+  Shield,
+  Swords,
+  Heart,
+  Zap,
+  Target,
+  Clock,
+  Trophy,
+  Star,
+  ChevronDown,
+  Loader2,
+  Flame,
+} from "lucide-react"
 
-const mockEquipment = {
-  head:      { name: "Sanctified Lightsworn Faceguard", ilvl: 277, rarity: "epic" },
-  neck:      { name: "Sindragosa's Cruel Claw", ilvl: 277, rarity: "epic" },
-  shoulders: { name: "Sanctified Lightsworn Shoulderguards", ilvl: 277, rarity: "epic" },
-  chest:     { name: "Sanctified Lightsworn Chestguard", ilvl: 277, rarity: "epic" },
-  waist:     { name: "Lich Killer's Lanyard", ilvl: 264, rarity: "epic" },
-  legs:      { name: "Sanctified Lightsworn Legguards", ilvl: 277, rarity: "epic" },
-  feet:      { name: "Apocalypse's Advance", ilvl: 264, rarity: "epic" },
-  wrist:     { name: "Bracers of Dark Reckoning", ilvl: 264, rarity: "epic" },
-  hands:     { name: "Sanctified Lightsworn Handguards", ilvl: 277, rarity: "epic" },
-  ring1:     { name: "Ashen Band of Endless Courage", ilvl: 277, rarity: "epic" },
-  ring2:     { name: "Frostbrood Sapphire Ring", ilvl: 264, rarity: "epic" },
-  trinket1:  { name: "Sindragosa's Flawless Fang", ilvl: 264, rarity: "epic" },
-  trinket2:  { name: "Corpse Tongue Coin", ilvl: 264, rarity: "epic" },
-  back:      { name: "Sentinel's Winter Cloak", ilvl: 264, rarity: "epic" },
-  mainHand:  { name: "Shadowmourne", ilvl: 284, rarity: "legendary" },
-  offHand:   { name: "Bulwark of Smouldering Steel", ilvl: 277, rarity: "epic" },
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface EquipItem {
+  name: string
+  ilvl: number
+  label: string
+  rarity: string
 }
 
-const mockStats = {
-  health: 52000, mana: 23000, strength: 1450, stamina: 2100,
-  armor: 28500, dodge: 24.5, parry: 18.2, block: 22.8,
-  attackPower: 4520, hitRating: 263, expertise: 26, spellPower: 1200,
+interface ArmoryCharacter {
+  guid: number
+  name: string
+  class: string
+  race: string
+  level: number
+  gold: number
+  silver: number
+  copper: number
+  online: boolean
+  playedTime: string
+  totalKills: number
+  faction: "Horda" | "Aliança"
+  avgIlvl: number
+  equipment: Record<string, EquipItem>
 }
 
-const mockAchievements = [
-  { name: "The Kingslayer", points: 10, date: "2024-01-15" },
-  { name: "Fall of the Lich King (25)", points: 25, date: "2024-01-10" },
-  { name: "Heroic: The Lich King", points: 25, date: "2024-01-05" },
-  { name: "Bane of the Fallen King", points: 25, date: "2023-12-20" },
-  { name: "Glory of the Icecrown Raider", points: 25, date: "2023-12-15" },
-]
+// ─── Constants ────────────────────────────────────────────────────────────────
 
-const equipmentSlots = [
-  { key: "head",     label: "Cabeça",      side: "left" },
-  { key: "neck",     label: "Pescoço",     side: "left" },
-  { key: "shoulders",label: "Ombros",      side: "left" },
-  { key: "chest",    label: "Peito",       side: "left" },
-  { key: "waist",    label: "Cintura",     side: "left" },
-  { key: "legs",     label: "Pernas",      side: "left" },
-  { key: "feet",     label: "Pés",         side: "left" },
-  { key: "wrist",    label: "Pulsos",      side: "right" },
-  { key: "hands",    label: "Mãos",        side: "right" },
-  { key: "ring1",    label: "Anel 1",      side: "right" },
-  { key: "ring2",    label: "Anel 2",      side: "right" },
-  { key: "trinket1", label: "Bijuteria 1", side: "right" },
-  { key: "trinket2", label: "Bijuteria 2", side: "right" },
-  { key: "back",     label: "Costas",      side: "right" },
-]
+const CLASS_COLORS: Record<string, string> = {
+  "Death Knight": "text-red-500",
+  Druid: "text-orange-400",
+  Hunter: "text-green-400",
+  Mage: "text-cyan-400",
+  Paladin: "text-pink-400",
+  Priest: "text-white",
+  Rogue: "text-yellow-400",
+  Shaman: "text-blue-400",
+  Warlock: "text-purple-400",
+  Warrior: "text-amber-600",
+}
 
-const rarityBorder: Record<string, string> = {
+const RARITY_BORDER: Record<string, string> = {
+  poor:      "border-base-content/20",
   common:    "border-base-content/30",
   uncommon:  "border-green-500",
   rare:      "border-blue-500",
   epic:      "border-purple-500",
   legendary: "border-primary",
+  artifact:  "border-primary",
 }
 
-const rarityText: Record<string, string> = {
+const RARITY_TEXT: Record<string, string> = {
+  poor:      "text-base-content/40",
   common:    "",
   uncommon:  "text-green-500",
   rare:      "text-blue-500",
   epic:      "text-purple-400",
   legendary: "text-primary",
+  artifact:  "text-primary",
 }
 
-type EquipItem = { name: string; ilvl: number; rarity: string }
+const RARITY_LABEL: Record<string, string> = {
+  poor:      "Ruim",
+  common:    "Comum",
+  uncommon:  "Incomum",
+  rare:      "Raro",
+  epic:      "Épico",
+  legendary: "Lendário",
+  artifact:  "Artefato",
+}
 
-const EquipmentSlot = ({ label, item }: { label: string; item: EquipItem }) => (
-  <div className={`rounded-lg border-2 ${rarityBorder[item.rarity]} bg-base-200/50 p-2`}>
+const LEFT_SLOTS  = ["head","neck","shoulders","chest","waist","legs","feet"]
+const RIGHT_SLOTS = ["wrist","hands","ring1","ring2","trinket1","trinket2","back"]
+const WEAPON_SLOTS = ["mainHand","offHand","ranged"]
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+const EquipmentSlot = ({ item }: { item: EquipItem }) => (
+  <div className={`rounded-lg border-2 ${RARITY_BORDER[item.rarity] ?? "border-base-300"} bg-base-200/50 p-2`}>
     <div className="flex items-center gap-2">
-      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded bg-base-300 ${rarityText[item.rarity]}`}>
+      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded bg-base-300 ${RARITY_TEXT[item.rarity] ?? ""}`}>
         <Swords className="h-4 w-4" />
       </div>
       <div className="min-w-0 flex-1">
-        <p className={`truncate text-xs font-medium ${rarityText[item.rarity]}`}>{item.name}</p>
-        <p className="text-[10px] text-base-content/50">{label} — iLvl {item.ilvl}</p>
+        <p className={`truncate text-xs font-medium ${RARITY_TEXT[item.rarity] ?? ""}`}>{item.name}</p>
+        <p className="text-[10px] text-base-content/50">{item.label} — iLvl {item.ilvl}</p>
       </div>
     </div>
   </div>
 )
 
-const CharacterStats = ({ character }: { character: Character }) => (
-  <div className="space-y-6">
-    <div>
-      <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-base-content/50">
-        Atributos Primários
-      </h4>
-      <div className="grid gap-2 sm:grid-cols-2">
-        {[
-          { icon: Heart, label: "Vida", value: mockStats.health.toLocaleString(), color: "text-error" },
-          { icon: Zap, label: "Mana", value: mockStats.mana.toLocaleString(), color: "text-info" },
-          { icon: Flame, label: "Força", value: mockStats.strength, color: "text-orange-400" },
-          { icon: Shield, label: "Vigor", value: mockStats.stamina, color: "text-primary" },
-        ].map(({ icon: Icon, label, value, color }) => (
-          <div key={label} className="flex items-center justify-between rounded-lg bg-base-200 p-2">
-            <div className="flex items-center gap-2">
-              <Icon className={`h-4 w-4 ${color}`} />
-              <span className="text-sm">{label}</span>
-            </div>
-            <span className="font-bold">{value}</span>
-          </div>
-        ))}
+const EmptySlot = ({ label }: { label: string }) => (
+  <div className="rounded-lg border-2 border-dashed border-base-300 bg-base-200/20 p-2">
+    <div className="flex items-center gap-2">
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded bg-base-300/40">
+        <Shield className="h-4 w-4 text-base-content/20" />
       </div>
-    </div>
-
-    <div>
-      <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-base-content/50">Defesa</h4>
-      <div className="space-y-3">
-        {[
-          { label: "Armadura", value: `${mockStats.armor.toLocaleString()}`, pct: 75 },
-          { label: "Esquiva", value: `${mockStats.dodge}%`, pct: mockStats.dodge },
-          { label: "Aparar", value: `${mockStats.parry}%`, pct: mockStats.parry },
-          { label: "Bloquear", value: `${mockStats.block}%`, pct: mockStats.block },
-        ].map(({ label, value, pct }) => (
-          <div key={label}>
-            <div className="flex justify-between text-sm">
-              <span>{label}</span>
-              <span>{value}</span>
-            </div>
-            <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-base-300">
-              <div className="h-full bg-primary transition-all" style={{ width: `${pct}%` }} />
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-
-    <div>
-      <h4 className="mb-3 text-xs font-semibold uppercase tracking-wider text-base-content/50">Ataque</h4>
-      <div className="grid gap-2 sm:grid-cols-2">
-        {[
-          { label: "Poder de Ataque", value: mockStats.attackPower, highlight: "text-primary" },
-          { label: "Acerto", value: mockStats.hitRating, highlight: "" },
-          { label: "Expertise", value: mockStats.expertise, highlight: "" },
-          { label: "Spell Power", value: mockStats.spellPower, highlight: "text-purple-400" },
-        ].map(({ label, value, highlight }) => (
-          <div key={label} className="flex items-center justify-between rounded-lg bg-base-200 p-2">
-            <span className="text-sm">{label}</span>
-            <span className={`font-bold ${highlight}`}>{value}</span>
-          </div>
-        ))}
-      </div>
+      <p className="text-xs text-base-content/30">{label} — vazio</p>
     </div>
   </div>
 )
 
-type Tab = "equipment" | "stats" | "achievements"
+// ─── Main component ───────────────────────────────────────────────────────────
+
+type Tab = "equipment" | "stats"
 
 const ArmoryPage = () => {
-  const [selectedId, setSelectedId] = useState(mockUser.characters[0]?.id ?? "")
+  const [characters, setCharacters] = useState<ArmoryCharacter[]>([])
+  const [loading, setLoading] = useState(true)
+  const [selectedGuid, setSelectedGuid] = useState<number | null>(null)
   const [tab, setTab] = useState<Tab>("equipment")
   const [selectOpen, setSelectOpen] = useState(false)
 
-  const character = mockUser.characters.find((c) => c.id === selectedId)
-  const avgIlvl = Math.round(
-    Object.values(mockEquipment).reduce((s, i) => s + i.ilvl, 0) /
-      Object.keys(mockEquipment).length
-  )
+  useEffect(() => {
+    fetch("/api/account/armory")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.characters?.length) {
+          setCharacters(data.characters)
+          setSelectedGuid(data.characters[0].guid)
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
 
-  if (!character) return null
+  const character = characters.find((c) => c.guid === selectedGuid) ?? null
+  const classColor = character ? (CLASS_COLORS[character.class] ?? "text-base-content") : ""
+
+  const SLOT_LABELS: Record<string, string> = {
+    head:      "Cabeça",
+    neck:      "Pescoço",
+    shoulders: "Ombros",
+    chest:     "Peito",
+    waist:     "Cintura",
+    legs:      "Pernas",
+    feet:      "Pés",
+    wrist:     "Pulsos",
+    hands:     "Mãos",
+    ring1:     "Anel 1",
+    ring2:     "Anel 2",
+    trinket1:  "Bijuteria 1",
+    trinket2:  "Bijuteria 2",
+    back:      "Costas",
+    mainHand:  "Mão Principal",
+    offHand:   "Mão Secundária",
+    ranged:    "Ranged",
+  }
 
   const tabs: { key: Tab; label: string; icon: React.ElementType }[] = [
     { key: "equipment", label: "Equipamentos", icon: Swords },
-    { key: "stats", label: "Estatísticas", icon: Target },
-    { key: "achievements", label: "Conquistas", icon: Trophy },
+    { key: "stats",     label: "Estatísticas", icon: Target },
   ]
 
   return (
@@ -177,215 +174,250 @@ const ArmoryPage = () => {
         <div>
           <h1 className="text-2xl font-bold font-serif glow-text">Armory</h1>
           <p className="text-sm text-base-content/60">
-            Visualize equipamentos e estatísticas dos seus personagens
+            Equipamentos e estatísticas dos seus personagens
           </p>
         </div>
 
-        {/* Character select */}
-        <div className="relative w-full sm:w-56">
-          <button
-            onClick={() => setSelectOpen((v) => !v)}
-            className="flex w-full items-center justify-between rounded-lg border border-base-300 bg-base-100 px-3 py-2 text-sm transition-colors hover:bg-base-200"
-          >
-            <span className={classColors[character.class]}>
-              {character.name} <span className="text-base-content/50">Lv.{character.level}</span>
-            </span>
-            <ChevronDown className="h-4 w-4 text-base-content/50" />
-          </button>
-          {selectOpen && (
-            <div className="absolute left-0 right-0 top-full z-10 mt-1 rounded-lg border border-base-300 bg-base-100 py-1 shadow-lg">
-              {mockUser.characters.map((c) => (
-                <button
-                  key={c.id}
-                  onClick={() => { setSelectedId(c.id); setSelectOpen(false) }}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors hover:bg-base-200"
-                >
-                  <span className={classColors[c.class]}>{c.name}</span>
-                  <span className="text-base-content/50">Lv.{c.level}</span>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Character banner */}
-      <div className="card-fantasy overflow-hidden">
-        <div className="bg-linear-to-r from-primary/20 via-base-200 to-primary/10 p-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-            <div className={`flex h-24 w-24 shrink-0 items-center justify-center rounded-xl border-2 border-primary bg-base-100 ${classColors[character.class]}`}>
-              <Shield className="h-12 w-12" />
-            </div>
-            <div className="flex-1">
-              <div className="flex flex-wrap items-center gap-3">
-                <h2 className={`text-2xl font-bold font-serif ${classColors[character.class]}`}>
-                  {character.name}
-                </h2>
-                <span className={`badge badge-outline text-xs ${
-                  character.faction === "Horda" ? "border-red-500 text-red-500" : "border-blue-500 text-blue-500"
-                }`}>
-                  {character.faction}
+        {/* Character selector */}
+        {!loading && characters.length > 0 && (
+          <div className="relative w-full sm:w-56">
+            <button
+              onClick={() => setSelectOpen((v) => !v)}
+              className="flex w-full items-center justify-between rounded-lg border border-base-300 bg-base-100 px-3 py-2 text-sm transition-colors hover:bg-base-200"
+            >
+              {character && (
+                <span className={classColor}>
+                  {character.name}{" "}
+                  <span className="text-base-content/50">Lv.{character.level}</span>
                 </span>
-              </div>
-              <p className="mt-1 text-base-content/60">
-                {character.class} — {character.race} — Level {character.level}
-              </p>
-              {character.guild && (
-                <p className="mt-1 text-sm">
-                  <span className="text-base-content/50">Guild:</span>{" "}
-                  <span className="font-medium">{character.guild}</span>
-                </p>
               )}
-            </div>
-            <div className="flex gap-4">
-              <div className="rounded-lg bg-base-100/80 px-4 py-2 text-center">
-                <p className="text-xs text-base-content/50">Item Level</p>
-                <p className="text-2xl font-bold text-primary">{avgIlvl}</p>
+              <ChevronDown className="h-4 w-4 text-base-content/50" />
+            </button>
+            {selectOpen && (
+              <div className="absolute left-0 right-0 top-full z-10 mt-1 rounded-lg border border-base-300 bg-base-100 py-1 shadow-lg">
+                {characters.map((c) => (
+                  <button
+                    key={c.guid}
+                    onClick={() => { setSelectedGuid(c.guid); setSelectOpen(false) }}
+                    className="flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors hover:bg-base-200"
+                  >
+                    <span className={CLASS_COLORS[c.class] ?? ""}>{c.name}</span>
+                    <span className="text-base-content/50">Lv.{c.level}</span>
+                    {c.online && <span className="ml-auto inline-flex h-2 w-2 rounded-full bg-success" />}
+                  </button>
+                ))}
               </div>
-              <div className="rounded-lg bg-base-100/80 px-4 py-2 text-center">
-                <p className="text-xs text-base-content/50">Conquistas</p>
-                <p className="text-2xl font-bold text-secondary">{character.achievementPoints}</p>
-              </div>
-            </div>
+            )}
           </div>
+        )}
+      </div>
+
+      {/* Loading state */}
+      {loading && (
+        <div className="flex items-center justify-center py-16 text-base-content/40">
+          <Loader2 className="h-6 w-6 animate-spin mr-2" />
+          Carregando armory…
         </div>
-      </div>
+      )}
 
-      {/* Tabs */}
-      <div className="flex gap-1 rounded-lg border border-base-300 bg-base-200 p-1 w-fit">
-        {tabs.map(({ key, label, icon: Icon }) => (
-          <button
-            key={key}
-            onClick={() => setTab(key)}
-            className={`flex items-center gap-2 rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
-              tab === key ? "bg-base-100 shadow-sm" : "text-base-content/60 hover:text-base-content"
-            }`}
-          >
-            <Icon className="h-4 w-4" />
-            {label}
-          </button>
-        ))}
-      </div>
+      {/* Empty state */}
+      {!loading && characters.length === 0 && (
+        <div className="card border border-dashed border-base-300 bg-base-100 p-12 text-center text-base-content/40">
+          <Shield className="mx-auto mb-3 h-12 w-12 opacity-20" />
+          <p className="text-sm">Nenhum personagem encontrado.</p>
+          <p className="mt-1 text-xs">Entre no jogo e crie seu primeiro personagem!</p>
+        </div>
+      )}
 
-      {/* Tab: Equipment */}
-      {tab === "equipment" && (
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div className="card-fantasy p-4">
-            <h3 className="mb-3 text-sm font-semibold text-base-content/60 uppercase tracking-wider">
-              Equipamentos (Esquerda)
-            </h3>
-            <div className="space-y-2">
-              {equipmentSlots.filter((s) => s.side === "left").map((slot) => (
-                <EquipmentSlot
-                  key={slot.key}
-                  label={slot.label}
-                  item={mockEquipment[slot.key as keyof typeof mockEquipment]}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className="card-fantasy p-4">
-            <h3 className="mb-3 text-sm font-semibold text-base-content/60 uppercase tracking-wider">
-              Equipamentos (Direita)
-            </h3>
-            <div className="space-y-2">
-              {equipmentSlots.filter((s) => s.side === "right").map((slot) => (
-                <EquipmentSlot
-                  key={slot.key}
-                  label={slot.label}
-                  item={mockEquipment[slot.key as keyof typeof mockEquipment]}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className="card-fantasy p-4 lg:col-span-2">
-            <h3 className="mb-3 text-sm font-semibold text-base-content/60 uppercase tracking-wider">
-              Armas
-            </h3>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-lg border-2 border-primary bg-primary/10 p-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/20 text-primary">
-                    <Swords className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-primary">{mockEquipment.mainHand.name}</p>
-                    <p className="text-xs text-base-content/50">
-                      Mão Principal — iLvl {mockEquipment.mainHand.ilvl}
-                    </p>
-                    <span className="badge badge-warning badge-sm mt-1">Lendário</span>
-                  </div>
+      {/* Content */}
+      {!loading && character && (
+        <>
+          {/* Character banner */}
+          <div className="card-fantasy overflow-hidden">
+            <div className="bg-linear-to-r from-primary/20 via-base-200 to-primary/10 p-6">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                <div className={`flex h-24 w-24 shrink-0 items-center justify-center rounded-xl border-2 border-primary bg-base-100 ${classColor}`}>
+                  <Shield className="h-12 w-12" />
                 </div>
-              </div>
-              <div className="rounded-lg border-2 border-purple-500 bg-purple-500/10 p-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500/20 text-purple-400">
-                    <Shield className="h-5 w-5" />
+                <div className="flex-1">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h2 className={`text-2xl font-bold font-serif ${classColor}`}>
+                      {character.name}
+                    </h2>
+                    {character.online && (
+                      <span className="inline-flex h-2 w-2 rounded-full bg-success" title="Online" />
+                    )}
+                    <span
+                      className={`badge badge-outline text-xs ${
+                        character.faction === "Horda"
+                          ? "border-red-500 text-red-500"
+                          : "border-blue-500 text-blue-500"
+                      }`}
+                    >
+                      {character.faction}
+                    </span>
                   </div>
-                  <div>
-                    <p className="font-bold text-purple-400">{mockEquipment.offHand.name}</p>
-                    <p className="text-xs text-base-content/50">
-                      Mão Secundária — iLvl {mockEquipment.offHand.ilvl}
-                    </p>
-                    <span className="badge badge-outline badge-sm mt-1 border-purple-500 text-purple-400">
-                      Épico
+                  <p className="mt-1 text-base-content/60">
+                    {character.class} — {character.race} — Level {character.level}
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-4 text-sm text-base-content/60">
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-3.5 w-3.5" />
+                      {character.playedTime}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Swords className="h-3.5 w-3.5" />
+                      {character.totalKills.toLocaleString()} kills
                     </span>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Tab: Stats */}
-      {tab === "stats" && (
-        <div className="card-fantasy p-6">
-          <h3 className="mb-1 text-lg font-bold">Estatísticas do Personagem</h3>
-          <p className="mb-6 text-sm text-base-content/60">Atributos e capacidades de combate</p>
-          <CharacterStats character={character} />
-        </div>
-      )}
-
-      {/* Tab: Achievements */}
-      {tab === "achievements" && (
-        <div className="card-fantasy p-6">
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <h3 className="flex items-center gap-2 text-lg font-bold">
-                <Trophy className="h-5 w-5 text-primary" />
-                Conquistas Recentes
-              </h3>
-              <p className="text-sm text-base-content/60">Suas últimas conquistas no jogo</p>
-            </div>
-            <div className="text-right">
-              <p className="text-2xl font-bold text-primary">{character.achievementPoints}</p>
-              <p className="text-xs text-base-content/50">pontos totais</p>
-            </div>
-          </div>
-          <div className="space-y-3">
-            {mockAchievements.map((achievement, i) => (
-              <div key={i} className="flex items-center gap-4 rounded-lg border border-base-300 p-3">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                  <Award className="h-6 w-6 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <p className="font-medium">{achievement.name}</p>
-                  <div className="flex items-center gap-1 text-xs text-base-content/50">
-                    <Clock className="h-3 w-3" />
-                    {achievement.date}
+                <div className="flex gap-4">
+                  <div className="rounded-lg bg-base-100/80 px-4 py-2 text-center">
+                    <p className="text-xs text-base-content/50">Item Level</p>
+                    <p className="text-2xl font-bold text-primary">
+                      {character.avgIlvl > 0 ? character.avgIlvl : "—"}
+                    </p>
+                  </div>
+                  <div className="rounded-lg bg-base-100/80 px-4 py-2 text-center">
+                    <p className="text-xs text-base-content/50">Gold</p>
+                    <p className="text-2xl font-bold text-yellow-400">
+                      {character.gold.toLocaleString()}
+                    </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-1 text-primary">
-                  <Star className="h-4 w-4" />
-                  <span className="font-bold">{achievement.points}</span>
-                </div>
               </div>
+            </div>
+          </div>
+
+          {/* Tabs */}
+          <div className="flex gap-1 rounded-lg border border-base-300 bg-base-200 p-1 w-fit">
+            {tabs.map(({ key, label, icon: Icon }) => (
+              <button
+                key={key}
+                onClick={() => setTab(key)}
+                className={`flex items-center gap-2 rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
+                  tab === key ? "bg-base-100 shadow-sm" : "text-base-content/60 hover:text-base-content"
+                }`}
+              >
+                <Icon className="h-4 w-4" />
+                {label}
+              </button>
             ))}
           </div>
-        </div>
+
+          {/* Tab: Equipment */}
+          {tab === "equipment" && (
+            <div className="space-y-4">
+              {Object.keys(character.equipment).length === 0 ? (
+                <p className="text-sm text-base-content/40 text-center py-8">
+                  Nenhum item equipado encontrado. Entre no jogo para equipar itens.
+                </p>
+              ) : (
+                <div className="grid gap-6 lg:grid-cols-2">
+                  {/* Left slots */}
+                  <div className="card-fantasy p-4">
+                    <h3 className="mb-3 text-sm font-semibold text-base-content/60 uppercase tracking-wider">
+                      Slots (Esquerda)
+                    </h3>
+                    <div className="space-y-2">
+                      {LEFT_SLOTS.map((slot) =>
+                        character.equipment[slot] ? (
+                          <EquipmentSlot key={slot} item={character.equipment[slot]} />
+                        ) : (
+                          <EmptySlot key={slot} label={SLOT_LABELS[slot] ?? slot} />
+                        )
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Right slots */}
+                  <div className="card-fantasy p-4">
+                    <h3 className="mb-3 text-sm font-semibold text-base-content/60 uppercase tracking-wider">
+                      Slots (Direita)
+                    </h3>
+                    <div className="space-y-2">
+                      {RIGHT_SLOTS.map((slot) =>
+                        character.equipment[slot] ? (
+                          <EquipmentSlot key={slot} item={character.equipment[slot]} />
+                        ) : (
+                          <EmptySlot key={slot} label={SLOT_LABELS[slot] ?? slot} />
+                        )
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Weapons */}
+                  {WEAPON_SLOTS.some((s) => character.equipment[s]) && (
+                    <div className="card-fantasy p-4 lg:col-span-2">
+                      <h3 className="mb-3 text-sm font-semibold text-base-content/60 uppercase tracking-wider">
+                        Armas
+                      </h3>
+                      <div className="grid gap-3 sm:grid-cols-3">
+                        {WEAPON_SLOTS.map((slot) => {
+                          const item = character.equipment[slot]
+                          if (!item) return null
+                          const border = RARITY_BORDER[item.rarity] ?? "border-base-300"
+                          const textColor = RARITY_TEXT[item.rarity] ?? ""
+                          return (
+                            <div key={slot} className={`rounded-lg border-2 ${border} bg-base-200/50 p-3`}>
+                              <div className="flex items-center gap-3">
+                                <div className={`flex h-10 w-10 items-center justify-center rounded-lg bg-base-300 ${textColor}`}>
+                                  <Swords className="h-5 w-5" />
+                                </div>
+                                <div>
+                                  <p className={`font-bold text-sm ${textColor}`}>{item.name}</p>
+                                  <p className="text-xs text-base-content/50">
+                                    {item.label} — iLvl {item.ilvl}
+                                  </p>
+                                  <span className={`badge badge-outline badge-sm mt-1 text-[10px] ${textColor}`}>
+                                    {RARITY_LABEL[item.rarity] ?? item.rarity}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Tab: Stats */}
+          {tab === "stats" && (
+            <div className="card-fantasy p-6">
+              <h3 className="mb-1 text-lg font-bold">Estatísticas do Personagem</h3>
+              <p className="mb-6 text-sm text-base-content/60">
+                Informações gerais da conta no banco de dados
+              </p>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {[
+                  { icon: Shield,    label: "Classe",         value: character.class,                          color: classColor },
+                  { icon: Star,      label: "Raça",           value: character.race,                           color: "" },
+                  { icon: Trophy,    label: "Facção",         value: character.faction,                        color: character.faction === "Horda" ? "text-red-500" : "text-blue-500" },
+                  { icon: Swords,    label: "Level",          value: `${character.level} / 80`,                color: "text-primary" },
+                  { icon: Flame,     label: "Item Level médio", value: character.avgIlvl > 0 ? character.avgIlvl.toString() : "—", color: "text-primary" },
+                  { icon: Swords,    label: "Kills totais",   value: character.totalKills.toLocaleString(),    color: "" },
+                  { icon: Clock,     label: "Tempo jogado",   value: character.playedTime,                     color: "" },
+                  { icon: Zap,       label: "Gold",           value: `${character.gold.toLocaleString()}g ${character.silver}s ${character.copper}c`, color: "text-yellow-400" },
+                  { icon: Heart,     label: "Status",         value: character.online ? "Online" : "Offline",  color: character.online ? "text-success" : "text-base-content/40" },
+                ].map(({ icon: Icon, label, value, color }) => (
+                  <div key={label} className="flex items-center gap-3 rounded-lg bg-base-200 p-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-base-300">
+                      <Icon className={`h-5 w-5 ${color || "text-base-content/60"}`} />
+                    </div>
+                    <div>
+                      <p className="text-xs text-base-content/50">{label}</p>
+                      <p className={`font-semibold ${color}`}>{value}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   )
