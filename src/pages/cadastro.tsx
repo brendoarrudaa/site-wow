@@ -233,6 +233,12 @@ const Register = () => {
                     <LogIn className="h-4 w-4 mr-2" />
                     {loading ? 'Entrando...' : 'Entrar'}
                   </button>
+
+                  <div className="text-center">
+                    <Link href="/recuperar-senha" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                      Esqueci minha senha
+                    </Link>
+                  </div>
                 </form>
               )}
 
