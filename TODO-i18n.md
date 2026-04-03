@@ -11,7 +11,8 @@ Basta substituir as strings literais por `t("chave")` e importar `useTranslation
 
 | Arquivo | Chaves a usar |
 |---|---|
-| `src/pages/cadastro.tsx` | `register.*` |
+| `src/pages/cadastro.tsx` | `register.*` — tabs login/registro |
+| `src/pages/dashboard.tsx` | `dashboard.*` — chaves ainda não criadas nos locales |
 | `src/pages/como-jogar.tsx` | `pages.howToPlay.*` |
 | `src/pages/download.tsx` | `pages.download.*` |
 | `src/pages/rates.tsx` | `pages.rates.*` |
