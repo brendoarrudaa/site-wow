@@ -1,30 +1,125 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
-  User, Mail, Lock, Shield, Smartphone, Clock,
-  Globe, Calendar, AlertTriangle, Copy, Gift, Share2,
+  User,
+  Mail,
+  Lock,
+  Shield,
+  Clock,
+  Calendar,
+  AlertTriangle,
+  Swords,
+  Loader2,
+  Check,
+  X,
 } from "lucide-react"
-import { mockUser } from "@/lib/mock-data"
 
-const referralCode = "FROST-" + mockUser.username.toUpperCase().slice(0, 4) + "-2024"
+interface AccountInfo {
+  joindate: string
+  lastLogin: string | null
+  lastIp: string
+  locked: boolean
+  failedLogins: number
+  totalCharacters: number
+}
 
-const ContaPage = () => {
+interface ContaPageProps {
+  username: string
+  email: string
+}
+
+const ContaPage = ({ username = "", email = "" }: ContaPageProps) => {
+  const [info, setInfo] = useState<AccountInfo | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  // Password change
   const [passwordDialog, setPasswordDialog] = useState(false)
-  const [notifPromo, setNotifPromo] = useState(true)
-  const [notifTickets, setNotifTickets] = useState(true)
-  const [notifSecurity, setNotifSecurity] = useState(true)
-  const [notifNewsletter, setNotifNewsletter] = useState(false)
+  const [currentPassword, setCurrentPassword] = useState("")
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [passwordLoading, setPasswordLoading] = useState(false)
+  const [passwordError, setPasswordError] = useState("")
+  const [passwordSuccess, setPasswordSuccess] = useState(false)
+
+  useEffect(() => {
+    fetch("/api/account/info")
+      .then((r) => r.json())
+      .then(setInfo)
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  const handleChangePassword = async () => {
+    setPasswordError("")
+    setPasswordSuccess(false)
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setPasswordError("Preencha todos os campos.")
+      return
+    }
+    if (newPassword.length < 6) {
+      setPasswordError("A nova senha deve ter pelo menos 6 caracteres.")
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordError("As senhas não coincidem.")
+      return
+    }
+
+    setPasswordLoading(true)
+    try {
+      const res = await fetch("/api/account/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      })
+      const data = await res.json()
+
+      if (!res.ok) {
+        setPasswordError(data.error || "Erro ao alterar senha.")
+        return
+      }
+
+      setPasswordSuccess(true)
+      setCurrentPassword("")
+      setNewPassword("")
+      setConfirmPassword("")
+      setTimeout(() => {
+        setPasswordDialog(false)
+        setPasswordSuccess(false)
+      }, 2000)
+    } catch {
+      setPasswordError("Erro de conexão.")
+    } finally {
+      setPasswordLoading(false)
+    }
+  }
+
+  const formatDate = (dateStr: string | null) => {
+    if (!dateStr) return "—"
+    const d = new Date(dateStr)
+    return d.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+  }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold font-serif glow-text">Configurações da Conta</h1>
-        <p className="text-sm text-base-content/60">Gerencie suas informações e segurança</p>
+        <h1 className="text-2xl font-bold font-serif glow-text">
+          Configurações da Conta
+        </h1>
+        <p className="text-sm text-base-content/60">
+          Gerencie suas informações e segurança
+        </p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Main — 2 cols */}
         <div className="space-y-6 lg:col-span-2">
-
           {/* Profile Info */}
           <div className="card-fantasy p-6 space-y-6">
             <div className="flex items-center gap-2">
@@ -34,15 +129,17 @@ const ContaPage = () => {
 
             <div className="flex items-center gap-4">
               <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border-2 border-primary bg-primary text-primary-content text-2xl font-bold">
-                {mockUser.username.slice(0, 2).toUpperCase()}
+                {username.slice(0, 2).toUpperCase()}
               </div>
               <div>
-                <h3 className="text-xl font-bold">{mockUser.username}</h3>
-                <p className="text-base-content/60">{mockUser.email}</p>
-                <span className="badge badge-outline mt-2 gap-1 text-xs">
-                  <Calendar className="h-3 w-3" />
-                  Membro desde {mockUser.accountCreated}
-                </span>
+                <h3 className="text-xl font-bold">{username}</h3>
+                <p className="text-base-content/60">{email || "Sem e-mail"}</p>
+                {info && (
+                  <span className="badge badge-outline mt-2 gap-1 text-xs">
+                    <Calendar className="h-3 w-3" />
+                    Membro desde {formatDate(info.joindate)}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -50,17 +147,21 @@ const ContaPage = () => {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1">
-                <label className="text-xs font-medium text-base-content/60">Nome de Usuário</label>
+                <label className="text-xs font-medium text-base-content/60">
+                  Nome de Usuário
+                </label>
                 <input
-                  value={mockUser.username}
+                  value={username}
                   disabled
                   className="input input-bordered w-full bg-base-200 text-sm"
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-medium text-base-content/60">Email</label>
+                <label className="text-xs font-medium text-base-content/60">
+                  Email
+                </label>
                 <input
-                  value={mockUser.email}
+                  value={email || "—"}
                   disabled
                   className="input input-bordered w-full bg-base-200 text-sm"
                 />
@@ -69,7 +170,9 @@ const ContaPage = () => {
 
             <div className="flex items-start gap-3 rounded-lg border border-warning/50 bg-warning/10 p-3 text-sm">
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
-              <span>Para alterar seu nome de usuário ou email, entre em contato com o suporte.</span>
+              <span>
+                O nome de usuário não pode ser alterado. Para alterar o email, entre em contato com o suporte.
+              </span>
             </div>
           </div>
 
@@ -88,11 +191,20 @@ const ContaPage = () => {
                 </div>
                 <div>
                   <p className="font-medium">Senha</p>
-                  <p className="text-sm text-base-content/50">Última alteração há 30 dias</p>
+                  <p className="text-sm text-base-content/50">
+                    Altere a senha da sua conta (site e jogo)
+                  </p>
                 </div>
               </div>
               <button
-                onClick={() => setPasswordDialog(true)}
+                onClick={() => {
+                  setPasswordDialog(true)
+                  setPasswordError("")
+                  setPasswordSuccess(false)
+                  setCurrentPassword("")
+                  setNewPassword("")
+                  setConfirmPassword("")
+                }}
                 className="btn btn-outline btn-sm"
               >
                 Alterar Senha
@@ -101,90 +213,45 @@ const ContaPage = () => {
 
             <div className="h-px bg-base-300" />
 
-            {/* 2FA */}
+            {/* Account status */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-base-200">
-                  <Smartphone className="h-5 w-5" />
+                  <Shield className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="font-medium">Autenticação 2FA</p>
-                  <p className="text-sm text-base-content/50">Adicione uma camada extra de segurança</p>
+                  <p className="font-medium">Status da Conta</p>
+                  <p className="text-sm text-base-content/50">
+                    {loading ? "Carregando…" : info?.locked ? "Conta bloqueada" : "Conta ativa"}
+                  </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <span className="badge badge-outline border-error text-error text-xs">Desativado</span>
-                <button className="btn btn-outline btn-sm">Ativar</button>
-              </div>
+              {!loading && info && (
+                <span
+                  className={`badge badge-outline text-xs ${
+                    info.locked
+                      ? "border-error text-error"
+                      : "border-success text-success"
+                  }`}
+                >
+                  {info.locked ? "Bloqueada" : "Ativa"}
+                </span>
+              )}
             </div>
 
-            <div className="h-px bg-base-300" />
-
-            {/* Sessions */}
-            <div>
-              <div className="mb-3 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-base-200">
-                  <Globe className="h-5 w-5" />
+            {!loading && info && info.failedLogins > 0 && (
+              <>
+                <div className="h-px bg-base-300" />
+                <div className="flex items-start gap-3 rounded-lg border border-error/50 bg-error/10 p-3 text-sm">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-error" />
+                  <span>
+                    {info.failedLogins} tentativa(s) de login falha(s) registrada(s).
+                    {info.failedLogins >= 10 &&
+                      " A conta foi bloqueada automaticamente por segurança."}
+                  </span>
                 </div>
-                <div>
-                  <p className="font-medium">Sessões Ativas</p>
-                  <p className="text-sm text-base-content/50">Gerencie onde você está logado</p>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between rounded-lg border border-base-300 p-3">
-                  <div className="flex items-center gap-3">
-                    <span className="h-2 w-2 rounded-full bg-success" />
-                    <div>
-                      <p className="text-sm font-medium">Windows — Chrome</p>
-                      <p className="text-xs text-base-content/50">São Paulo, BR — Ativo agora</p>
-                    </div>
-                  </div>
-                  <span className="badge badge-outline border-success text-success text-xs">Atual</span>
-                </div>
-                <div className="flex items-center justify-between rounded-lg border border-base-300 p-3">
-                  <div className="flex items-center gap-3">
-                    <span className="h-2 w-2 rounded-full bg-base-content/30" />
-                    <div>
-                      <p className="text-sm font-medium">Android — App</p>
-                      <p className="text-xs text-base-content/50">São Paulo, BR — Há 2 dias</p>
-                    </div>
-                  </div>
-                  <button className="btn btn-ghost btn-xs text-error">Encerrar</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Notifications */}
-          <div className="card-fantasy p-6 space-y-4">
-            <div className="flex items-center gap-2">
-              <Mail className="h-5 w-5 text-primary" />
-              <h2 className="font-bold">Notificações</h2>
-            </div>
-
-            {[
-              { label: "Emails de Promoções", desc: "Receba ofertas e novidades da loja", value: notifPromo, set: setNotifPromo },
-              { label: "Atualizações de Tickets", desc: "Notificações sobre seus tickets de suporte", value: notifTickets, set: setNotifTickets },
-              { label: "Alertas de Segurança", desc: "Avisos sobre atividades suspeitas", value: notifSecurity, set: setNotifSecurity },
-              { label: "Newsletter do Servidor", desc: "Novidades e atualizações do servidor", value: notifNewsletter, set: setNotifNewsletter },
-            ].map(({ label, desc, value, set }, i, arr) => (
-              <div key={label}>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">{label}</p>
-                    <p className="text-sm text-base-content/50">{desc}</p>
-                  </div>
-                  <input
-                    type="checkbox"
-                    className="toggle toggle-primary toggle-sm"
-                    checked={value}
-                    onChange={(e) => set(e.target.checked)}
-                  />
-                </div>
-                {i < arr.length - 1 && <div className="mt-4 h-px bg-base-300" />}
-              </div>
-            ))}
+              </>
+            )}
           </div>
         </div>
 
@@ -192,73 +259,64 @@ const ContaPage = () => {
         <div className="space-y-6">
           {/* Account stats */}
           <div className="card-fantasy p-4 space-y-3">
-            <h3 className="text-sm font-semibold text-base-content/60 uppercase tracking-wider">Estatísticas</h3>
-            {[
-              { label: "Personagens", value: mockUser.characters.length, color: "" },
-              { label: "Pontos de Doação", value: mockUser.donationPoints, color: "text-primary" },
-              { label: "Pontos de Voto", value: mockUser.votePoints, color: "text-secondary" },
-            ].map(({ label, value, color }) => (
-              <div key={label} className="flex items-center justify-between">
-                <span className="text-sm text-base-content/60">{label}</span>
-                <span className={`font-bold ${color}`}>{value}</span>
-              </div>
-            ))}
-            <div className="h-px bg-base-300" />
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-base-content/60">Último Login</span>
-              <span>{mockUser.lastLogin}</span>
-            </div>
-          </div>
-
-          {/* Referral */}
-          <div className="card-fantasy border-primary/30 bg-primary/5 p-4 space-y-4">
-            <div>
-              <h3 className="flex items-center gap-2 font-bold">
-                <Gift className="h-5 w-5 text-primary" />
-                Indique Amigos
-              </h3>
-              <p className="mt-1 text-sm text-base-content/60">
-                Ganhe 100 DP por cada amigo que se cadastrar
-              </p>
-            </div>
-            <div className="space-y-1">
-              <label className="text-xs text-base-content/50">Seu código de indicação</label>
-              <div className="flex gap-2">
-                <input
-                  value={referralCode}
-                  readOnly
-                  className="input input-bordered input-sm w-full font-mono bg-base-100 text-xs"
-                />
-                <button className="btn btn-outline btn-sm btn-square">
-                  <Copy className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-base-content/60">Amigos indicados</span>
-              <span className="font-bold">3</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-base-content/60">DP ganhos</span>
-              <span className="font-bold text-primary">300</span>
-            </div>
-            <button className="btn btn-outline btn-sm w-full gap-2">
-              <Share2 className="h-4 w-4" />
-              Compartilhar
-            </button>
-          </div>
-
-          {/* Danger zone */}
-          <div className="card-fantasy border-error/30 p-4 space-y-3">
-            <h3 className="flex items-center gap-2 text-sm font-bold text-error">
-              <AlertTriangle className="h-4 w-4" />
-              Zona de Perigo
+            <h3 className="text-sm font-semibold text-base-content/60 uppercase tracking-wider">
+              Detalhes da Conta
             </h3>
-            <button className="btn btn-outline btn-sm btn-error w-full">
-              Desativar Conta
-            </button>
-            <p className="text-center text-xs text-base-content/50">
-              Isso irá desativar temporariamente sua conta. Você pode reativar a qualquer momento.
+
+            {loading ? (
+              <div className="flex items-center justify-center py-6 text-base-content/30">
+                <Loader2 className="h-5 w-5 animate-spin" />
+              </div>
+            ) : info ? (
+              <>
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-2 text-sm text-base-content/60">
+                    <Swords className="h-3.5 w-3.5" />
+                    Personagens
+                  </span>
+                  <span className="font-bold">{info.totalCharacters}</span>
+                </div>
+
+                <div className="h-px bg-base-300" />
+
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-2 text-sm text-base-content/60">
+                    <Calendar className="h-3.5 w-3.5" />
+                    Cadastro
+                  </span>
+                  <span className="text-sm">{formatDate(info.joindate)}</span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-2 text-sm text-base-content/60">
+                    <Clock className="h-3.5 w-3.5" />
+                    Último Login
+                  </span>
+                  <span className="text-sm">{formatDate(info.lastLogin)}</span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-2 text-sm text-base-content/60">
+                    <Mail className="h-3.5 w-3.5" />
+                    Último IP
+                  </span>
+                  <span className="text-sm font-mono text-base-content/50">
+                    {info.lastIp || "—"}
+                  </span>
+                </div>
+              </>
+            ) : (
+              <p className="text-sm text-base-content/40">Erro ao carregar dados.</p>
+            )}
+          </div>
+
+          {/* Info card */}
+          <div className="card-fantasy p-4 space-y-3">
+            <h3 className="text-sm font-semibold text-base-content/60 uppercase tracking-wider">
+              Dica de Segurança
+            </h3>
+            <p className="text-sm text-base-content/60">
+              Use uma senha forte e exclusiva para sua conta. A mesma senha é usada para entrar no site e no cliente do jogo.
             </p>
           </div>
         </div>
@@ -267,26 +325,98 @@ const ContaPage = () => {
       {/* Change password modal */}
       {passwordDialog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="fixed inset-0 bg-black/50" onClick={() => setPasswordDialog(false)} />
+          <div
+            className="fixed inset-0 bg-black/50"
+            onClick={() => setPasswordDialog(false)}
+          />
           <div className="relative z-50 w-full max-w-md rounded-lg border border-base-300 bg-base-100 p-6 shadow-xl">
-            <h2 className="mb-1 text-lg font-semibold">Alterar Senha</h2>
-            <p className="mb-5 text-sm text-base-content/60">
-              Digite sua senha atual e a nova senha
-            </p>
-            <div className="space-y-4">
-              {["Senha Atual", "Nova Senha", "Confirmar Nova Senha"].map((label) => (
-                <div key={label} className="space-y-1">
-                  <label className="text-xs font-medium text-base-content/60">{label}</label>
-                  <input type="password" className="input input-bordered w-full text-sm" />
-                </div>
-              ))}
-            </div>
-            <div className="mt-6 flex justify-end gap-2">
-              <button className="btn btn-ghost btn-sm" onClick={() => setPasswordDialog(false)}>
-                Cancelar
+            <div className="mb-5 flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-semibold">Alterar Senha</h2>
+                <p className="text-sm text-base-content/60">
+                  A nova senha vale para o site e para o cliente do jogo
+                </p>
+              </div>
+              <button
+                className="btn btn-ghost btn-sm btn-square"
+                onClick={() => setPasswordDialog(false)}
+              >
+                <X className="h-4 w-4" />
               </button>
-              <button className="btn btn-primary btn-sm">Salvar</button>
             </div>
+
+            {passwordSuccess ? (
+              <div className="flex flex-col items-center gap-3 py-6 text-success">
+                <Check className="h-10 w-10" />
+                <p className="font-medium">Senha alterada com sucesso!</p>
+              </div>
+            ) : (
+              <>
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-base-content/60">
+                      Senha Atual
+                    </label>
+                    <input
+                      type="password"
+                      className="input input-bordered w-full text-sm"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-base-content/60">
+                      Nova Senha
+                    </label>
+                    <input
+                      type="password"
+                      className="input input-bordered w-full text-sm"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-base-content/60">
+                      Confirmar Nova Senha
+                    </label>
+                    <input
+                      type="password"
+                      className="input input-bordered w-full text-sm"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {passwordError && (
+                  <div className="mt-3 flex items-center gap-2 rounded-lg border border-error/50 bg-error/10 p-2 text-sm text-error">
+                    <AlertTriangle className="h-4 w-4 shrink-0" />
+                    {passwordError}
+                  </div>
+                )}
+
+                <div className="mt-6 flex justify-end gap-2">
+                  <button
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => setPasswordDialog(false)}
+                    disabled={passwordLoading}
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    className="btn btn-primary btn-sm"
+                    onClick={handleChangePassword}
+                    disabled={passwordLoading}
+                  >
+                    {passwordLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      "Salvar"
+                    )}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
