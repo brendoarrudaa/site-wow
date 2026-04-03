@@ -1,0 +1,242 @@
+{
+  "meta": {
+    "siteName": "Azeroth Legacy",
+    "tagline": "The most epic WoW era, done right.",
+    "description": "Brazilian WotLK 3.3.5a server focused on quality, stability and fair play."
+  },
+  "nav": {
+    "home": "Home",
+    "howToPlay": "How to Play",
+    "download": "Download",
+    "rates": "Rates",
+    "rules": "Rules",
+    "faq": "FAQ",
+    "blog": "Blog",
+    "status": "Status",
+    "vip": "VIP",
+    "roadmap": "Roadmap",
+    "community": "Community",
+    "suggestions": "Suggestions",
+    "bugs": "Bug Report",
+    "more": "More",
+    "playNow": "Play Now"
+  },
+  "common": {
+    "joinDiscord": "Join Discord",
+    "download": "Download",
+    "back": "Back",
+    "backToBlog": "Back to Blog",
+    "sendAnother": "Send Another",
+    "reportAnother": "Report Another",
+    "learnMore": "Learn More",
+    "required": "*",
+    "optional": "(optional)",
+    "noResults": "No results found.",
+    "all": "All",
+    "loading": "Loading...",
+    "search": "Search",
+    "searchPlaceholder": "Search the blog...",
+    "searchBlogPlaceholder": "Type to search...",
+    "typeToSearch": "Type something to start searching.",
+    "resultsFor": "result for",
+    "resultsForPlural": "results for"
+  },
+  "footer": {
+    "navigation": "Navigation",
+    "community": "Community",
+    "copyright": "© {year} {name}. Community project. Not affiliated with Blizzard Entertainment."
+  },
+  "cta": {
+    "defaultLabel": "Ready?",
+    "defaultTitle": "Your adventure starts with a click",
+    "defaultSubtitle": "Download the client, set the realmlist and enter Northrend. The community is waiting for you.",
+    "defaultPrimary": "Start Playing",
+    "defaultSecondary": "Join Discord"
+  },
+  "forms": {
+    "suggestion": {
+      "title": "Suggestion Title",
+      "titlePlaceholder": "Ex: Add weekly PvP event",
+      "category": "Category",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe your suggestion in as much detail as possible...",
+      "name": "Your Name (optional)",
+      "namePlaceholder": "What to call you",
+      "discord": "Discord (optional)",
+      "discordPlaceholder": "user#1234",
+      "submit": "Submit Suggestion",
+      "successTitle": "Suggestion Sent!",
+      "successMessage": "Thank you for your feedback. The team will review your suggestion.",
+      "categories": ["Gameplay", "Interface", "Balance", "Events", "Economy", "Community", "Other"]
+    },
+    "bug": {
+      "area": "Affected Area",
+      "description": "Bug Description",
+      "descriptionPlaceholder": "Describe the bug in as much detail as possible...",
+      "steps": "Steps to Reproduce",
+      "stepsPlaceholder": "1. Go to...\n2. Use spell...\n3. Observe that...",
+      "character": "Character (optional)",
+      "characterPlaceholder": "Character name",
+      "screenshot": "Screenshot / Link (optional)",
+      "screenshotPlaceholder": "URL of screenshot or video",
+      "submit": "Submit Report",
+      "successTitle": "Bug Reported!",
+      "successMessage": "Thank you for helping improve the server. The team will investigate the issue.",
+      "areas": ["Quest", "Dungeon", "Raid", "PvP / Arena", "Spell / Talent", "NPC", "Item", "Interface", "Other"]
+    }
+  },
+  "pages": {
+    "home": {
+      "seoDescription": "Brazilian WotLK 3.3.5a server with Blizzlike scripts, balanced rates, active anti-cheat and dedicated community. Free and no pay-to-win."
+    },
+    "howToPlay": {
+      "title": "How to Play",
+      "subtitle": "From zero to login in minutes. Follow the steps and join the server.",
+      "seoDescription": "Step by step guide to connect to Azeroth Legacy: download WoW 3.3.5a client, configure realmlist and create your account.",
+      "tips": "Tips to Get the Most Out",
+      "cta": {
+        "title": "All set up?",
+        "subtitle": "Download the client and join the server now.",
+        "primary": "Download Client",
+        "secondary": "View Rates"
+      }
+    },
+    "download": {
+      "title": "Download",
+      "subtitle": "Everything you need to enter the server. Client, realmlist and instructions.",
+      "seoDescription": "Download the WoW 3.3.5a client to play on Azeroth Legacy. Verified links via torrent, Google Drive and MEGA.",
+      "clientTitle": "WoW 3.3.5a Client",
+      "realmlistTitle": "Realmlist Configuration",
+      "realmlistInstruction": "After installing the client, open Data/realmlist.wtf and replace the content with:",
+      "launcherTitle": "Custom Launcher — Coming Soon",
+      "launcherDescription": "We are developing a dedicated launcher with automatic patch, pre-configured realmlist and server news. Follow on Discord.",
+      "requirementsTitle": "System Requirements",
+      "minimum": "Minimum",
+      "recommended": "Recommended",
+      "downloadButton": "Download",
+      "cta": {
+        "title": "Client ready?",
+        "subtitle": "See the complete step-by-step guide to connect to the server.",
+        "primary": "How to Play",
+        "secondary": "Join Discord"
+      }
+    },
+    "rates": {
+      "title": "Server Rates",
+      "subtitle": "Each rate was chosen with purpose. Fast leveling, earned endgame, untouched legendaries.",
+      "seoDescription": "WotLK server rates: XP, drop, gold, PvP, professions. All explained and justified.",
+      "category": "Category",
+      "rate": "Rate",
+      "blizzlike": "Blizzlike",
+      "philosophyTitle": "The Philosophy Behind the Numbers",
+      "philosophyText": "The server was designed for those who want to reach endgame without weeks of grinding, but without skipping the merit. Accelerated leveling puts you in raids quickly, while legendary items maintain 1x rates — those are achievements to be celebrated, not purchased.",
+      "cta": {
+        "title": "Rates approved?",
+        "subtitle": "Download the client, set the realmlist and enter Northrend.",
+        "primary": "How to Play",
+        "secondary": "Download Client"
+      }
+    },
+    "rules": {
+      "title": "Server Rules",
+      "subtitle": "Read carefully. Violations may result in punishments ranging from warnings to permanent bans.",
+      "seoDescription": "Server rules: conduct, anti-cheat, trading, PvP and communication.",
+      "footerNote": "Rules may be updated at any time. It is the player's responsibility to stay informed. If in doubt, contact the team on Discord.",
+      "cta": {
+        "title": "Rules read?",
+        "subtitle": "Now just log in and play with fair play.",
+        "primary": "How to Play",
+        "secondary": "Join Discord"
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Quick answers to the most common questions about the server.",
+      "seoTitle": "FAQ — Frequently Asked Questions",
+      "seoDescription": "Answers to the most common questions: how to connect, which client to use, rates, addons, anti-cheat and more.",
+      "cta": {
+        "title": "Still have questions?",
+        "subtitle": "Join Discord and ask the team directly.",
+        "primary": "Join Discord",
+        "secondary": "How to Play"
+      }
+    },
+    "status": {
+      "title": "Server Status",
+      "subtitle": "Monitor in real time whether the server is online and current population.",
+      "seoDescription": "Real-time status of Azeroth Legacy server.",
+      "note": "Status data will be updated automatically when the server API is integrated."
+    },
+    "vip": {
+      "title": "VIP — Support the Project",
+      "subtitle": "Convenience and cosmetics for those who want to contribute. No pay-to-win. No exceptions.",
+      "seoDescription": "Azeroth Legacy VIP system: benefits, prices and Free vs VIP comparison.",
+      "whatIsTitle": "What is VIP?",
+      "whatIsText": "VIP is the way to sustain the server. In return, you get quality-of-life shortcuts and exclusive cosmetic items. What VIP does NOT give: gear, stats, drop bonus or any combat advantage.",
+      "comparisonTitle": "Free vs VIP — No Tricks",
+      "benefit": "Benefit",
+      "free": "Free",
+      "footerNote": "Benefits and prices may be adjusted as the server evolves. Always with transparency.",
+      "cta": {
+        "title": "Want to be part of the build?",
+        "subtitle": "VIP will be activated soon. Follow on Discord to be the first to know.",
+        "primary": "Join Discord",
+        "secondary": "View Roadmap"
+      }
+    },
+    "roadmap": {
+      "title": "Roadmap",
+      "subtitle": "Track the server's progress and what's coming next.",
+      "seoDescription": "Azeroth Legacy roadmap: completed phases, current phase and next steps.",
+      "currentPhase": "Current Phase",
+      "cta": {
+        "title": "Excited about the future?",
+        "subtitle": "Join Discord to follow updates in real time.",
+        "primary": "Join Discord",
+        "secondary": "View Blog"
+      }
+    },
+    "community": {
+      "title": "Community",
+      "subtitle": "Discord is where the server really happens. Support, groups, events and decisions.",
+      "seoDescription": "Join Azeroth Legacy Discord. Support, guilds, events, suggestions and everything that happens in the community.",
+      "sectionTitle": "More than a chat.",
+      "sectionTitleHighlight": "A community.",
+      "sectionText": "All official communication happens on Discord. It's where you find support, form groups, recruit for your guild and have a voice in server decisions."
+    },
+    "suggestions": {
+      "title": "Suggestions",
+      "subtitle": "Your opinion matters. Send ideas to improve the server.",
+      "seoDescription": "Send suggestions to improve Azeroth Legacy."
+    },
+    "bugs": {
+      "title": "Report Bug",
+      "subtitle": "Found a problem? Help us fix it by reporting here.",
+      "seoDescription": "Report bugs and issues found on Azeroth Legacy."
+    },
+    "blog": {
+      "title": "Blog",
+      "subtitle": "News, changelogs, guides and everything that happens on the server.",
+      "seoDescription": "News, changelogs, guides and updates from Azeroth Legacy.",
+      "searchTitle": "Search the Blog",
+      "noPostsFound": "No posts found.",
+      "notFound": "Post not found",
+      "recommended": "Recommended Posts",
+      "cta": {
+        "title": "Enjoyed the content?",
+        "subtitle": "Join the server or the community on Discord."
+      }
+    },
+    "notFound": {
+      "error": "Error 404",
+      "title": "Page not found",
+      "description": "The page you are looking for does not exist or has been moved.",
+      "backHome": "Back to Home"
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "subtitle": "How the server handles your information.",
+      "seoDescription": "Learn how Azeroth Legacy collects, uses and protects your information."
+    }
+  }
+}

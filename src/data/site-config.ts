@@ -11,20 +11,20 @@ export const siteConfig = {
 };
 
 export const navLinks = [
-  { label: "Home", href: "/" },
-  { label: "Como Jogar", href: "/como-jogar" },
-  { label: "Download", href: "/download" },
-  { label: "Rates", href: "/rates" },
-  { label: "Regras", href: "/regras" },
-  { label: "FAQ", href: "/faq" },
-  { label: "Blog", href: "/blog" },
-  { label: "Status", href: "/status" },
-  { label: "VIP", href: "/vip" },
-  { label: "Roadmap", href: "/roadmap" },
-  { label: "Comunidade", href: "/comunidade" },
+  { labelKey: "nav.home", href: "/" },
+  { labelKey: "nav.howToPlay", href: "/como-jogar" },
+  { labelKey: "nav.download", href: "/download" },
+  { labelKey: "nav.rates", href: "/rates" },
+  { labelKey: "nav.rules", href: "/regras" },
+  { labelKey: "nav.faq", href: "/faq" },
+  { labelKey: "nav.blog", href: "/blog" },
+  { labelKey: "nav.status", href: "/status" },
+  { labelKey: "nav.vip", href: "/vip" },
+  { labelKey: "nav.roadmap", href: "/roadmap" },
+  { labelKey: "nav.community", href: "/comunidade" },
 ];
 
 export const navMoreLinks = [
-  { label: "Sugestões", href: "/sugestoes" },
-  { label: "Bugs", href: "/bugs" },
+  { labelKey: "nav.suggestions", href: "/sugestoes" },
+  { labelKey: "nav.bugs", href: "/bugs" },
 ];
