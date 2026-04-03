@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 interface CTASectionProps {
@@ -20,7 +20,7 @@ const CTASection = ({
 }: CTASectionProps) => {
   return (
     <section className="page-section relative">
-      <div className="absolute inset-0 bg-gradient-to-t from-card/40 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-t from-card/40 to-transparent pointer-events-none" />
       <div className="page-container text-center relative">
         <div className="section-divider mb-14" />
         <p className="text-xs font-medium text-primary tracking-[0.2em] uppercase mb-4">Pronto?</p>
@@ -28,10 +28,10 @@ const CTASection = ({
         <p className="mt-5 text-muted-foreground max-w-lg mx-auto text-base">{subtitle}</p>
         <div className="mt-10 flex flex-wrap justify-center gap-4">
           <Button variant="gold" size="lg" className="text-base px-8 h-12" asChild>
-            <Link to={primaryHref}>{primaryLabel}</Link>
+            <Link href={primaryHref}>{primaryLabel}</Link>
           </Button>
           <Button variant="outline-gold" size="lg" className="text-base px-8 h-12" asChild>
-            <Link to={secondaryHref}>{secondaryLabel}</Link>
+            <Link href={secondaryHref}>{secondaryLabel}</Link>
           </Button>
         </div>
       </div>

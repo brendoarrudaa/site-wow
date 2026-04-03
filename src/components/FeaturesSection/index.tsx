@@ -3,7 +3,7 @@ import { features } from "@/data/features";
 const FeaturesSection = () => {
   return (
     <section className="page-section relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-card/40 via-transparent to-card/40 pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-b from-card/40 via-transparent to-card/40 pointer-events-none" />
       <div className="page-container relative">
         <div className="text-center mb-16">
           <p className="text-xs font-medium text-primary tracking-[0.2em] uppercase mb-3">Diferenciais</p>
@@ -22,7 +22,7 @@ const FeaturesSection = () => {
             const Icon = feature.icon;
             return (
               <div key={feature.title} className="card-fantasy-hover p-6 group">
-                <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center mb-5 group-hover:from-primary/25 group-hover:to-primary/10 transition-all">
+                <div className="h-11 w-11 rounded-xl bg-linear-to-br from-primary/15 to-primary/5 flex items-center justify-center mb-5 group-hover:from-primary/25 group-hover:to-primary/10 transition-all">
                   <Icon className="h-5 w-5 text-primary" />
                 </div>
                 <h3 className="text-base font-serif font-semibold text-foreground mb-2">{feature.title}</h3>

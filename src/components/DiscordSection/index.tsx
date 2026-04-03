@@ -14,7 +14,7 @@ const benefits = [
 const DiscordSection = () => {
   return (
     <section className="page-section relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-card/30 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-b from-transparent via-card/30 to-transparent pointer-events-none" />
       <div className="page-container relative">
         <div className="card-frost p-10 md:p-14 text-center relative overflow-hidden">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-48 bg-frost/5 rounded-full blur-3xl pointer-events-none" />
@@ -35,7 +35,7 @@ const DiscordSection = () => {
                 const Icon = b.icon;
                 return (
                   <div key={b.label} className="flex items-center gap-2.5 text-sm text-secondary-foreground p-2 rounded-lg hover:bg-frost/5 transition-colors">
-                    <Icon className="h-4 w-4 text-frost flex-shrink-0" />
+                    <Icon className="h-4 w-4 text-frost shrink-0" />
                     <span>{b.label}</span>
                   </div>
                 );
