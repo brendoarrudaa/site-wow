@@ -1,7 +1,7 @@
 ---
 title: "Por Que Essas Rates? A Filosofia por Trás dos Números"
 excerpt: "Entenda como cada taxa foi escolhida para equilibrar agilidade no leveling, mérito no endgame e respeito pela progressão original."
-date: "2025-05-03"
+date: "2026-03-20"
 category: "Info"
 coverColor: "from-gold/20 to-gold-dark/10"
 recommended:

@@ -1,7 +1,7 @@
 ---
 title: "Primeiro Dia no Azeroth Legacy: Guia para Novatos"
 excerpt: "Nunca jogou WoW ou nunca entrou em private server? Este guia cobre tudo que você precisa para começar do zero."
-date: "2025-05-07"
+date: "2026-04-01"
 category: "Guia"
 coverColor: "from-gold-light/20 to-gold/10"
 recommended:

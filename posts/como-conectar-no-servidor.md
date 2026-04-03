@@ -1,7 +1,7 @@
 ---
 title: "Do Download ao Login: Como Conectar em 5 Minutos"
 excerpt: "Guia direto ao ponto para baixar o cliente, configurar o realmlist e entrar no Azeroth Legacy sem complicação."
-date: "2025-05-02"
+date: "2026-03-15"
 category: "Guia"
 coverColor: "from-frost/20 to-frost-dark/10"
 recommended:

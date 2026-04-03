@@ -1,7 +1,7 @@
 ---
 title: "Roadmap: De Onde Viemos e Para Onde Vamos"
 excerpt: "O que já foi entregue, o que está no ar agora e o que está planejado para os próximos meses do Azeroth Legacy."
-date: "2025-05-05"
+date: "2026-03-28"
 category: "Anúncio"
 coverColor: "from-frost/20 to-gold/10"
 recommended:

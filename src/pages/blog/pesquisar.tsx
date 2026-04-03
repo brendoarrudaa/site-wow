@@ -93,11 +93,19 @@ const SearchPage = ({ posts }: Props) => {
                     href={`/blog/${post.slug}`}
                     className="card-fantasy-hover group flex flex-col"
                   >
-                    <div className={`h-28 rounded-t-lg bg-linear-to-br ${post.coverColor} flex items-center justify-center relative overflow-hidden`}>
-                      <div className="absolute inset-0 bg-linear-to-t from-card/50 to-transparent" />
-                      <span className="relative text-[10px] uppercase tracking-[0.2em] text-foreground/60 font-semibold px-3 py-1 rounded-full border border-foreground/10 bg-background/20 backdrop-blur-sm">
-                        {post.category}
-                      </span>
+                    <div className={`h-28 rounded-t-lg bg-linear-to-br ${post.coverColor} relative overflow-hidden`}>
+                      {post.image ? (
+                        <img src={post.image} alt={post.title} className="absolute inset-0 w-full h-full object-cover" />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className="text-[10px] uppercase tracking-[0.2em] text-foreground/60 font-semibold px-3 py-1 rounded-full border border-foreground/10 bg-background/20 backdrop-blur-sm">
+                            {post.category}
+                          </span>
+                        </div>
+                      )}
+                      {post.image && (
+                        <div className="absolute inset-0 bg-linear-to-t from-card/70 to-transparent" />
+                      )}
                     </div>
                     <div className="p-5 flex-1 flex flex-col">
                       <h2 className="font-serif font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug">

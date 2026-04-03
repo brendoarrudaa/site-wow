@@ -54,10 +54,19 @@ const BlogPostPage = ({ post, recommended }: Props) => {
               Voltar ao Blog
             </Link>
 
-            <div className={`h-48 md:h-64 rounded-xl bg-linear-to-br ${post.coverColor} mb-6 flex items-center justify-center`}>
-              <span className="text-sm uppercase tracking-widest text-muted-foreground font-medium">
-                {post.category}
-              </span>
+            <div className={`h-48 md:h-64 rounded-xl bg-linear-to-br ${post.coverColor} mb-6 relative overflow-hidden`}>
+              {post.image ? (
+                <img src={post.image} alt={post.title} className="absolute inset-0 w-full h-full object-cover" />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-sm uppercase tracking-widest text-muted-foreground font-medium">
+                    {post.category}
+                  </span>
+                </div>
+              )}
+              {post.image && (
+                <div className="absolute inset-0 bg-linear-to-t from-card/60 to-transparent" />
+              )}
             </div>
 
             <h1 className="text-3xl md:text-4xl font-bold text-foreground glow-text">{post.title}</h1>

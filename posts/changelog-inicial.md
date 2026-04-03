@@ -1,7 +1,7 @@
 ---
 title: "Changelog v1.0 — O Que Mudou na Build de Lançamento"
 excerpt: "Todas as correções, melhorias e novidades aplicadas na primeira build pública do Beta Aberto."
-date: "2025-05-06"
+date: "2026-04-03"
 category: "Changelog"
 coverColor: "from-success/20 to-frost-dark/10"
 recommended:
