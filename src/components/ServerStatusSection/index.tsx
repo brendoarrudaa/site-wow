@@ -58,10 +58,10 @@ const ServerStatusSection = () => {
               </div>
               <div className="h-2.5 bg-muted/50 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-gold via-gold to-accent rounded-full transition-all duration-700 relative"
+                  className="h-full bg-linear-to-r from-gold via-gold to-accent rounded-full transition-all duration-700 relative"
                   style={{ width: `${populationPercent}%` }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/10" />
+                  <div className="absolute inset-0 bg-linear-to-r from-transparent to-white/10" />
                 </div>
               </div>
             </div>
