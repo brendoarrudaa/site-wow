@@ -7,8 +7,8 @@ const HeroSection = () => {
     <section className="relative overflow-hidden min-h-[85vh] flex items-center">
       <div className="absolute inset-0">
         <img
-          src="/assets/hero-bg.jpg"
-          alt="Realm of Shadows"
+          src="/assets/img/hero-bg.jpg"
+          alt="Azeroth Legacy"
           className="w-full h-full object-cover scale-105"
           width={1920}
           height={1080}
