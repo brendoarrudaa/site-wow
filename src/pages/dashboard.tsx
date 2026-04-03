@@ -196,7 +196,7 @@ const Dashboard = ({ username, email }: Props) => {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const session = await getIronSession(req, res, sessionOptions)
+  const session = await getIronSession<{ user?: { id: number; username: string; email: string } }>(req, res, sessionOptions)
 
   if (!session.user) {
     return {
