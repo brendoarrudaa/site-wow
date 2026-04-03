@@ -31,6 +31,7 @@
     "remark": "^15.0.1",
     "remark-oembed": "^1.2.2",
     "remark-rehype": "^11.1.1",
+    "resend": "^6.10.0",
     "slick-carousel": "^1.8.1",
     "slugify": "^1.6.8",
     "styled-components": "^6.3.11",
