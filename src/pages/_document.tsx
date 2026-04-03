@@ -7,8 +7,14 @@ export default class MyDocument extends Document {
 
   render() {
     return (
-      <Html lang="pt-BR">
-        <Head />
+      <Html lang="pt-BR" data-theme="dark">
+        <Head>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `(function(){try{var t=localStorage.getItem('theme');var theme=t==='light'||t==='dark'?t:window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.setAttribute('data-theme',theme);}catch(e){}})();`,
+            }}
+          />
+        </Head>
         <body>
           <Main />
           <NextScript />

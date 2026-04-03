@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { siteConfig, navLinks, navMoreLinks } from "@/data/site-config";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -87,6 +88,7 @@ const Header = () => {
         </nav>
 
         <div className="hidden lg:flex items-center gap-3">
+          <ThemeToggle />
           <Link href="/como-jogar" className="btn btn-sm bg-gold text-black hover:bg-gold/90 border-0">
             Jogar Agora
           </Link>
@@ -117,8 +119,9 @@ const Header = () => {
                 {link.label}
               </Link>
             ))}
-            <div className="pt-3 mt-3 border-t border-border/30">
-              <Link href="/como-jogar" onClick={() => setMobileOpen(false)} className="btn btn-sm bg-gold text-black hover:bg-gold/90 border-0 w-full">
+            <div className="pt-3 mt-3 border-t border-border/30 flex items-center gap-2">
+              <ThemeToggle className="shrink-0" />
+              <Link href="/como-jogar" onClick={() => setMobileOpen(false)} className="btn btn-sm bg-gold text-black hover:bg-gold/90 border-0 flex-1">
                 Jogar Agora
               </Link>
             </div>
