@@ -1,11 +1,13 @@
 export const siteConfig = {
-  name: "Realm of Shadows",
+  name: "Azeroth Legacy",
   tagline: "A era mais épica do WoW, feita do jeito certo.",
   description: "Servidor brasileiro de WotLK 3.3.5a com foco em qualidade, estabilidade e fair play. Scripts Blizzlike, rates equilibradas e uma comunidade que leva o jogo a sério.",
-  realmlist: "set realmlist logon.realmofshadows.com",
-  discordUrl: "https://discord.gg/realmofshadows",
+  realmlist: "set realmlist logon.azerothlegacy.com.br",
+  discordUrl: "https://discord.gg/azerothlegacy",
   expansion: "Wrath of the Lich King 3.3.5a",
   version: "3.3.5a (12340)",
+  contactEmail: "contato@azerothlegacy.com.br",
+  siteUrl: "https://azerothlegacy.com.br",
 };
 
 export const navLinks = [
