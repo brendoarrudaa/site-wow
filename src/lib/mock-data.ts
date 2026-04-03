@@ -74,12 +74,30 @@ export interface Guild {
   bossKills: BossKill[]
 }
 
+export interface TicketMessage {
+  author: string
+  content: string
+  date: string
+  isStaff: boolean
+}
+
 export interface Ticket {
   id: string
   subject: string
-  status: "open" | "in-progress" | "closed"
+  status: "open" | "in-progress" | "resolved" | "closed"
+  category: "bug" | "account" | "character" | "report" | "suggestion" | "other"
+  priority: "low" | "medium" | "high"
   createdAt: string
   updatedAt: string
+  messages: TicketMessage[]
+}
+
+export interface Service {
+  id: string
+  name: string
+  description: string
+  price: number
+  icon: string
 }
 
 export interface RankingPlayer {
@@ -160,9 +178,56 @@ export const mockUser: User = {
 }
 
 export const mockTickets: Ticket[] = [
-  { id: "1", subject: "Item não recebido após compra", status: "open", createdAt: "2024-01-10", updatedAt: "2024-01-11" },
-  { id: "2", subject: "Bug no dungeon ICC", status: "in-progress", createdAt: "2024-01-08", updatedAt: "2024-01-09" },
-  { id: "3", subject: "Problema de login", status: "closed", createdAt: "2024-01-05", updatedAt: "2024-01-06" },
+  {
+    id: "1",
+    subject: "Item não recebido após compra",
+    status: "open",
+    category: "account",
+    priority: "high",
+    createdAt: "2024-01-10",
+    updatedAt: "2024-01-11",
+    messages: [
+      { author: "Arthas", content: "Comprei o Invocador do Inferno mas não recebi no jogo.", date: "2024-01-10 14:32", isStaff: false },
+      { author: "Suporte", content: "Olá! Estamos verificando sua compra, aguarde.", date: "2024-01-11 09:15", isStaff: true },
+    ],
+  },
+  {
+    id: "2",
+    subject: "Bug no dungeon ICC",
+    status: "in-progress",
+    category: "bug",
+    priority: "medium",
+    createdAt: "2024-01-08",
+    updatedAt: "2024-01-09",
+    messages: [
+      { author: "Arthas", content: "O boss Sindragosa está resetando sem motivo no meio da luta.", date: "2024-01-08 20:10", isStaff: false },
+      { author: "Suporte", content: "Confirmado, nossa equipe já está investigando.", date: "2024-01-09 11:00", isStaff: true },
+      { author: "Arthas", content: "Aconteceu de novo hoje às 21h.", date: "2024-01-09 21:05", isStaff: false },
+    ],
+  },
+  {
+    id: "3",
+    subject: "Problema de login",
+    status: "closed",
+    category: "account",
+    priority: "low",
+    createdAt: "2024-01-05",
+    updatedAt: "2024-01-06",
+    messages: [
+      { author: "Arthas", content: "Não consigo logar na conta.", date: "2024-01-05 10:00", isStaff: false },
+      { author: "Suporte", content: "Senha resetada com sucesso. Tente novamente.", date: "2024-01-06 08:30", isStaff: true },
+      { author: "Arthas", content: "Funcionou, obrigado!", date: "2024-01-06 09:00", isStaff: false },
+    ],
+  },
+]
+
+export const services: Service[] = [
+  { id: "unstuck", name: "Destravar Personagem", description: "Teleporte seu personagem preso para a cidade inicial da sua facção.", price: 0, icon: "MapPin" },
+  { id: "faction-change", name: "Troca de Facção", description: "Mude seu personagem de Horda para Aliança ou vice-versa.", price: 400, icon: "Repeat" },
+  { id: "race-change", name: "Troca de Raça", description: "Mude a raça do seu personagem mantendo a mesma facção.", price: 200, icon: "Users" },
+  { id: "name-change", name: "Troca de Nome", description: "Escolha um novo nome para o seu personagem.", price: 100, icon: "Edit" },
+  { id: "appearance", name: "Mudança de Aparência", description: "Altere a aparência visual do seu personagem.", price: 150, icon: "Palette" },
+  { id: "level-reset", name: "Reset de Talentos", description: "Resete os talentos do seu personagem gratuitamente.", price: 0, icon: "RotateCcw" },
 ]
 
 export const mockRankingArena: RankingPlayer[] = [
@@ -248,6 +313,17 @@ export const mockServerStatus: ServerStatus = {
   uptime: "14d 6h 22m",
   nextMaintenance: "Quarta-feira, 03:00",
 }
+
+// Aliases usados nas páginas de ranking
+export const mockArena2v2Ranking = mockRankingArena
+export const mockArena3v3Ranking = mockRankingArena.map((p, i) => ({
+  ...p,
+  position: i + 1,
+  rating: p.rating - 50,
+  wins: p.wins - 10,
+  losses: p.losses + 5,
+}))
+export const mockHKRanking = mockRankingHK
 
 export const mockGuild: Guild = {
   name: "Scourge",
