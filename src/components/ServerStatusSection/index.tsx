@@ -1,17 +1,58 @@
-import { Wifi, WifiOff, Wrench, Users } from "lucide-react";
-import { mockServerStatus } from "@/data/server-status";
+import { useEffect, useState } from 'react'
+import { Wifi, WifiOff, Wrench, Users, RefreshCw } from 'lucide-react'
+import type { RealmStatus } from '@/data/server-status'
+
+const POLL_INTERVAL = 30_000 // 30 segundos
 
 const statusConfig = {
-  online: { label: "Online", color: "text-online", icon: Wifi, dotColor: "bg-online" },
-  offline: { label: "Offline", color: "text-offline", icon: WifiOff, dotColor: "bg-offline" },
-  maintenance: { label: "Manutenção", color: "text-gold", icon: Wrench, dotColor: "bg-gold" },
-};
+  online: { label: 'Online', color: 'text-online', icon: Wifi, dotColor: 'bg-online' },
+  offline: { label: 'Offline', color: 'text-offline', icon: WifiOff, dotColor: 'bg-offline' },
+  maintenance: { label: 'Manutenção', color: 'text-gold', icon: Wrench, dotColor: 'bg-gold' },
+}
 
 const ServerStatusSection = () => {
-  const status = mockServerStatus;
-  const config = statusConfig[status.status];
-  const StatusIcon = config.icon;
-  const populationPercent = Math.round((status.population / status.maxPopulation) * 100);
+  const [status, setStatus] = useState<RealmStatus | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+
+  const fetchStatus = async () => {
+    try {
+      const res = await fetch('/api/server/status')
+      if (res.ok) {
+        const data = await res.json()
+        setStatus(data)
+        setLastUpdated(new Date())
+      }
+    } catch {
+      // mantém o último status conhecido
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchStatus()
+    const interval = setInterval(fetchStatus, POLL_INTERVAL)
+    return () => clearInterval(interval)
+  }, [])
+
+  if (loading) {
+    return (
+      <section className="page-section">
+        <div className="page-container">
+          <div className="card-fantasy p-8 md:p-10 max-w-3xl mx-auto flex items-center justify-center min-h-[200px]">
+            <RefreshCw className="h-6 w-6 text-muted-foreground animate-spin" />
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (!status) return null
+
+  const config = statusConfig[status.status]
+  const StatusIcon = config.icon
+  const populationPercent = Math.round((status.population / status.maxPopulation) * 100)
 
   return (
     <section className="page-section">
@@ -26,20 +67,20 @@ const ServerStatusSection = () => {
                 <h2 className="text-2xl font-serif font-bold text-foreground">Status do Servidor</h2>
               </div>
               <div className={`flex items-center gap-2.5 px-4 py-2 rounded-full border ${
-                status.status === "online" ? "border-online/20 bg-online/5" :
-                status.status === "offline" ? "border-offline/20 bg-offline/5" : "border-gold/20 bg-gold/5"
+                status.status === 'online' ? 'border-online/20 bg-online/5' :
+                status.status === 'offline' ? 'border-offline/20 bg-offline/5' : 'border-gold/20 bg-gold/5'
               }`}>
-                <span className={`h-2 w-2 rounded-full ${config.dotColor} animate-pulse-glow`} />
+                <span className={`h-2 w-2 rounded-full ${config.dotColor} ${status.status === 'online' ? 'animate-pulse-glow' : ''}`} />
                 <span className={`text-sm font-semibold ${config.color}`}>{config.label}</span>
               </div>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {[
-                { label: "Realm", value: status.name },
-                { label: "Tipo", value: status.type },
-                { label: "Jogadores", value: status.population.toString(), icon: Users },
-                { label: "Uptime", value: status.uptime },
+                { label: 'Realm', value: status.name },
+                { label: 'Tipo', value: status.type },
+                { label: 'Jogadores', value: status.population.toString(), icon: Users },
+                { label: 'Uptime', value: status.uptime },
               ].map((item) => (
                 <div key={item.label} className="p-3 rounded-lg bg-muted/30">
                   <p className="text-[10px] text-muted-foreground uppercase tracking-[0.15em] font-medium">{item.label}</p>
@@ -65,11 +106,17 @@ const ServerStatusSection = () => {
                 </div>
               </div>
             </div>
+
+            {lastUpdated && (
+              <p className="text-[10px] text-muted-foreground/50 text-right mt-4">
+                Atualizado às {lastUpdated.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+              </p>
+            )}
           </div>
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default ServerStatusSection;
+export default ServerStatusSection

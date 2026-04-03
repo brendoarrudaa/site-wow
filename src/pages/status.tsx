@@ -16,14 +16,6 @@ const Status = () => {
         subtitle="Acompanhe em tempo real se o servidor está online e a população atual."
       />
       <ServerStatusSection />
-      <section className="pb-16">
-        <div className="page-container max-w-2xl text-center">
-          <p className="text-sm text-muted-foreground">
-            Os dados de status serão atualizados automaticamente quando a API do servidor for integrada.
-            No momento, os valores exibidos são ilustrativos.
-          </p>
-        </div>
-      </section>
     </Layout>
   );
 };
