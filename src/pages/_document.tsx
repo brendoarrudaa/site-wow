@@ -7,11 +7,11 @@ export default class MyDocument extends Document {
 
   render() {
     return (
-      <Html lang="pt-BR" data-theme="dark">
+      <Html lang="pt-BR" data-theme="wow-dark">
         <Head>
           <script
             dangerouslySetInnerHTML={{
-              __html: `(function(){try{var t=localStorage.getItem('theme');var theme=t==='light'||t==='dark'?t:window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.setAttribute('data-theme',theme);}catch(e){}})();`,
+              __html: `(function(){try{var t=localStorage.getItem('theme');var theme=t==='wow-light'||t==='wow-dark'?t:window.matchMedia('(prefers-color-scheme: light)').matches?'wow-light':'wow-dark';document.documentElement.setAttribute('data-theme',theme);}catch(e){}})();`,
             }}
           />
         </Head>

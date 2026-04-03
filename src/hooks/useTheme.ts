@@ -1,9 +1,9 @@
 import * as React from "react";
 
-export type Theme = "dark" | "light";
+export type Theme = "wow-dark" | "wow-light";
 
 const listeners: Array<(theme: Theme) => void> = [];
-let currentTheme: Theme = "dark";
+let currentTheme: Theme = "wow-dark";
 
 function dispatch(theme: Theme) {
   currentTheme = theme;
@@ -20,13 +20,13 @@ export function setTheme(theme: Theme) {
 }
 
 export function toggleTheme() {
-  setTheme(currentTheme === "dark" ? "light" : "dark");
+  setTheme(currentTheme === "wow-dark" ? "wow-light" : "wow-dark");
 }
 
 export function useTheme() {
   const [theme, setThemeState] = React.useState<Theme>(() => {
-    if (typeof window === "undefined") return "dark";
-    return (document.documentElement.getAttribute("data-theme") as Theme) ?? "dark";
+    if (typeof window === "undefined") return "wow-dark";
+    return (document.documentElement.getAttribute("data-theme") as Theme) ?? "wow-dark";
   });
 
   React.useEffect(() => {

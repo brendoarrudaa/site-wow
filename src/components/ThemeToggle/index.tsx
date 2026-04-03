@@ -11,11 +11,11 @@ export const ThemeToggle = ({ className }: ThemeToggleProps) => {
   const [isDark, setIsDark] = useState(true);
 
   useEffect(() => {
-    setIsDark(document.documentElement.getAttribute("data-theme") !== "light");
+    setIsDark(document.documentElement.getAttribute("data-theme") !== "wow-light");
     setMounted(true);
 
     const observer = new MutationObserver(() => {
-      setIsDark(document.documentElement.getAttribute("data-theme") !== "light");
+      setIsDark(document.documentElement.getAttribute("data-theme") !== "wow-light");
     });
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
     return () => observer.disconnect();

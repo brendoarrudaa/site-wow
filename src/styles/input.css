@@ -2,45 +2,79 @@
 @import "tailwindcss";
 
 @plugin "daisyui" {
-  themes: false;
+  themes: wow-dark --default, wow-light;
 }
 
-@theme inline {
-  /* Fonts */
+@plugin "daisyui/theme" {
+  name: "wow-dark";
+  default: true;
+  color-scheme: dark;
+
+  --color-base-100: hsl(225 30% 4%);
+  --color-base-200: hsl(225 25% 7%);
+  --color-base-300: hsl(225 20% 11%);
+  --color-base-content: hsl(40 20% 92%);
+
+  --color-primary: hsl(43 96% 56%);
+  --color-primary-content: hsl(225 30% 4%);
+
+  --color-secondary: hsl(225 20% 11%);
+  --color-secondary-content: hsl(40 15% 78%);
+
+  --color-accent: hsl(30 80% 50%);
+  --color-accent-content: hsl(40 15% 95%);
+
+  --color-neutral: hsl(225 15% 13%);
+  --color-neutral-content: hsl(40 20% 92%);
+
+  --color-info: hsl(200 80% 60%);
+  --color-success: hsl(142 76% 46%);
+  --color-warning: hsl(43 96% 56%);
+  --color-error: hsl(0 84% 60%);
+}
+
+@plugin "daisyui/theme" {
+  name: "wow-light";
+  color-scheme: light;
+
+  --color-base-100: hsl(220 20% 97%);
+  --color-base-200: hsl(220 20% 93%);
+  --color-base-300: hsl(220 15% 88%);
+  --color-base-content: hsl(222 30% 10%);
+
+  --color-primary: hsl(43 96% 44%);
+  --color-primary-content: hsl(220 20% 99%);
+
+  --color-secondary: hsl(220 15% 88%);
+  --color-secondary-content: hsl(222 25% 20%);
+
+  --color-accent: hsl(30 80% 45%);
+  --color-accent-content: hsl(0 0% 100%);
+
+  --color-neutral: hsl(220 15% 82%);
+  --color-neutral-content: hsl(222 30% 10%);
+
+  --color-info: hsl(200 80% 50%);
+  --color-success: hsl(142 76% 36%);
+  --color-warning: hsl(43 96% 44%);
+  --color-error: hsl(0 84% 55%);
+}
+
+@theme {
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-serif: 'Cinzel', ui-serif, Georgia, serif;
   --font-mono: ui-monospace, 'Cascadia Code', monospace;
 
-  /* Colors — referencing CSS vars so light/dark mode works dynamically */
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
+  /* Semânticos mapeados para daisyUI base */
+  --color-background: var(--color-base-100);
+  --color-foreground: var(--color-base-content);
+  --color-card: var(--color-base-200);
+  --color-card-foreground: var(--color-base-content);
+  --color-muted: var(--color-base-300);
+  --color-muted-foreground: color-mix(in oklch, var(--color-base-content) 55%, transparent);
+  --color-border: color-mix(in oklch, var(--color-base-content) 12%, transparent);
 
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
-
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
-
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
-
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
-
-  /* Custom — fixed brand colors, não mudam com o tema */
+  /* Identidade visual — fixas */
   --color-gold: hsl(43 96% 56%);
   --color-gold-dark: hsl(38 80% 40%);
   --color-gold-light: hsl(45 100% 72%);
@@ -52,76 +86,50 @@
   --radius: 0.5rem;
 }
 
+/* Variáveis semânticas legadas (usadas em hsl(var(--x)) nos componentes CSS) */
+:root,
+[data-theme] {
+  --background: var(--color-base-100);
+  --foreground: var(--color-base-content);
+  --card: var(--color-base-200);
+  --card-foreground: var(--color-base-content);
+  --muted: var(--color-base-300);
+  --muted-foreground: color-mix(in oklch, var(--color-base-content) 55%, transparent);
+  --border: color-mix(in oklch, var(--color-base-content) 12%, transparent);
+  --primary: var(--color-primary);
+  --primary-foreground: var(--color-primary-content);
+  --secondary: var(--color-secondary);
+  --secondary-foreground: var(--color-secondary-content);
+  --accent: var(--color-accent);
+  --accent-foreground: var(--color-accent-content);
+  --destructive: var(--color-error);
+  --ring: var(--color-primary);
+  --input: var(--color-base-200);
+  --gold: hsl(43 96% 56%);
+  --frost: hsl(200 80% 60%);
+  --online: hsl(142 76% 46%);
+  --offline: hsl(0 84% 50%);
+}
+
 @layer base {
-  :root {
-    --background: 225 30% 4%;
-    --foreground: 40 20% 92%;
-    --card: 225 25% 7%;
-    --card-foreground: 40 20% 92%;
-    --popover: 225 25% 7%;
-    --popover-foreground: 40 20% 92%;
-    --primary: 43 96% 56%;
-    --primary-foreground: 225 30% 4%;
-    --secondary: 225 20% 11%;
-    --secondary-foreground: 40 15% 78%;
-    --muted: 225 15% 13%;
-    --muted-foreground: 220 12% 50%;
-    --accent: 30 80% 50%;
-    --accent-foreground: 40 15% 95%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 225 15% 14%;
-    --input: 225 15% 12%;
-    --ring: 43 96% 56%;
-    --gold: 43 96% 56%;
-    --gold-dark: 38 80% 40%;
-    --gold-light: 45 100% 72%;
-    --frost: 200 80% 60%;
-    --frost-dark: 210 70% 30%;
-    --online: 142 76% 46%;
-    --offline: 0 84% 50%;
-  }
-
-  [data-theme="light"] {
-    --background: 220 20% 97%;
-    --foreground: 222 30% 10%;
-    --card: 220 20% 99%;
-    --card-foreground: 222 30% 10%;
-    --popover: 220 20% 99%;
-    --popover-foreground: 222 30% 10%;
-    --primary: 43 96% 44%;
-    --primary-foreground: 220 20% 99%;
-    --secondary: 220 15% 91%;
-    --secondary-foreground: 222 25% 20%;
-    --muted: 220 15% 88%;
-    --muted-foreground: 222 15% 42%;
-    --accent: 30 80% 45%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 84% 55%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 220 15% 82%;
-    --input: 220 15% 92%;
-    --ring: 43 96% 44%;
-  }
-
-  [data-theme="light"] body {
-    background-image:
-      radial-gradient(ellipse 80% 50% at 50% -20%, hsl(43 96% 56% / 0.06), transparent),
-      radial-gradient(ellipse 60% 40% at 80% 50%, hsl(200 80% 60% / 0.04), transparent);
-  }
-
   * {
-    border-color: hsl(var(--border));
+    border-color: var(--color-border, hsl(var(--border)));
   }
 
   body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
+    background-color: var(--color-base-100);
+    color: var(--color-base-content);
     font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     background-image:
       radial-gradient(ellipse 80% 50% at 50% -20%, hsl(43 96% 56% / 0.03), transparent),
       radial-gradient(ellipse 60% 40% at 80% 50%, hsl(200 80% 60% / 0.02), transparent);
+  }
+
+  [data-theme="wow-light"] body {
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -20%, hsl(43 96% 44% / 0.06), transparent),
+      radial-gradient(ellipse 60% 40% at 80% 50%, hsl(200 80% 60% / 0.04), transparent);
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -158,25 +166,25 @@
   .card-fantasy {
     @apply rounded-lg border;
     border-color: hsl(43 96% 56% / 0.1);
-    background: linear-gradient(160deg, hsl(225 25% 9%), hsl(225 25% 5%));
+    background: linear-gradient(160deg, var(--color-base-200), var(--color-base-100));
     box-shadow:
       0 1px 0 0 hsl(43 96% 56% / 0.05) inset,
-      0 4px 24px hsl(225 30% 2% / 0.5);
+      0 4px 24px oklch(from var(--color-base-100) l c h / 0.5);
   }
 
   .card-fantasy-hover {
     @apply rounded-lg border transition-all duration-300 ease-out;
     border-color: hsl(43 96% 56% / 0.1);
-    background: linear-gradient(160deg, hsl(225 25% 9%), hsl(225 25% 5%));
+    background: linear-gradient(160deg, var(--color-base-200), var(--color-base-100));
     box-shadow:
       0 1px 0 0 hsl(43 96% 56% / 0.05) inset,
-      0 4px 24px hsl(225 30% 2% / 0.5);
+      0 4px 24px oklch(from var(--color-base-100) l c h / 0.5);
   }
   .card-fantasy-hover:hover {
     border-color: hsl(43 96% 56% / 0.3);
     box-shadow:
       0 1px 0 0 hsl(43 96% 56% / 0.08) inset,
-      0 8px 32px hsl(225 30% 2% / 0.6),
+      0 8px 32px oklch(from var(--color-base-100) l c h / 0.6),
       0 0 24px hsl(43 96% 56% / 0.06);
     transform: translateY(-3px);
   }
@@ -184,10 +192,10 @@
   .card-frost {
     @apply rounded-lg border;
     border-color: hsl(200 80% 60% / 0.12);
-    background: linear-gradient(160deg, hsl(210 30% 9%), hsl(225 25% 5%));
+    background: linear-gradient(160deg, var(--color-base-200), var(--color-base-100));
     box-shadow:
       0 1px 0 0 hsl(200 80% 60% / 0.05) inset,
-      0 4px 24px hsl(225 30% 2% / 0.5);
+      0 4px 24px oklch(from var(--color-base-100) l c h / 0.5);
   }
 
   .section-divider {
@@ -234,18 +242,22 @@
   .ornament::before,
   .ornament::after {
     content: '◆';
-    @apply text-primary/20 text-xs mx-3;
+    color: hsl(43 96% 56% / 0.2);
+    font-size: 0.75rem;
+    margin: 0 0.75rem;
   }
 
   .prose-fantasy {
-    color: hsl(var(--secondary-foreground));
+    color: var(--color-base-content);
     @apply leading-relaxed;
   }
   .prose-fantasy h2 {
-    @apply text-2xl font-bold text-foreground mt-10 mb-5;
+    @apply text-2xl font-bold mt-10 mb-5;
+    color: var(--color-base-content);
   }
   .prose-fantasy h3 {
-    @apply text-xl font-semibold text-foreground mt-8 mb-3;
+    @apply text-xl font-semibold mt-8 mb-3;
+    color: var(--color-base-content);
   }
   .prose-fantasy p {
     @apply mb-5 leading-7;
@@ -257,47 +269,27 @@
     @apply list-decimal list-inside mb-5 space-y-2;
   }
   .prose-fantasy strong {
-    @apply text-foreground font-semibold;
+    font-weight: 600;
+    color: var(--color-base-content);
   }
   .prose-fantasy a {
-    @apply text-primary hover:underline underline-offset-2;
+    color: var(--color-primary);
+    @apply hover:underline underline-offset-2;
   }
   .prose-fantasy code {
-    @apply bg-muted px-2 py-0.5 rounded text-sm font-mono text-primary;
+    @apply px-2 py-0.5 rounded text-sm font-mono;
+    background: var(--color-base-300);
+    color: var(--color-primary);
   }
   .prose-fantasy blockquote {
-    @apply border-l-2 border-primary/30 pl-4 italic text-muted-foreground my-5;
+    @apply border-l-2 pl-4 italic my-5;
+    border-color: color-mix(in oklch, var(--color-primary) 30%, transparent);
+    color: var(--color-muted-foreground, var(--color-base-content));
+    opacity: 0.7;
   }
 
   .stat-value {
     @apply text-3xl md:text-4xl font-bold font-serif;
-    background-image: linear-gradient(180deg, hsl(40 20% 92%), hsl(40 15% 70%));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  [data-theme="light"] .card-fantasy,
-  [data-theme="light"] .card-fantasy-hover {
-    background: linear-gradient(160deg, hsl(220 20% 99%), hsl(220 20% 95%));
-    border-color: hsl(43 96% 44% / 0.2);
-    box-shadow: 0 1px 0 0 hsl(43 96% 44% / 0.06) inset, 0 4px 24px hsl(220 20% 60% / 0.12);
-  }
-
-  [data-theme="light"] .card-fantasy-hover:hover {
-    border-color: hsl(43 96% 44% / 0.4);
-    box-shadow: 0 1px 0 0 hsl(43 96% 44% / 0.1) inset, 0 8px 32px hsl(220 20% 60% / 0.18), 0 0 24px hsl(43 96% 44% / 0.08);
-  }
-
-  [data-theme="light"] .card-frost {
-    background: linear-gradient(160deg, hsl(210 30% 97%), hsl(220 20% 95%));
-    border-color: hsl(200 80% 50% / 0.18);
-  }
-
-  [data-theme="light"] .stat-value {
-    background-image: linear-gradient(180deg, hsl(222 30% 12%), hsl(222 25% 30%));
-  }
-
-  [data-theme="light"] .glow-text {
-    text-shadow: 0 0 30px hsl(43 96% 44% / 0.15);
+    color: var(--color-base-content);
   }
 }
