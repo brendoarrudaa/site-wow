@@ -1,21 +1,38 @@
+import { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
-import { useTheme, toggleTheme } from "@/hooks/useTheme";
+import { toggleTheme } from "@/hooks/useTheme";
 
 interface ThemeToggleProps {
   className?: string;
 }
 
 export const ThemeToggle = ({ className }: ThemeToggleProps) => {
-  const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  const [isDark, setIsDark] = useState(true);
+
+  useEffect(() => {
+    setIsDark(document.documentElement.getAttribute("data-theme") !== "light");
+    setMounted(true);
+
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.getAttribute("data-theme") !== "light");
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => observer.disconnect();
+  }, []);
+
+  if (!mounted) {
+    return <span className={`p-2 inline-block w-8 h-8 ${className ?? ""}`} />;
+  }
 
   return (
     <button
       onClick={toggleTheme}
       className={`p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all duration-200 ${className ?? ""}`}
-      aria-label={theme === "dark" ? "Ativar modo claro" : "Ativar modo escuro"}
-      title={theme === "dark" ? "Modo claro" : "Modo escuro"}
+      aria-label={isDark ? "Ativar modo claro" : "Ativar modo escuro"}
+      title={isDark ? "Modo claro" : "Modo escuro"}
     >
-      {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+      {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
     </button>
   );
 };
