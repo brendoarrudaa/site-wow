@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Layout from '@/components/Layout/Layout'
 import SEO from '@/components/SEO'
@@ -6,12 +7,15 @@ import { Shield, Gamepad2, Eye, EyeOff, LogIn, UserPlus } from 'lucide-react'
 
 // TODO: substituir strings por t("register.*") quando i18n for aplicado nas páginas
 const Register = () => {
+  const router = useRouter()
   const [tab, setTab] = useState<'login' | 'register'>('login')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [showLoginPassword, setShowLoginPassword] = useState(false)
   const [agreed, setAgreed] = useState(false)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+  const [loading, setLoading] = useState(false)
   const [registerForm, setRegisterForm] = useState({
     username: '',
     email: '',
@@ -23,9 +27,10 @@ const Register = () => {
     password: '',
   })
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError('')
+    setSuccess('')
     if (registerForm.password !== registerForm.confirmPassword) {
       setError('As senhas não coincidem.')
       return
@@ -34,12 +39,57 @@ const Register = () => {
       setError('Aceite as regras para continuar.')
       return
     }
-    setError('O sistema de cadastro será ativado em breve. Fique atento ao Discord!')
+    setLoading(true)
+    try {
+      const res = await fetch('/api/account/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: registerForm.username,
+          email: registerForm.email,
+          password: registerForm.password,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.error || 'Erro ao criar conta.')
+      } else {
+        setSuccess(`Conta "${data.username}" criada com sucesso! Você já pode entrar no jogo.`)
+        setRegisterForm({ username: '', email: '', password: '', confirmPassword: '' })
+        setAgreed(false)
+      }
+    } catch {
+      setError('Erro de conexão. Tente novamente.')
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setError('Sistema de login em desenvolvimento. Fique atento ao Discord!')
+    setError('')
+    setSuccess('')
+    setLoading(true)
+    try {
+      const res = await fetch('/api/account/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: loginForm.username,
+          password: loginForm.password,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.error || 'Erro ao entrar.')
+      } else {
+        router.push('/dashboard')
+      }
+    } catch {
+      setError('Erro de conexão. Tente novamente.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -138,9 +188,9 @@ const Register = () => {
                     </p>
                   )}
 
-                  <button type="submit" className="btn bg-gold text-black hover:bg-gold/90 border-0 w-full h-11 text-base">
+                  <button type="submit" disabled={loading} className="btn bg-gold text-black hover:bg-gold/90 border-0 w-full h-11 text-base disabled:opacity-60">
                     <LogIn className="h-4 w-4 mr-2" />
-                    Entrar
+                    {loading ? 'Entrando...' : 'Entrar'}
                   </button>
                 </form>
               )}
@@ -252,9 +302,15 @@ const Register = () => {
                     </p>
                   )}
 
-                  <button type="submit" className="btn bg-gold text-black hover:bg-gold/90 border-0 w-full h-11 text-base">
+                  {success && (
+                    <p className="text-sm text-success bg-success/10 border border-success/30 rounded-lg px-4 py-3">
+                      {success}
+                    </p>
+                  )}
+
+                  <button type="submit" disabled={loading} className="btn bg-gold text-black hover:bg-gold/90 border-0 w-full h-11 text-base disabled:opacity-60">
                     <Shield className="h-4 w-4 mr-2" />
-                    Criar Conta
+                    {loading ? 'Criando conta...' : 'Criar Conta'}
                   </button>
                 </form>
               )}
