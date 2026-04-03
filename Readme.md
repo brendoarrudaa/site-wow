@@ -1,6 +1,6 @@
-# Meu Servidor — Site Oficial
+# Azeroth Legacy — Site Oficial
 
-Site oficial do servidor **Meu Servidor** (WoW WotLK 3.3.5a), construído com Next.js.
+Site oficial do servidor **Azeroth Legacy** (WoW WotLK 3.3.5a), construído com Next.js.
 
 ## Tecnologias
 

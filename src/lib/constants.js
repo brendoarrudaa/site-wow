@@ -1,6 +1,6 @@
-export const BLOG_TITLE = 'Movisul'
+export const BLOG_TITLE = 'Azeroth Legacy'
 
 export const BLOG_SUBTITLE =
-  'Nosso blog tem o intuito de ajudar a todos que buscam alavancar suas carreiras com conhecimento em tecnologia, programação e marketing digital.'
+  'Notícias, guias e novidades do servidor Azeroth Legacy — WoW WotLK 3.3.5a.'
 
-export const BLOG_URL = 'https://movisul.com'
+export const BLOG_URL = 'https://azerothlegacy.com'

@@ -1,4 +1,4 @@
-# Guia de Postagem — Blog Movisul
+# Guia de Postagem — Blog Azeroth Legacy
 
 ## Acesso ao CMS
 
@@ -13,7 +13,7 @@ Não exige senha — usa o backend local.
 
 ### Em produção
 
-Acesse: [https://site-movisul.vercel.app/admin](https://site-movisul.vercel.app/admin)
+Acesse: [https://azerothlegacy.com/admin](https://azerothlegacy.com/admin)
 Clique em **Login with GitHub** e autorize com sua conta.
 
 ---

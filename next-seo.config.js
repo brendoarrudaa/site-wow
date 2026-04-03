@@ -2,18 +2,18 @@ const DefaultSEO = {
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
-    url: 'https://movisul.com',
-    site_name: 'MoviSul - Saude e Seguranca do Trabalho'
+    url: 'https://azerothlegacy.com',
+    site_name: 'Azeroth Legacy - Servidor WoW WotLK 3.3.5a'
   },
   twitter: {
-    handle: '@movisul',
-    site: '@movisul',
+    handle: '@azerothlegacy',
+    site: '@azerothlegacy',
     cardType: 'summary_large_image'
   },
   additionalMetaTags: [
     {
       name: 'author',
-      content: 'MoviSul'
+      content: 'Azeroth Legacy'
     },
     {
       name: 'robots',
@@ -21,13 +21,13 @@ const DefaultSEO = {
     },
     {
       name: 'keywords',
-      content: 'seguranca do trabalho, saude ocupacional, SST, PGR, PCMSO, eSocial, consultoria SST, gestao de riscos'
+      content: 'wow servidor, wotlk, wrath of the lich king, azeroth legacy, 3.3.5a, world of warcraft privado'
     }
   ],
   additionalLinkTags: [
     {
       rel: 'canonical',
-      href: 'https://movisul.com'
+      href: 'https://azerothlegacy.com'
     }
   ]
 }
