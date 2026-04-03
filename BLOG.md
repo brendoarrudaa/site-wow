@@ -3,13 +3,16 @@
 ## Acesso ao CMS
 
 ### Localmente
+
 ```bash
 npm run dev:cms
 ```
+
 Acesse: [http://localhost:3000/admin](http://localhost:3000/admin)
 Não exige senha — usa o backend local.
 
 ### Em produção
+
 Acesse: [https://site-movisul.vercel.app/admin](https://site-movisul.vercel.app/admin)
 Clique em **Login with GitHub** e autorize com sua conta.
 
@@ -28,53 +31,57 @@ Clique em **Login with GitHub** e autorize com sua conta.
 
 ## Campos obrigatórios
 
-| Campo | Obrigatório | O que é |
-|---|---|---|
-| **Titulo** | Sim | Título principal. Vira o slug do arquivo (ex: `como-usar-ia.md`) |
-| **Data** | Sim | Data e hora da publicação |
-| **Descricao** | Sim | Resumo curto — aparece na listagem e no Google. **Máximo 160 caracteres** |
-| **Categoria** | Sim | Define a cor e o filtro do post (ver tabela abaixo) |
-| **Cor** | Sim | Cor visual do post — deve corresponder à Categoria escolhida |
-| **Categoria Label** | Sim | Versão com maiúscula exibida no blog (ex: `IA`, `WEB`) |
-| **Imagem** | Recomendado | Caminho da imagem de capa. Salve antes em `/public/assets/img/` |
-| **Tags** | Não | Palavras-chave do post |
-| **Conteudo** | Sim | Corpo do post em Markdown |
+| Campo               | Obrigatório | O que é                                                                   |
+| ------------------- | ----------- | ------------------------------------------------------------------------- |
+| **Titulo**          | Sim         | Título principal. Vira o slug do arquivo (ex: `como-usar-ia.md`)          |
+| **Data**            | Sim         | Data e hora da publicação                                                 |
+| **Descricao**       | Sim         | Resumo curto — aparece na listagem e no Google. **Máximo 160 caracteres** |
+| **Categoria**       | Sim         | Define a cor e o filtro do post (ver tabela abaixo)                       |
+| **Cor**             | Sim         | Cor visual do post — deve corresponder à Categoria escolhida              |
+| **Categoria Label** | Sim         | Versão com maiúscula exibida no blog (ex: `IA`, `WEB`)                    |
+| **Imagem**          | Recomendado | Caminho da imagem de capa. Salve antes em `/public/assets/img/`           |
+| **Tags**            | Não         | Palavras-chave do post                                                    |
+| **Conteudo**        | Sim         | Corpo do post em Markdown                                                 |
 
 ### Categoria → Cor → Label
 
-| Categoria | Cor | Label |
-|---|---|---|
-| `sst` | `#0f4c81` | `SST` |
-| `gestao-riscos` | `#1a6fa8` | `Gestao de Riscos` |
-| `laudos` | `#2a9d6e` | `Laudos Tecnicos` |
-| `esocial` | `#1d7a55` | `eSocial` |
-| `seguranca` | `#e67e22` | `Seguranca` |
-| `treinamentos` | `#8e44ad` | `Treinamentos` |
+| Categoria           | Cor       | Label               |
+| ------------------- | --------- | ------------------- |
+| `sst`               | `#0f4c81` | `SST`               |
+| `gestao-riscos`     | `#1a6fa8` | `Gestao de Riscos`  |
+| `laudos`            | `#2a9d6e` | `Laudos Tecnicos`   |
+| `esocial`           | `#1d7a55` | `eSocial`           |
+| `seguranca`         | `#e67e22` | `Seguranca`         |
+| `treinamentos`      | `#8e44ad` | `Treinamentos`      |
 | `saude-ocupacional` | `#c0392b` | `Saude Ocupacional` |
-| `prevencao` | `#d35400` | `Prevencao` |
+| `prevencao`         | `#d35400` | `Prevencao`         |
 
 ---
 
 ## Como fazer um bom post
 
 ### Tamanho ideal
+
 Entre **600 e 1500 palavras**. Posts muito curtos não rankeiam bem. Posts muito longos perdem o leitor.
 
 ### Título
+
 - Seja direto e use palavras que o leitor buscaria no Google
 - Formatos que funcionam bem:
-  - *"5 Motivos para..."*
-  - *"Como fazer X em Y passos"*
-  - *"O que é X e por que sua empresa precisa"*
-  - *"X erros que sua empresa comete em..."*
-- Evite títulos genéricos como *"Novidades"* ou *"Atualização"*
+  - _"5 Motivos para..."_
+  - _"Como fazer X em Y passos"_
+  - _"O que é X e por que sua empresa precisa"_
+  - _"X erros que sua empresa comete em..."_
+- Evite títulos genéricos como _"Novidades"_ ou _"Atualização"_
 
 ### Descrição (meta description)
+
 - Máximo **160 caracteres** — o que passa disso é cortado no Google
-- Deve responder: *"O que o leitor vai aprender ou ganhar com esse post?"*
+- Deve responder: _"O que o leitor vai aprender ou ganhar com esse post?"_
 - Inclua a palavra-chave principal
 
 ### Imagem de capa
+
 - Formato: `.webp` (menor e mais rápido que `.jpg` ou `.png`)
 - Resolução: **1200 × 630 px** (proporção ideal para compartilhamento)
 - Nome do arquivo: use o slug do post (ex: `reducao-custos-ia.webp`)
@@ -119,6 +126,7 @@ Finalize com uma chamada para ação — convide o leitor a entrar em contato co
 - Evite paredes de texto sem subtítulos
 
 ### O que não fazer
+
 - Não copie conteúdo de outros sites
 - Não use título igual à descrição
 - Não publique sem imagem de capa
@@ -133,7 +141,7 @@ Finalize com uma chamada para ação — convide o leitor a entrar em contato co
 layout: post
 date: 2026-03-28 09:00:00
 image: /assets/img/esocial-sst-conformidade.webp
-title: eSocial SST: O Que Sua Empresa Precisa Saber em 2025
+title: eSocial SST: O Que Sua Empresa Precisa Saber em 2026
 description: Entenda as obrigações do eSocial SST, quais eventos enviar e como manter sua empresa em conformidade com a legislação vigente.
 main-class: sst
 color: "#0f4c81"

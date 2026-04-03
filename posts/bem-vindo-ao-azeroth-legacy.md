@@ -1,6 +1,6 @@
 ---
-title: "Azeroth Legacy: O Servidor Que a Comunidade Merece"
-date: 2025-05-01
+title: 'Azeroth Legacy: O Servidor Que a Comunidade Merece'
+date: 2026-05-01
 excerpt: Conheça o projeto que está trazendo WotLK de volta com qualidade,
   dedicação e respeito pelo jogo. Saiba o que esperar e como participar desde o
   início.
