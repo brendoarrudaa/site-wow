@@ -1,7 +1,6 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/data/site-config";
-import heroBg from "@/assets/hero-bg.jpg";
 import { Shield, Users, Swords } from "lucide-react";
 
 const HeroSection = () => {
@@ -9,15 +8,15 @@ const HeroSection = () => {
     <section className="relative overflow-hidden min-h-[85vh] flex items-center">
       <div className="absolute inset-0">
         <img
-          src={heroBg}
+          src="/assets/hero-bg.jpg"
           alt="Realm of Shadows"
           className="w-full h-full object-cover scale-105"
           width={1920}
           height={1080}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/85 to-background/30" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/70 via-background/40 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-background via-background/85 to-background/30" />
+        <div className="absolute inset-0 bg-linear-to-r from-background/70 via-background/40 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-background to-transparent" />
       </div>
 
       <div className="relative page-container py-24 md:py-32 lg:py-40 w-full">
@@ -41,10 +40,10 @@ const HeroSection = () => {
 
           <div className="mt-10 flex flex-wrap gap-4">
             <Button variant="gold" size="lg" className="text-base px-8 h-12" asChild>
-              <Link to="/como-jogar">Começar a Jogar</Link>
+              <Link href="/como-jogar">Começar a Jogar</Link>
             </Button>
             <Button variant="outline-gold" size="lg" className="text-base px-8 h-12" asChild>
-              <Link to="/download">Baixar Cliente</Link>
+              <Link href="/download">Baixar Cliente</Link>
             </Button>
           </div>
 

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { blogPosts } from "@/data/blog-posts";
 import { ArrowRight, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ const LatestNewsSection = () => {
 
   return (
     <section className="page-section relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-card/30 via-transparent to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-b from-card/30 via-transparent to-transparent pointer-events-none" />
       <div className="page-container relative">
         <div className="flex items-end justify-between mb-12">
           <div>
@@ -17,7 +17,7 @@ const LatestNewsSection = () => {
             <p className="mt-2 text-muted-foreground">Updates, guias e tudo que importa para quem joga.</p>
           </div>
           <Button variant="outline-gold" size="sm" className="hidden sm:flex gap-1.5" asChild>
-            <Link to="/blog">
+            <Link href="/blog">
               Ver Todas <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </Button>
@@ -27,11 +27,11 @@ const LatestNewsSection = () => {
           {latest.map((post) => (
             <Link
               key={post.slug}
-              to={`/blog/${post.slug}`}
+              href={`/blog/${post.slug}`}
               className="card-fantasy-hover group flex flex-col"
             >
-              <div className={`h-36 rounded-t-lg bg-gradient-to-br ${post.coverColor} flex items-center justify-center relative overflow-hidden`}>
-                <div className="absolute inset-0 bg-gradient-to-t from-card/50 to-transparent" />
+              <div className={`h-36 rounded-t-lg bg-linear-to-br ${post.coverColor} flex items-center justify-center relative overflow-hidden`}>
+                <div className="absolute inset-0 bg-linear-to-t from-card/50 to-transparent" />
                 <span className="relative text-[10px] uppercase tracking-[0.2em] text-foreground/60 font-semibold px-3 py-1 rounded-full border border-foreground/10 bg-background/20 backdrop-blur-sm">
                   {post.category}
                 </span>
@@ -52,7 +52,7 @@ const LatestNewsSection = () => {
 
         <div className="mt-8 text-center sm:hidden">
           <Button variant="outline-gold" size="sm" asChild>
-            <Link to="/blog">Ver Todas as Notícias</Link>
+            <Link href="/blog">Ver Todas as Notícias</Link>
           </Button>
         </div>
       </div>
