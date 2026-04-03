@@ -1,43 +1,73 @@
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { GetServerSideProps } from 'next'
+import { getIronSession } from 'iron-session'
 import Link from 'next/link'
 import Layout from '@/components/Layout/Layout'
 import SEO from '@/components/SEO'
 import { Swords, Crown, Coins, Shield, LogOut, User, Trophy } from 'lucide-react'
+import { sessionOptions } from '@/lib/session'
 
-// TODO: i18n — strings em pt-BR fixo, aguardando chaves dashboard.* nos locales
-// TODO: substituir dados mock por API real quando sistema de contas estiver ativo
-const mockCharacters = [
-  {
-    name: 'Arthasx',
-    class: 'Death Knight',
-    race: 'Humano',
-    level: 80,
-    gold: 12450,
-    icon: Swords,
-    classColor: 'text-red-400',
-  },
-  {
-    name: 'Frostmage',
-    class: 'Mage',
-    race: 'Elfo Sangrento',
-    level: 73,
-    gold: 3200,
-    icon: Crown,
-    classColor: 'text-blue-400',
-  },
-  {
-    name: 'Healbot',
-    class: 'Priest',
-    race: 'Draenei',
-    level: 45,
-    gold: 580,
-    icon: Shield,
-    classColor: 'text-yellow-400',
-  },
-]
+const CLASS_ICON: Record<string, typeof Swords> = {
+  'Death Knight': Swords,
+  'Warrior': Swords,
+  'Paladin': Shield,
+  'Priest': Shield,
+  'Mage': Crown,
+  'Warlock': Crown,
+  'Hunter': Swords,
+  'Rogue': Swords,
+  'Shaman': Crown,
+  'Druid': Crown,
+}
 
-const Dashboard = () => {
-  const totalGold = mockCharacters.reduce((sum, c) => sum + c.gold, 0)
-  const maxLevel = Math.max(...mockCharacters.map(c => c.level))
+const CLASS_COLOR: Record<string, string> = {
+  'Death Knight': 'text-red-400',
+  'Warrior': 'text-orange-400',
+  'Paladin': 'text-pink-400',
+  'Priest': 'text-yellow-100',
+  'Mage': 'text-blue-400',
+  'Warlock': 'text-purple-400',
+  'Hunter': 'text-green-400',
+  'Rogue': 'text-yellow-400',
+  'Shaman': 'text-blue-300',
+  'Druid': 'text-orange-300',
+}
+
+type Character = {
+  guid: number
+  name: string
+  race: string
+  class: string
+  level: number
+  gold: number
+  online: boolean
+}
+
+type Props = {
+  username: string
+  email: string
+}
+
+const Dashboard = ({ username, email }: Props) => {
+  const router = useRouter()
+  const [characters, setCharacters] = useState<Character[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/account/characters')
+      .then(r => r.json())
+      .then(data => setCharacters(data.characters || []))
+      .finally(() => setLoading(false))
+  }, [])
+
+  const handleLogout = async () => {
+    await fetch('/api/account/logout', { method: 'POST' })
+    router.push('/cadastro')
+  }
+
+  const totalGold = characters.reduce((sum, c) => sum + c.gold, 0)
+  const maxLevel = characters.length > 0 ? Math.max(...characters.map(c => c.level)) : 0
 
   return (
     <Layout>
@@ -51,17 +81,19 @@ const Dashboard = () => {
                 <User className="h-7 w-7 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold font-serif text-foreground glow-text">Bem-vindo, Jogador</h1>
-                <p className="text-muted-foreground text-sm">Gerencie seus personagens e acompanhe seu progresso</p>
+                <h1 className="text-2xl font-bold font-serif text-foreground glow-text">
+                  Bem-vindo, {username}
+                </h1>
+                <p className="text-muted-foreground text-sm">{email}</p>
               </div>
             </div>
-            <Link
-              href="/cadastro"
+            <button
+              onClick={handleLogout}
               className="btn btn-sm btn-outline border-border-strong text-muted-foreground hover:text-foreground gap-2"
             >
               <LogOut className="h-4 w-4" />
               Sair
-            </Link>
+            </button>
           </div>
 
           {/* Stats */}
@@ -72,7 +104,7 @@ const Dashboard = () => {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Personagens</p>
-                <p className="text-2xl font-bold text-foreground">{mockCharacters.length}</p>
+                <p className="text-2xl font-bold text-foreground">{characters.length}</p>
               </div>
             </div>
             <div className="card-fantasy p-5 flex items-center gap-4">
@@ -81,7 +113,7 @@ const Dashboard = () => {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Maior Level</p>
-                <p className="text-2xl font-bold text-foreground">{maxLevel}</p>
+                <p className="text-2xl font-bold text-foreground">{maxLevel || '—'}</p>
               </div>
             </div>
             <div className="card-fantasy p-5 flex items-center gap-4">
@@ -90,25 +122,46 @@ const Dashboard = () => {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Gold Total</p>
-                <p className="text-2xl font-bold text-foreground">{totalGold.toLocaleString('pt-BR')}</p>
+                <p className="text-2xl font-bold text-foreground">
+                  {totalGold.toLocaleString('pt-BR')}
+                </p>
               </div>
             </div>
           </div>
 
           {/* Characters */}
           <h2 className="text-xl font-bold font-serif text-foreground mb-4">Seus Personagens</h2>
+
+          {loading && (
+            <p className="text-muted-foreground text-sm">Carregando personagens...</p>
+          )}
+
+          {!loading && characters.length === 0 && (
+            <div className="card-fantasy p-8 text-center text-muted-foreground">
+              <Swords className="h-10 w-10 mx-auto mb-3 opacity-30" />
+              <p>Nenhum personagem encontrado.</p>
+              <p className="text-sm mt-1">Entre no jogo e crie seu primeiro personagem!</p>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {mockCharacters.map(char => {
-              const Icon = char.icon
+            {characters.map(char => {
+              const Icon = CLASS_ICON[char.class] || Swords
+              const color = CLASS_COLOR[char.class] || 'text-muted-foreground'
               return (
-                <div key={char.name} className="card-fantasy p-5 space-y-4">
+                <div key={char.guid} className="card-fantasy p-5 space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-lg bg-muted/50 flex items-center justify-center shrink-0">
-                      <Icon className={`h-5 w-5 ${char.classColor}`} />
+                      <Icon className={`h-5 w-5 ${color}`} />
                     </div>
-                    <div>
-                      <h3 className="font-bold text-foreground">{char.name}</h3>
-                      <p className={`text-sm ${char.classColor}`}>{char.class} — {char.race}</p>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-bold text-foreground truncate">{char.name}</h3>
+                        {char.online && (
+                          <span className="h-2 w-2 rounded-full bg-green-400 shrink-0" title="Online" />
+                        )}
+                      </div>
+                      <p className={`text-sm ${color}`}>{char.class} — {char.race}</p>
                     </div>
                   </div>
 
@@ -140,6 +193,23 @@ const Dashboard = () => {
       </section>
     </Layout>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await getIronSession(req, res, sessionOptions)
+
+  if (!session.user) {
+    return {
+      redirect: { destination: '/cadastro', permanent: false },
+    }
+  }
+
+  return {
+    props: {
+      username: session.user.username,
+      email: session.user.email,
+    },
+  }
 }
 
 export default Dashboard
