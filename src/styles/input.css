@@ -270,7 +270,7 @@
   }
 
   .page-section {
-    @apply py-20 md:py-28;
+    @apply py-8 ;
   }
 
   /* Noise overlay */
