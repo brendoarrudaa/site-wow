@@ -16,7 +16,7 @@ const Roadmap = () => {
     <Layout>
       <SEO
         title="Roadmap"
-        description="Acompanhe o progresso do Realm of Shadows: fases concluídas, fase atual e o que está planejado. Transparência sobre o desenvolvimento do servidor."
+        description="Acompanhe o progresso do Azeroth Legacy: fases concluídas, fase atual e o que está planejado. Transparência sobre o desenvolvimento do servidor."
         path="/roadmap"
       />
       <PageHeader

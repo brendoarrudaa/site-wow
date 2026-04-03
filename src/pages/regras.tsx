@@ -9,7 +9,7 @@ const Rules = () => {
     <Layout>
       <SEO
         title="Regras do Servidor"
-        description="Regras oficiais do Realm of Shadows: conduta geral, anti-cheat, comércio, PvP e comunicação. Leia antes de jogar."
+        description="Regras oficiais do Azeroth Legacy: conduta geral, anti-cheat, comércio, PvP e comunicação. Leia antes de jogar."
         path="/regras"
       />
       <PageHeader

@@ -8,7 +8,7 @@ const Suggestions = () => {
     <Layout>
       <SEO
         title="Sugestões"
-        description="Envie sua sugestão para o Realm of Shadows. Ideias de gameplay, qualidade de vida, eventos e melhorias são bem-vindas."
+        description="Envie sua sugestão para o Azeroth Legacy. Ideias de gameplay, qualidade de vida, eventos e melhorias são bem-vindas."
         path="/sugestoes"
       />
       <PageHeader

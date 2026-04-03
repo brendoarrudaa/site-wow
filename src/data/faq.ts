@@ -9,7 +9,7 @@ export const faqItems = [
   },
   {
     question: "Preciso pagar para jogar?",
-    answer: "Não. O Realm of Shadows é 100% gratuito. O VIP é opcional e oferece apenas conveniências e cosméticos — sem venda de poder, sem pay-to-win.",
+    answer: "Não. O Azeroth Legacy é 100% gratuito. O VIP é opcional e oferece apenas conveniências e cosméticos — sem venda de poder, sem pay-to-win.",
   },
   {
     question: "As raids e dungeons funcionam?",

@@ -8,7 +8,7 @@ const Bugs = () => {
     <Layout>
       <SEO
         title="Reportar Bug"
-        description="Encontrou um bug no Realm of Shadows? Reporte aqui com detalhes para que a equipe possa corrigir rapidamente."
+        description="Encontrou um bug no Azeroth Legacy? Reporte aqui com detalhes para que a equipe possa corrigir rapidamente."
         path="/bugs"
       />
       <PageHeader

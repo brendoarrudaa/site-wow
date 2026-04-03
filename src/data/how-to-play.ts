@@ -24,7 +24,7 @@ export const steps = [
     icon: Play,
     step: 4,
     title: "Entre em Azeroth",
-    description: "Faça login, escolha seu realm, crie seu personagem e comece. Sua aventura no Realm of Shadows começa agora.",
+    description: "Faça login, escolha seu realm, crie seu personagem e comece. Sua aventura no Azeroth Legacy começa agora.",
   },
   {
     icon: MessageCircle,

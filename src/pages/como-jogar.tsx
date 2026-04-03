@@ -10,12 +10,12 @@ const HowToPlay = () => {
     <Layout>
       <SEO
         title="Como Jogar"
-        description="Passo a passo para conectar no Realm of Shadows. Baixe o cliente WoW 3.3.5a, configure o realmlist e entre no servidor em minutos."
+        description="Passo a passo para conectar no Azeroth Legacy. Baixe o cliente WoW 3.3.5a, configure o realmlist e entre no servidor em minutos."
         path="/como-jogar"
       />
       <PageHeader
         title="Como Jogar"
-        subtitle="Do zero ao login em poucos minutos. Siga o passo a passo e entre no Realm of Shadows."
+        subtitle="Do zero ao login em poucos minutos. Siga o passo a passo e entre no Azeroth Legacy."
       />
 
       <section className="page-section">

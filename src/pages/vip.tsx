@@ -10,7 +10,7 @@ const VIP = () => {
     <Layout>
       <SEO
         title="VIP — Apoie o Projeto"
-        description="O VIP do Realm of Shadows oferece conveniências e cosméticos exclusivos. Sem pay-to-win. Apoie o projeto e ganhe benefícios de qualidade de vida."
+        description="O VIP do Azeroth Legacy oferece conveniências e cosméticos exclusivos. Sem pay-to-win. Apoie o projeto e ganhe benefícios de qualidade de vida."
         path="/vip"
       />
       <PageHeader
@@ -28,7 +28,7 @@ const VIP = () => {
               O que é o <span className="text-gradient-gold">VIP</span>?
             </h2>
             <p className="mt-3 text-muted-foreground max-w-xl mx-auto">
-              O VIP é a forma de sustentar o Realm of Shadows. Em troca, você ganha atalhos de qualidade de vida
+              O VIP é a forma de sustentar o Azeroth Legacy. Em troca, você ganha atalhos de qualidade de vida
               e itens cosméticos exclusivos. O que o VIP não dá: gear, stats, drop bonus ou qualquer vantagem em combat.
             </p>
           </div>

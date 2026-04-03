@@ -9,7 +9,7 @@ const FeaturesSection = () => {
           <p className="text-xs font-medium text-primary tracking-[0.2em] uppercase mb-3">Diferenciais</p>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
             O que faz o{" "}
-            <span className="text-gradient-gold">Realm of Shadows</span>{" "}
+            <span className="text-gradient-gold">Azeroth Legacy</span>{" "}
             diferente
           </h2>
           <p className="mt-4 text-muted-foreground max-w-xl mx-auto text-base">

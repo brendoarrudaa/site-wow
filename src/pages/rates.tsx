@@ -10,7 +10,7 @@ const RatesPage = () => {
     <Layout>
       <SEO
         title="Rates do Servidor"
-        description="Rates do Realm of Shadows: 10x XP, 5x Gold e Drop, 1x Legendary. Cada taxa foi escolhida para equilibrar agilidade no leveling e mérito no endgame."
+        description="Rates do Azeroth Legacy: 10x XP, 5x Gold e Drop, 1x Legendary. Cada taxa foi escolhida para equilibrar agilidade no leveling e mérito no endgame."
         path="/rates"
       />
       <PageHeader
@@ -65,7 +65,7 @@ const RatesPage = () => {
             <div>
               <h3 className="font-serif font-semibold text-foreground mb-3">A Filosofia por Trás dos Números</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                O Realm of Shadows foi pensado para quem quer chegar ao endgame sem semanas de grind,
+                O Azeroth Legacy foi pensado para quem quer chegar ao endgame sem semanas de grind,
                 mas sem pular o mérito. O leveling acelerado coloca você nas raids rapidamente, enquanto
                 itens lendários como <strong className="text-foreground">Shadowmourne</strong> e{" "}
                 <strong className="text-foreground">Val&apos;anyr</strong> mantêm rates 1x — são conquistas

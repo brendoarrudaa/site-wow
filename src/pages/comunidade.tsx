@@ -20,12 +20,12 @@ const Community = () => {
     <Layout>
       <SEO
         title="Comunidade"
-        description="Entre no Discord do Realm of Shadows. Suporte, recrutamento de guilds, eventos, sugestões e tudo que acontece na comunidade."
+        description="Entre no Discord do Azeroth Legacy. Suporte, recrutamento de guilds, eventos, sugestões e tudo que acontece na comunidade."
         path="/comunidade"
       />
       <PageHeader
         title="Comunidade"
-        subtitle="O Discord é onde o Realm of Shadows acontece de verdade. Suporte, grupos, eventos e decisões."
+        subtitle="O Discord é onde o Azeroth Legacy acontece de verdade. Suporte, grupos, eventos e decisões."
       />
 
       <section className="page-section">

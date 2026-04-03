@@ -11,12 +11,12 @@ const DownloadPage = () => {
     <Layout>
       <SEO
         title="Download"
-        description="Baixe o cliente WoW 3.3.5a para jogar no Realm of Shadows. Links verificados via torrent, Google Drive e MEGA."
+        description="Baixe o cliente WoW 3.3.5a para jogar no Azeroth Legacy. Links verificados via torrent, Google Drive e MEGA."
         path="/download"
       />
       <PageHeader
         title="Download"
-        subtitle="Tudo que você precisa para entrar no Realm of Shadows. Cliente, realmlist e instruções."
+        subtitle="Tudo que você precisa para entrar no Azeroth Legacy. Cliente, realmlist e instruções."
       />
 
       <section className="page-section">

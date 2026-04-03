@@ -8,7 +8,7 @@ const Status = () => {
     <Layout>
       <SEO
         title="Status do Servidor"
-        description="Verifique se o Realm of Shadows está online, quantos jogadores estão conectados e o uptime atual do servidor."
+        description="Verifique se o Azeroth Legacy está online, quantos jogadores estão conectados e o uptime atual do servidor."
         path="/status"
       />
       <PageHeader

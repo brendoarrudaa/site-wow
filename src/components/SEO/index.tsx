@@ -12,7 +12,7 @@ interface SEOProps {
   noindex?: boolean;
 }
 
-const SITE_NAME = "Realm of Shadows";
+const SITE_NAME = "Azeroth Legacy";
 const BASE_URL = "https://realmofshadows.com";
 const DEFAULT_DESCRIPTION =
   "Servidor brasileiro de World of Warcraft WotLK 3.3.5a com scripts Blizzlike, rates equilibradas, anti-cheat ativo e comunidade dedicada.";

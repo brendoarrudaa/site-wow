@@ -12,14 +12,14 @@ export type BlogPost = {
 export const blogPosts: BlogPost[] = [
   {
     slug: 'bem-vindo-ao-realm-of-shadows',
-    title: 'Realm of Shadows: O Servidor Que a Comunidade Merece',
+    title: 'Azeroth Legacy: O Servidor Que a Comunidade Merece',
     excerpt:
       'Conheça o projeto que está trazendo WotLK de volta com qualidade, dedicação e respeito pelo jogo. Saiba o que esperar e como participar desde o início.',
     date: '2026-05-01',
     category: 'Anúncio',
     coverColor: 'from-gold/20 to-accent/10',
     content: `<h2>Um servidor construído com propósito</h2>
-<p>O <strong>Realm of Shadows</strong> não é mais um servidor genérico. Nasceu da frustração com projetos instáveis, abandonados ou pay-to-win — e da certeza de que a comunidade brasileira de WotLK merece algo melhor.</p>
+<p>O <strong>Azeroth Legacy</strong> não é mais um servidor genérico. Nasceu da frustração com projetos instáveis, abandonados ou pay-to-win — e da certeza de que a comunidade brasileira de WotLK merece algo melhor.</p>
 <h3>O que nos diferencia</h3>
 <ul>
 <li><strong>Scripts Blizzlike</strong> — raids, dungeons e quests funcionando como a Blizzard projetou</li>
@@ -36,7 +36,7 @@ export const blogPosts: BlogPost[] = [
     slug: 'como-conectar-no-servidor',
     title: 'Do Download ao Login: Como Conectar em 5 Minutos',
     excerpt:
-      'Guia direto ao ponto para baixar o cliente, configurar o realmlist e entrar no Realm of Shadows sem complicação.',
+      'Guia direto ao ponto para baixar o cliente, configurar o realmlist e entrar no Azeroth Legacy sem complicação.',
     date: '2026-05-02',
     category: 'Guia',
     coverColor: 'from-frost/20 to-frost-dark/10',
@@ -64,7 +64,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Info',
     coverColor: 'from-gold/20 to-gold-dark/10',
     content: `<h2>Rates não são arbitrárias</h2>
-<p>No Realm of Shadows, cada taxa foi calibrada com um princípio: <strong>agilidade sem trivializar</strong>. Queremos que você chegue ao conteúdo que importa sem semanas de grind, mas que cada conquista significativa exija esforço real.</p>
+<p>No Azeroth Legacy, cada taxa foi calibrada com um princípio: <strong>agilidade sem trivializar</strong>. Queremos que você chegue ao conteúdo que importa sem semanas de grind, mas que cada conquista significativa exija esforço real.</p>
 <h3>XP e Leveling — 10x / 5x</h3>
 <p>Com 10x de XP, o caminho de 1 a 80 leva entre 15 e 20 horas para jogadores experientes. Exploração e BGs com 5x mantêm relevância sem virar obrigação.</p>
 <h3>Drop e Gold — 5x</h3>
@@ -79,7 +79,7 @@ export const blogPosts: BlogPost[] = [
     slug: 'roadmap-do-beta',
     title: 'Roadmap: De Onde Viemos e Para Onde Vamos',
     excerpt:
-      'O que já foi entregue, o que está no ar agora e o que está planejado para os próximos meses do Realm of Shadows.',
+      'O que já foi entregue, o que está no ar agora e o que está planejado para os próximos meses do Azeroth Legacy.',
     date: '2026-05-05',
     category: 'Anúncio',
     coverColor: 'from-frost/20 to-gold/10',
@@ -133,7 +133,7 @@ export const blogPosts: BlogPost[] = [
   },
   {
     slug: 'guia-rapido-novos-jogadores',
-    title: 'Primeiro Dia no Realm of Shadows: Guia para Novatos',
+    title: 'Primeiro Dia no Azeroth Legacy: Guia para Novatos',
     excerpt:
       'Nunca jogou WoW ou nunca entrou em private server? Este guia cobre tudo que você precisa para começar do zero.',
     date: '2026-05-07',
@@ -142,7 +142,7 @@ export const blogPosts: BlogPost[] = [
     content: `<h2>Bem-vindo, aventureiro</h2>
 <p>Se essa é sua primeira vez em um servidor privado — ou até sua primeira vez em WoW — relaxa. Este guia existe para que ninguém fique perdido.</p>
 <h3>1. O que é um private server?</h3>
-<p>É um servidor não-oficial mantido pela comunidade. O Realm of Shadows roda <strong>Wrath of the Lich King (3.3.5a)</strong>, a expansão considerada o auge do WoW por milhões de jogadores.</p>
+<p>É um servidor não-oficial mantido pela comunidade. O Azeroth Legacy roda <strong>Wrath of the Lich King (3.3.5a)</strong>, a expansão considerada o auge do WoW por milhões de jogadores.</p>
 <h3>2. Preciso pagar?</h3>
 <p>Não. Jogar é 100% gratuito. O VIP existe para quem quer apoiar o projeto — e não vende nenhuma vantagem competitiva.</p>
 <h3>3. Como começo?</h3>
@@ -161,7 +161,7 @@ export const blogPosts: BlogPost[] = [
 <li>Pergunte sem medo no chat ou no Discord — a comunidade ajuda</li>
 <li>Leia as <a href="/regras">Regras</a> para jogar sem surpresas</li>
 </ul>
-<p>O Realm of Shadows foi feito para jogadores como você. Bem-vindo. 🛡️</p>`,
+<p>O Azeroth Legacy foi feito para jogadores como você. Bem-vindo. 🛡️</p>`,
     recommended: ['como-conectar-no-servidor', 'rates-explicadas']
   }
 ]

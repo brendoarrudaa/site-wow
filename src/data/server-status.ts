@@ -8,7 +8,7 @@ export type RealmStatus = {
 };
 
 export const mockServerStatus: RealmStatus = {
-  name: "Realm of Shadows",
+  name: "Azeroth Legacy",
   type: "PvP",
   status: "online",
   population: 347,

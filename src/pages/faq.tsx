@@ -26,7 +26,7 @@ const FAQ = () => {
     <Layout>
       <SEO
         title="FAQ — Perguntas Frequentes"
-        description="Respostas para as dúvidas mais comuns sobre o Realm of Shadows: como conectar, qual cliente usar, rates, addons, anti-cheat e mais."
+        description="Respostas para as dúvidas mais comuns sobre o Azeroth Legacy: como conectar, qual cliente usar, rates, addons, anti-cheat e mais."
         path="/faq"
       />
       <script

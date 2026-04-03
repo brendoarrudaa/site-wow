@@ -25,7 +25,7 @@ const DiscordSection = () => {
               <span className="text-gradient-frost">A comunidade também.</span>
             </h2>
             <p className="text-muted-foreground max-w-xl mx-auto mb-10">
-              No Discord do Realm of Shadows você encontra suporte real, jogadores ativos e uma equipe que ouve.
+              No Discord do Azeroth Legacy você encontra suporte real, jogadores ativos e uma equipe que ouve.
               Não é só um chat — é onde o servidor acontece.
             </p>
 
