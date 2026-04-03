@@ -39,6 +39,18 @@ export default async function handler(req, res) {
   const pool = getPool()
 
   try {
+    // Bloqueia login de conta com verificação pendente
+    const [pendingRows] = await pool.query(
+      'SELECT id FROM account_pending_verifications WHERE username = ?',
+      [user.toUpperCase()]
+    )
+    if (pendingRows.length > 0) {
+      return res.status(403).json({
+        error: 'Conta aguardando confirmação de e-mail. Verifique sua caixa de entrada.',
+        pending: true,
+      })
+    }
+
     const [rows] = await pool.query(
       'SELECT id, username, email, salt, verifier, locked, failed_logins, online FROM account WHERE username = ?',
       [user.toUpperCase()]
