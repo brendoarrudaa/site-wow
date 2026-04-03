@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CheckCircle } from "lucide-react";
@@ -31,9 +30,9 @@ const SuggestionForm = () => {
         <p className="text-muted-foreground">
           Obrigado pelo seu feedback. A equipe irá analisar sua sugestão.
         </p>
-        <Button variant="outline-gold" className="mt-6" onClick={() => setSubmitted(false)}>
+        <button className="btn btn-outline border-gold text-gold hover:bg-gold hover:text-black hover:border-gold mt-6" onClick={() => setSubmitted(false)}>
           Enviar Outra
-        </Button>
+        </button>
       </div>
     );
   }
@@ -81,9 +80,9 @@ const SuggestionForm = () => {
         </div>
       </div>
 
-      <Button type="submit" variant="gold" className="w-full">
+      <button type="submit" className="btn bg-gold text-black hover:bg-gold/90 border-0 w-full">
         Enviar Sugestão
-      </Button>
+      </button>
     </form>
   );
 };
