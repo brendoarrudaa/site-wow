@@ -1,5 +1,5 @@
+import Link from "next/link";
 import { rates } from "@/data/rates";
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const RatesSection = () => {
@@ -25,10 +25,10 @@ const RatesSection = () => {
                 key={rate.category}
                 className={`card-fantasy-hover p-5 flex items-start gap-4 ${isBlizzlike ? "border-gold/20" : ""}`}
               >
-                <div className={`flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center ${
+                <div className={`shrink-0 h-10 w-10 rounded-lg flex items-center justify-center ${
                   isBlizzlike
-                    ? "bg-gradient-to-br from-gold/20 to-gold/5"
-                    : "bg-gradient-to-br from-primary/12 to-primary/4"
+                    ? "bg-linear-to-br from-gold/20 to-gold/5"
+                    : "bg-linear-to-br from-primary/12 to-primary/4"
                 }`}>
                   <Icon className={`h-5 w-5 ${isBlizzlike ? "text-gold" : "text-primary"}`} />
                 </div>
@@ -53,7 +53,7 @@ const RatesSection = () => {
 
         <div className="mt-10 text-center">
           <Button variant="outline-gold" asChild>
-            <Link to="/rates">Ver Detalhes das Rates</Link>
+            <Link href="/rates">Ver Detalhes das Rates</Link>
           </Button>
         </div>
       </div>
