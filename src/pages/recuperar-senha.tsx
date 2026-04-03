@@ -3,7 +3,15 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Layout from '@/components/Layout/Layout'
 import SEO from '@/components/SEO'
-import { Shield, Mail, KeyRound, Eye, EyeOff, ArrowLeft, Check } from 'lucide-react'
+import {
+  Shield,
+  Mail,
+  KeyRound,
+  Eye,
+  EyeOff,
+  ArrowLeft,
+  Check
+} from 'lucide-react'
 
 const RecuperarSenha = () => {
   const router = useRouter()
@@ -23,7 +31,7 @@ const RecuperarSenha = () => {
       const res = await fetch('/api/account/reset-request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email })
       })
       const data = await res.json()
       if (!res.ok) setRequestError(data.error || 'Erro ao solicitar.')
@@ -56,7 +64,7 @@ const RecuperarSenha = () => {
       const res = await fetch('/api/account/reset-confirm', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, password }),
+        body: JSON.stringify({ token, password })
       })
       const data = await res.json()
       if (!res.ok) setConfirmError(data.error || 'Erro ao redefinir.')
@@ -87,12 +95,13 @@ const RecuperarSenha = () => {
                 Recuperar Senha
               </h1>
               <p className="text-muted-foreground mt-2">
-                {token ? 'Crie uma nova senha para sua conta.' : 'Informe seu e-mail para receber o link de redefinição.'}
+                {token
+                  ? 'Crie uma nova senha para sua conta.'
+                  : 'Informe seu e-mail para receber o link de redefinição.'}
               </p>
             </div>
 
             <div className="card-fantasy p-6 md:p-8">
-
               {/* === FLUXO 1: Solicitar link === */}
               {!token && (
                 <>
@@ -102,12 +111,16 @@ const RecuperarSenha = () => {
                         <Check className="h-6 w-6 text-online" />
                       </div>
                       <p className="text-sm text-foreground">
-                        Se este e-mail estiver cadastrado, você receberá as instruções em breve.
+                        Se este e-mail estiver cadastrado, você receberá as
+                        instruções em breve.
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Verifique sua caixa de spam caso não receba o e-mail.
                       </p>
-                      <Link href="/cadastro" className="btn btn-sm btn-outline border-border-strong w-full mt-2">
+                      <Link
+                        href="/cadastro"
+                        className="btn btn-sm btn-outline border-border-strong w-full mt-2"
+                      >
                         <ArrowLeft className="h-4 w-4 mr-2" />
                         Voltar ao login
                       </Link>
@@ -115,7 +128,10 @@ const RecuperarSenha = () => {
                   ) : (
                     <form onSubmit={handleRequest} className="space-y-5">
                       <div>
-                        <label htmlFor="reset-email" className="block text-sm font-medium text-foreground mb-2">
+                        <label
+                          htmlFor="reset-email"
+                          className="block text-sm font-medium text-foreground mb-2"
+                        >
                           E-mail da conta
                         </label>
                         <div className="relative">
@@ -123,7 +139,7 @@ const RecuperarSenha = () => {
                           <input
                             id="reset-email"
                             type="email"
-                            className="input input-bordered w-full pl-10"
+                            className="input input-bordered w-full"
                             placeholder="seu@email.com"
                             value={email}
                             onChange={e => setEmail(e.target.value)}
@@ -144,10 +160,15 @@ const RecuperarSenha = () => {
                         className="btn bg-gold text-black hover:bg-gold/90 border-0 w-full h-11 text-base disabled:opacity-60"
                       >
                         <Mail className="h-4 w-4 mr-2" />
-                        {requestLoading ? 'Enviando...' : 'Enviar link de recuperação'}
+                        {requestLoading
+                          ? 'Enviando...'
+                          : 'Enviar link de recuperação'}
                       </button>
 
-                      <Link href="/cadastro" className="flex items-center justify-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                      <Link
+                        href="/cadastro"
+                        className="flex items-center justify-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      >
                         <ArrowLeft className="h-3.5 w-3.5" />
                         Voltar ao login
                       </Link>
@@ -164,9 +185,17 @@ const RecuperarSenha = () => {
                       <div className="inline-flex items-center justify-center h-12 w-12 rounded-full bg-online/10 mx-auto">
                         <Check className="h-6 w-6 text-online" />
                       </div>
-                      <p className="text-sm text-foreground font-medium">Senha redefinida com sucesso!</p>
-                      <p className="text-xs text-muted-foreground">Agora você pode entrar com sua nova senha no site e no jogo.</p>
-                      <Link href="/cadastro" className="btn bg-gold text-black hover:bg-gold/90 border-0 w-full h-11 text-base">
+                      <p className="text-sm text-foreground font-medium">
+                        Senha redefinida com sucesso!
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Agora você pode entrar com sua nova senha no site e no
+                        jogo.
+                      </p>
+                      <Link
+                        href="/cadastro"
+                        className="btn bg-gold text-black hover:bg-gold/90 border-0 w-full h-11 text-base"
+                      >
                         <Shield className="h-4 w-4 mr-2" />
                         Ir para o login
                       </Link>
@@ -174,7 +203,10 @@ const RecuperarSenha = () => {
                   ) : (
                     <form onSubmit={handleConfirm} className="space-y-5">
                       <div>
-                        <label htmlFor="new-password" className="block text-sm font-medium text-foreground mb-2">
+                        <label
+                          htmlFor="new-password"
+                          className="block text-sm font-medium text-foreground mb-2"
+                        >
                           Nova senha
                         </label>
                         <div className="relative">
@@ -194,13 +226,20 @@ const RecuperarSenha = () => {
                             onClick={() => setShowPassword(!showPassword)}
                             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                           >
-                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
                           </button>
                         </div>
                       </div>
 
                       <div>
-                        <label htmlFor="confirm-password" className="block text-sm font-medium text-foreground mb-2">
+                        <label
+                          htmlFor="confirm-password"
+                          className="block text-sm font-medium text-foreground mb-2"
+                        >
                           Confirmar nova senha
                         </label>
                         <div className="relative">
@@ -220,7 +259,11 @@ const RecuperarSenha = () => {
                             onClick={() => setShowConfirm(!showConfirm)}
                             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                           >
-                            {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            {showConfirm ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
                           </button>
                         </div>
                       </div>
