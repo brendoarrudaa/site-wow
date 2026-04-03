@@ -1,14 +1,14 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { siteConfig, navLinks, navMoreLinks } from "@/data/site-config";
 
 const Footer = () => {
   return (
-    <footer className="border-t border-border/30 bg-gradient-to-b from-card/50 to-background">
+    <footer className="border-t border-border/30 bg-linear-to-b from-card/50 to-background">
       <div className="page-container py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <div className="md:col-span-2">
-            <Link to="/" className="flex items-center gap-2.5 mb-5">
-              <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-gold-light via-gold to-accent flex items-center justify-center shadow-md shadow-gold/15">
+            <Link href="/" className="flex items-center gap-2.5 mb-5">
+              <div className="h-9 w-9 rounded-lg bg-linear-to-br from-gold-light via-gold to-accent flex items-center justify-center shadow-md shadow-gold/15">
                 <span className="font-serif text-sm font-bold text-primary-foreground">RS</span>
               </div>
               <span className="font-serif text-lg font-bold text-foreground tracking-wide">{siteConfig.name}</span>
@@ -24,7 +24,7 @@ const Footer = () => {
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
-                  to={link.href}
+                  href={link.href}
                   className="text-sm text-muted-foreground hover:text-primary transition-colors"
                 >
                   {link.label}
@@ -47,7 +47,7 @@ const Footer = () => {
               {navMoreLinks.map((link) => (
                 <Link
                   key={link.href}
-                  to={link.href}
+                  href={link.href}
                   className="text-sm text-muted-foreground hover:text-primary transition-colors"
                 >
                   {link.label}
