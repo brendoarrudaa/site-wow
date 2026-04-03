@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CheckCircle } from "lucide-react";
@@ -33,9 +32,9 @@ const BugReportForm = () => {
         <p className="text-muted-foreground">
           Obrigado por ajudar a melhorar o servidor. A equipe irá investigar o problema.
         </p>
-        <Button variant="outline-gold" className="mt-6" onClick={() => setSubmitted(false)}>
+        <button className="btn btn-outline border-gold text-gold hover:bg-gold hover:text-black hover:border-gold mt-6" onClick={() => setSubmitted(false)}>
           Reportar Outro
-        </Button>
+        </button>
       </div>
     );
   }
@@ -83,9 +82,9 @@ const BugReportForm = () => {
         </div>
       </div>
 
-      <Button type="submit" variant="gold" className="w-full">
+      <button type="submit" className="btn bg-gold text-black hover:bg-gold/90 border-0 w-full">
         Enviar Report
-      </Button>
+      </button>
     </form>
   );
 };

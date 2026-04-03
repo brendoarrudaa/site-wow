@@ -2,7 +2,6 @@ import Layout from "@/components/Layout/Layout";
 import SEO from "@/components/SEO";
 import PageHeader from "@/components/PageHeader";
 import { siteConfig } from "@/data/site-config";
-import { Button } from "@/components/ui/button";
 import { MessageCircle, Users, Megaphone, Bug, Shield, Calendar, Swords, Trophy } from "lucide-react";
 
 const communityFeatures = [
@@ -56,11 +55,9 @@ const Community = () => {
           </div>
 
           <div className="text-center">
-            <Button variant="frost" size="lg" asChild>
-              <a href={siteConfig.discordUrl} target="_blank" rel="noopener noreferrer">
-                Entrar no Discord
-              </a>
-            </Button>
+            <a href={siteConfig.discordUrl} target="_blank" rel="noopener noreferrer" className="btn btn-lg bg-frost text-white hover:bg-frost/90 border-0">
+              Entrar no Discord
+            </a>
           </div>
         </div>
       </section>

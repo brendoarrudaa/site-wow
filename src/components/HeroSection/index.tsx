@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/data/site-config";
 import { Shield, Users, Swords } from "lucide-react";
 
@@ -39,12 +38,12 @@ const HeroSection = () => {
           </p>
 
           <div className="mt-10 flex flex-wrap gap-4">
-            <Button variant="gold" size="lg" className="text-base px-8 h-12" asChild>
-              <Link href="/como-jogar">Começar a Jogar</Link>
-            </Button>
-            <Button variant="outline-gold" size="lg" className="text-base px-8 h-12" asChild>
-              <Link href="/download">Baixar Cliente</Link>
-            </Button>
+            <Link href="/como-jogar" className="btn btn-lg bg-gold text-black hover:bg-gold/90 border-0 text-base px-8 h-12">
+              Começar a Jogar
+            </Link>
+            <Link href="/download" className="btn btn-lg btn-outline border-gold text-gold hover:bg-gold hover:text-black hover:border-gold text-base px-8 h-12">
+              Baixar Cliente
+            </Link>
           </div>
 
           <div className="mt-12 flex items-center gap-6 text-sm text-muted-foreground">

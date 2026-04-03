@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { siteConfig, navLinks, navMoreLinks } from "@/data/site-config";
-import { Button } from "@/components/ui/button";
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -88,9 +87,9 @@ const Header = () => {
         </nav>
 
         <div className="hidden lg:flex items-center gap-3">
-          <Button variant="gold" size="sm" asChild>
-            <Link href="/como-jogar">Jogar Agora</Link>
-          </Button>
+          <Link href="/como-jogar" className="btn btn-sm bg-gold text-black hover:bg-gold/90 border-0">
+            Jogar Agora
+          </Link>
         </div>
 
         <button
@@ -119,11 +118,9 @@ const Header = () => {
               </Link>
             ))}
             <div className="pt-3 mt-3 border-t border-border/30">
-              <Button variant="gold" size="sm" className="w-full" asChild>
-                <Link href="/como-jogar" onClick={() => setMobileOpen(false)}>
-                  Jogar Agora
-                </Link>
-              </Button>
+              <Link href="/como-jogar" onClick={() => setMobileOpen(false)} className="btn btn-sm bg-gold text-black hover:bg-gold/90 border-0 w-full">
+                Jogar Agora
+              </Link>
             </div>
           </nav>
         </div>

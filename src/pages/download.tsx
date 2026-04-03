@@ -4,7 +4,6 @@ import PageHeader from "@/components/PageHeader";
 import CTASection from "@/components/CTASection";
 import { downloadLinks, systemRequirements } from "@/data/download";
 import { siteConfig } from "@/data/site-config";
-import { Button } from "@/components/ui/button";
 import { Download as DownloadIcon, Monitor, FileText } from "lucide-react";
 
 const DownloadPage = () => {
@@ -35,9 +34,7 @@ const DownloadPage = () => {
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-xs text-muted-foreground">{link.size}</span>
-                  <Button variant="outline-gold" size="sm" asChild>
-                    <a href={link.url}>Baixar</a>
-                  </Button>
+                  <a href={link.url} className="btn btn-sm btn-outline border-gold text-gold hover:bg-gold hover:text-black hover:border-gold">Baixar</a>
                 </div>
               </div>
             ))}

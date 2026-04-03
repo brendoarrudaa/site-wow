@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { blogPosts } from "@/data/blog-posts";
 import { ArrowRight, Calendar } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const LatestNewsSection = () => {
   const latest = blogPosts.slice(0, 3);
@@ -16,11 +15,9 @@ const LatestNewsSection = () => {
             <h2 className="text-3xl md:text-4xl font-bold text-foreground font-serif">Direto do Servidor</h2>
             <p className="mt-2 text-muted-foreground">Updates, guias e tudo que importa para quem joga.</p>
           </div>
-          <Button variant="outline-gold" size="sm" className="hidden sm:flex gap-1.5" asChild>
-            <Link href="/blog">
-              Ver Todas <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </Button>
+          <Link href="/blog" className="btn btn-sm btn-outline border-gold text-gold hover:bg-gold hover:text-black hover:border-gold hidden sm:flex gap-1.5">
+            Ver Todas <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -51,9 +48,9 @@ const LatestNewsSection = () => {
         </div>
 
         <div className="mt-8 text-center sm:hidden">
-          <Button variant="outline-gold" size="sm" asChild>
-            <Link href="/blog">Ver Todas as Notícias</Link>
-          </Button>
+          <Link href="/blog" className="btn btn-sm btn-outline border-gold text-gold hover:bg-gold hover:text-black hover:border-gold">
+            Ver Todas as Notícias
+          </Link>
         </div>
       </div>
     </section>

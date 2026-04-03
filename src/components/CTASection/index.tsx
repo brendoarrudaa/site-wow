@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 
 interface CTASectionProps {
   title?: string;
@@ -27,12 +26,12 @@ const CTASection = ({
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground font-serif glow-text leading-tight">{title}</h2>
         <p className="mt-5 text-muted-foreground max-w-lg mx-auto text-base">{subtitle}</p>
         <div className="mt-10 flex flex-wrap justify-center gap-4">
-          <Button variant="gold" size="lg" className="text-base px-8 h-12" asChild>
-            <Link href={primaryHref}>{primaryLabel}</Link>
-          </Button>
-          <Button variant="outline-gold" size="lg" className="text-base px-8 h-12" asChild>
-            <Link href={secondaryHref}>{secondaryLabel}</Link>
-          </Button>
+          <Link href={primaryHref} className="btn btn-lg bg-gold text-black hover:bg-gold/90 border-0 text-base px-8 h-12">
+            {primaryLabel}
+          </Link>
+          <Link href={secondaryHref} className="btn btn-lg btn-outline border-gold text-gold hover:bg-gold hover:text-black hover:border-gold text-base px-8 h-12">
+            {secondaryLabel}
+          </Link>
         </div>
       </div>
     </section>

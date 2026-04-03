@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { rates } from "@/data/rates";
-import { Button } from "@/components/ui/button";
 
 const RatesSection = () => {
   return (
@@ -52,9 +51,9 @@ const RatesSection = () => {
         </div>
 
         <div className="mt-10 text-center">
-          <Button variant="outline-gold" asChild>
-            <Link href="/rates">Ver Detalhes das Rates</Link>
-          </Button>
+          <Link href="/rates" className="btn btn-outline border-gold text-gold hover:bg-gold hover:text-black hover:border-gold">
+            Ver Detalhes das Rates
+          </Link>
         </div>
       </div>
     </section>

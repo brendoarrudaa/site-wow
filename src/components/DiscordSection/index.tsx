@@ -1,6 +1,5 @@
 import { MessageCircle, Users, Megaphone, Bug, Shield, Calendar } from "lucide-react";
 import { siteConfig } from "@/data/site-config";
-import { Button } from "@/components/ui/button";
 
 const benefits = [
   { icon: Megaphone, label: "Anúncios em primeira mão" },
@@ -42,11 +41,9 @@ const DiscordSection = () => {
               })}
             </div>
 
-            <Button variant="frost" size="lg" className="text-base px-8 h-12" asChild>
-              <a href={siteConfig.discordUrl} target="_blank" rel="noopener noreferrer">
-                Entrar no Discord
-              </a>
-            </Button>
+            <a href={siteConfig.discordUrl} target="_blank" rel="noopener noreferrer" className="btn btn-lg bg-frost text-white hover:bg-frost/90 border-0 text-base px-8 h-12">
+              Entrar no Discord
+            </a>
           </div>
         </div>
       </div>

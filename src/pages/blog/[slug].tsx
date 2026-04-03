@@ -4,7 +4,6 @@ import Layout from "@/components/Layout/Layout";
 import SEO from "@/components/SEO";
 import { getPostBySlug, blogPosts } from "@/data/blog-posts";
 import { Calendar, ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import CTASection from "@/components/CTASection";
 
 const BlogPostPage = () => {
@@ -18,9 +17,9 @@ const BlogPostPage = () => {
         <SEO title="Post não encontrado" noindex />
         <div className="page-container py-24 text-center">
           <h1 className="text-2xl font-serif font-bold text-foreground mb-4">Post não encontrado</h1>
-          <Button variant="outline-gold" asChild>
-            <Link href="/blog">Voltar ao Blog</Link>
-          </Button>
+          <Link href="/blog" className="btn btn-outline border-gold text-gold hover:bg-gold hover:text-black hover:border-gold">
+            Voltar ao Blog
+          </Link>
         </div>
       </Layout>
     );

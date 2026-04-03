@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Crown, Sparkles, Zap } from "lucide-react";
 
 const VIPPreviewSection = () => {
@@ -34,9 +33,9 @@ const VIPPreviewSection = () => {
                 <span className="flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5 text-gold" />Suporte Dedicado</span>
               </div>
             </div>
-            <Button variant="gold" size="lg" className="shrink-0" asChild>
-              <Link href="/vip">Conhecer o VIP</Link>
-            </Button>
+            <Link href="/vip" className="btn btn-lg bg-gold text-black hover:bg-gold/90 border-0 shrink-0">
+              Conhecer o VIP
+            </Link>
           </div>
         </div>
       </div>
