@@ -35,8 +35,10 @@ export interface Character {
   arenaRating2v2: number
   arenaRating3v3: number
   guild?: string
+  guildRank?: string
   faction: "Horda" | "Aliança"
   playedTime: string
+  achievementPoints: number
 }
 
 export interface User {
@@ -45,7 +47,31 @@ export interface User {
   email: string
   donationPoints: number
   votePoints: number
+  accountCreated: string
+  lastLogin: string
   characters: Character[]
+}
+
+export interface GuildMember {
+  name: string
+  class: CharacterClass
+  level: number
+  rank: string
+  lastOnline: string
+}
+
+export interface BossKill {
+  name: string
+  kills: number
+}
+
+export interface Guild {
+  name: string
+  faction: "Horda" | "Aliança"
+  level: number
+  achievements: number
+  members: GuildMember[]
+  bossKills: BossKill[]
 }
 
 export interface Ticket {
@@ -93,6 +119,8 @@ export const mockUser: User = {
   email: "arthas@frostmourne.com",
   donationPoints: 1500,
   votePoints: 42,
+  accountCreated: "2023-08-15",
+  lastLogin: "2024-01-15",
   characters: [
     {
       id: "1",
@@ -106,8 +134,10 @@ export const mockUser: User = {
       arenaRating2v2: 1850,
       arenaRating3v3: 2100,
       guild: "Scourge",
+      guildRank: "Líder",
       faction: "Horda",
       playedTime: "45d 12h 30m",
+      achievementPoints: 9450,
     },
     {
       id: "2",
@@ -121,8 +151,10 @@ export const mockUser: User = {
       arenaRating2v2: 0,
       arenaRating3v3: 0,
       guild: "Kirin Tor",
+      guildRank: "Membro",
       faction: "Aliança",
       playedTime: "12d 5h 15m",
+      achievementPoints: 2100,
     },
   ],
 }
@@ -215,4 +247,25 @@ export const mockServerStatus: ServerStatus = {
   realmName: "Frostmourne",
   uptime: "14d 6h 22m",
   nextMaintenance: "Quarta-feira, 03:00",
+}
+
+export const mockGuild: Guild = {
+  name: "Scourge",
+  faction: "Horda",
+  level: 25,
+  achievements: 1250,
+  members: [
+    { name: "Arthas", class: "Death Knight", level: 80, rank: "Líder", lastOnline: "Online" },
+    { name: "Kel'Thuzad", class: "Mage", level: 80, rank: "Oficial", lastOnline: "Online" },
+    { name: "Sylvanas", class: "Hunter", level: 80, rank: "Oficial", lastOnline: "Há 1 dia" },
+    { name: "Darion", class: "Death Knight", level: 80, rank: "Veterano", lastOnline: "Online" },
+    { name: "Thane", class: "Warrior", level: 80, rank: "Membro", lastOnline: "Há 3 dias" },
+    { name: "Vrakna", class: "Shaman", level: 78, rank: "Membro", lastOnline: "Há 5 dias" },
+  ],
+  bossKills: [
+    { name: "Lich King 25HC", kills: 42 },
+    { name: "Halion 25HC", kills: 28 },
+    { name: "Sindragosa 25HC", kills: 55 },
+    { name: "Professor Putricide 25HC", kills: 61 },
+  ],
 }
