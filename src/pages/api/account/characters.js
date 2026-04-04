@@ -34,6 +34,8 @@ export default async function handler(req, res) {
     const characters = rows.map(c => ({
       guid: c.guid,
       name: c.name,
+      raceId: c.race,
+      classId: c.class,
       race: RACE_NAMES[c.race] || 'Desconhecido',
       class: CLASS_NAMES[c.class] || 'Desconhecido',
       level: c.level,

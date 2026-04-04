@@ -12,6 +12,7 @@ export default async function handler(req, res) {
   }
 
   // Always refresh email from DB (it may have changed after session was created)
+  let isAdmin = false
   try {
     const pool = getPool()
     const [rows] = await pool.query(
@@ -23,7 +24,13 @@ export default async function handler(req, res) {
       session.user.email = rows[0].email
       await session.save()
     }
+
+    const [access] = await pool.query(
+      'SELECT 1 FROM acore_auth.account_access WHERE id = ? AND gmlevel >= 2 LIMIT 1',
+      [session.user.id]
+    )
+    isAdmin = access.length > 0
   } catch {}
 
-  return res.status(200).json({ user: session.user })
+  return res.status(200).json({ user: session.user, isAdmin })
 }
