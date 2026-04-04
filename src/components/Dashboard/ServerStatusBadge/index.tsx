@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react"
-import { Users, Wifi, WifiOff } from "lucide-react"
+import { useEffect, useState } from 'react'
+import { Users, Wifi, WifiOff } from 'lucide-react'
 
 interface StatusData {
   name: string
-  status: "online" | "offline"
+  status: 'online' | 'offline'
   population: number
   maxPopulation: number
   uptime: string
@@ -15,8 +15,8 @@ const ServerStatusBadge = () => {
 
   useEffect(() => {
     const load = () =>
-      fetch("/api/server/status")
-        .then((r) => r.json())
+      fetch('/api/server/status')
+        .then(r => r.json())
         .then(setStatus)
         .catch(() => {})
 
@@ -27,7 +27,7 @@ const ServerStatusBadge = () => {
 
   if (!status) return null
 
-  const online = status.status === "online"
+  const online = status.status === 'online'
 
   return (
     <div
@@ -42,15 +42,16 @@ const ServerStatusBadge = () => {
             <span className="font-semibold text-base-content">
               {status.population.toLocaleString()}
             </span>
-            <span className="hidden sm:inline"> / {status.maxPopulation.toLocaleString()}</span>
+            <span className="hidden sm:inline">
+              {' '}
+              / {status.maxPopulation.toLocaleString()}
+            </span>
           </span>
         </div>
 
         <span
-          className={`badge gap-1 text-xs font-medium ${
-            online
-              ? "border-success bg-success/10 text-success"
-              : "badge-error"
+          className={`badge gap-1 text-xs font-medium p-2 ${
+            online ? 'border-success bg-success/10 text-success' : 'badge-error'
           }`}
         >
           {online ? (

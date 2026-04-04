@@ -576,7 +576,7 @@ export default function AdminGmPage({ user, gmLevel }: AdminGmPageProps) {
           </p>
         </div>
 
-        <div className="alert alert-info">
+        <div className="alert alert-info rounded-lg">
           <AlertCircle className="h-5 w-5" />
           <div className="text-sm">
             Você está logado como <strong>{user.username}</strong> (GM {gmLevel}
@@ -584,76 +584,8 @@ export default function AdminGmPage({ user, gmLevel }: AdminGmPageProps) {
           </div>
         </div>
 
-        {/* Atalhos de página */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {gmLevel >= 2 && (
-            <Link
-              href="/dashboard/admin-aprovacoes"
-              className="card bg-base-200 border border-base-300 hover:border-primary transition-colors"
-            >
-              <div className="card-body p-4">
-                <div className="flex items-center gap-2 mb-1">
-                  <CheckCircle className="h-5 w-5 text-primary" />
-                  <h3 className="font-bold">Aprovações</h3>
-                </div>
-                <p className="text-sm text-base-content/70">
-                  Aprovar ou rejeitar listagens.
-                </p>
-              </div>
-            </Link>
-          )}
-          {gmLevel >= 1 && (
-            <Link
-              href="/dashboard/admin-entregas"
-              className="card bg-base-200 border border-base-300 hover:border-primary transition-colors"
-            >
-              <div className="card-body p-4">
-                <div className="flex items-center gap-2 mb-1">
-                  <Truck className="h-5 w-5 text-primary" />
-                  <h3 className="font-bold">Entregas</h3>
-                </div>
-                <p className="text-sm text-base-content/70">
-                  Marcar filas como entregues.
-                </p>
-              </div>
-            </Link>
-          )}
-          {gmLevel >= 3 && (
-            <Link
-              href="/dashboard/admin-auditoria"
-              className="card bg-base-200 border border-base-300 hover:border-primary transition-colors"
-            >
-              <div className="card-body p-4">
-                <div className="flex items-center gap-2 mb-1">
-                  <FileText className="h-5 w-5 text-primary" />
-                  <h3 className="font-bold">Auditoria</h3>
-                </div>
-                <p className="text-sm text-base-content/70">
-                  Consultar log de ações administrativas.
-                </p>
-              </div>
-            </Link>
-          )}
-          {gmLevel >= 2 && (
-            <Link
-              href="/dashboard/leilao"
-              className="card bg-base-200 border border-base-300 hover:border-primary transition-colors"
-            >
-              <div className="card-body p-4">
-                <div className="flex items-center gap-2 mb-1">
-                  <Gavel className="h-5 w-5 text-primary" />
-                  <h3 className="font-bold">Leilão GM</h3>
-                </div>
-                <p className="text-sm text-base-content/70">
-                  Gerenciar lances e fechamento de leilões.
-                </p>
-              </div>
-            </Link>
-          )}
-        </div>
-
         {/* ── Ações do Painel ───────────────────────────────────────────────── */}
-        <div className="card bg-base-200 shadow-xl">
+        <div className="card bg-base-200 shadow-xl rounded-lg">
           <div className="card-body">
             <div className="flex items-center gap-3 mb-1">
               <Shield className="h-6 w-6 text-warning" />
@@ -663,40 +595,30 @@ export default function AdminGmPage({ user, gmLevel }: AdminGmPageProps) {
               Execute ações diretamente pelo painel — sem precisar abrir o jogo.
             </p>
 
-            <div className="flex gap-1 mb-6 bg-base-300 p-1 rounded-lg w-fit">
+            <div className="tabs tabs-box mb-6 w-fit">
               {[
                 {
                   id: 'comunicacao',
-                  label: 'Comunicação',
-                  icon: <Megaphone className="h-4 w-4" />,
-                  badge: 'SOAP'
+                  label: 'Comunicação'
                 },
                 {
                   id: 'moderacao',
-                  label: 'Moderação',
-                  icon: <Ban className="h-4 w-4" />,
-                  badge: 'DB + SOAP'
+                  label: 'Moderação'
                 },
                 {
                   id: 'personagem',
-                  label: 'Personagem',
-                  icon: <Sword className="h-4 w-4" />,
-                  badge: 'DB'
+                  label: 'Personagem'
                 }
               ].map(t => (
-                <button
+                <input
                   key={t.id}
-                  className={`btn btn-sm gap-2 ${actionTab === t.id ? 'btn-primary' : 'btn-ghost'}`}
-                  onClick={() => setActionTab(t.id as typeof actionTab)}
-                >
-                  {t.icon}
-                  {t.label}
-                  <span
-                    className={`badge badge-xs ${t.badge === 'SOAP' ? 'badge-info' : t.badge === 'DB' ? 'badge-success' : 'badge-warning'}`}
-                  >
-                    {t.badge}
-                  </span>
-                </button>
+                  type="radio"
+                  name="admin_gm_action_tabs"
+                  className="tab"
+                  aria-label={t.label}
+                  checked={actionTab === t.id}
+                  onChange={() => setActionTab(t.id as typeof actionTab)}
+                />
               ))}
             </div>
 

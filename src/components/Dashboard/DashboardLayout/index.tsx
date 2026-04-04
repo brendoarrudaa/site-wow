@@ -15,7 +15,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   // Restore persisted preferences
   useEffect(() => {
-    const savedTheme = localStorage.getItem('wow-theme') as 'wow-dark' | 'wow-light' | null
+    const savedTheme = localStorage.getItem('wow-theme') as
+      | 'wow-dark'
+      | 'wow-light'
+      | null
     const savedCollapsed = localStorage.getItem('sidebar-collapsed')
     if (savedTheme) setTheme(savedTheme)
     if (savedCollapsed === 'true') setCollapsed(true)
@@ -27,7 +30,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     localStorage.setItem('wow-theme', theme)
   }, [theme])
 
-  const toggleTheme = () => setTheme(t => (t === 'wow-dark' ? 'wow-light' : 'wow-dark'))
+  const toggleTheme = () =>
+    setTheme(t => (t === 'wow-dark' ? 'wow-light' : 'wow-dark'))
 
   const toggleCollapse = () =>
     setCollapsed(v => {
@@ -51,10 +55,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <AppSidebar
-          collapsed={collapsed}
-          onToggleCollapse={toggleCollapse}
-        />
+        <AppSidebar collapsed={collapsed} onToggleCollapse={toggleCollapse} />
       </div>
 
       {/* Main */}
@@ -94,7 +95,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4">{children}</main>
       </div>
     </div>
   )
