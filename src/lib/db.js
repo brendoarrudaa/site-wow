@@ -12,6 +12,7 @@ export function getPool() {
       database: 'acore_auth',
       waitForConnections: true,
       connectionLimit: 10,
+      charset: 'utf8mb4',
     })
   }
   return pool

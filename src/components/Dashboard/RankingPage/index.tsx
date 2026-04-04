@@ -1,12 +1,9 @@
-import { useState } from "react"
-import { Search, Trophy, Swords, Users, Crown } from "lucide-react"
-import {
-  mockArena2v2Ranking,
-  mockArena3v3Ranking,
-  mockHKRanking,
-  mockUser,
-} from "@/lib/mock-data"
-import RankingTable from "@/components/Dashboard/RankingTable"
+import { useEffect, useState } from "react"
+import { Search, Trophy, Swords, Users, Crown, Loader2 } from "lucide-react"
+import RankingTable, {
+  ArenaPlayer,
+  HKPlayer,
+} from "@/components/Dashboard/RankingTable"
 
 type Tab = "2v2" | "3v3" | "hk"
 
@@ -14,10 +11,37 @@ const RankingPage = () => {
   const [tab, setTab] = useState<Tab>("2v2")
   const [search, setSearch] = useState("")
   const [faction, setFaction] = useState("all")
+  const [loading, setLoading] = useState(true)
 
-  const userCharName = mockUser.characters[0]?.name ?? ""
+  const [arena2v2, setArena2v2] = useState<ArenaPlayer[]>([])
+  const [arena3v3, setArena3v3] = useState<ArenaPlayer[]>([])
+  const [hk, setHk] = useState<HKPlayer[]>([])
 
-  const filterPlayers = (players: typeof mockArena2v2Ranking) =>
+  // Fetch player's character names to highlight
+  const [myCharNames, setMyCharNames] = useState<string[]>([])
+
+  useEffect(() => {
+    fetch("/api/ranking")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.arena2v2) setArena2v2(data.arena2v2)
+        if (data.arena3v3) setArena3v3(data.arena3v3)
+        if (data.hk) setHk(data.hk)
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+
+    fetch("/api/account/characters")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.characters) {
+          setMyCharNames(data.characters.map((c: { name: string }) => c.name))
+        }
+      })
+      .catch(() => {})
+  }, [])
+
+  const filterArena = (players: ArenaPlayer[]) =>
     players.filter((p) => {
       const matchSearch = p.name.toLowerCase().includes(search.toLowerCase())
       const matchFaction =
@@ -27,9 +51,17 @@ const RankingPage = () => {
       return matchSearch && matchFaction
     })
 
-  const user2v2 = mockArena2v2Ranking.find((p) => p.name === userCharName)
-  const user3v3 = mockArena3v3Ranking.find((p) => p.name === userCharName)
-  const userHK = mockHKRanking.find((p) => p.name === userCharName)
+  const filterHK = (players: HKPlayer[]) =>
+    players.filter((p) => {
+      const matchSearch = p.name.toLowerCase().includes(search.toLowerCase())
+      const matchFaction =
+        faction === "all" ||
+        (faction === "horda" && p.faction === "Horda") ||
+        (faction === "alianca" && p.faction === "Aliança")
+      return matchSearch && matchFaction
+    })
+
+  const highlightName = myCharNames[0] ?? ""
 
   const tabs: { key: Tab; label: string; icon: React.ElementType }[] = [
     { key: "2v2", label: "Arena 2v2", icon: Users },
@@ -37,14 +69,21 @@ const RankingPage = () => {
     { key: "hk", label: "Honorable Kills", icon: Swords },
   ]
 
-  const activeData =
-    tab === "2v2"
-      ? filterPlayers(mockArena2v2Ranking)
-      : tab === "3v3"
-      ? filterPlayers(mockArena3v3Ranking)
-      : filterPlayers(mockHKRanking)
+  const filtered2v2 = filterArena(arena2v2)
+  const filtered3v3 = filterArena(arena3v3)
+  const filteredHK = filterHK(hk)
 
-  const activeType = tab === "hk" ? "hk" : "arena"
+  const activeCount =
+    tab === "2v2"
+      ? filtered2v2.length
+      : tab === "3v3"
+      ? filtered3v3.length
+      : filteredHK.length
+
+  // Find user position in each ranking
+  const myPos2v2 = arena2v2.find((p) => myCharNames.includes(p.name))
+  const myPos3v3 = arena3v3.find((p) => myCharNames.includes(p.name))
+  const myPosHK = hk.find((p) => myCharNames.includes(p.name))
 
   return (
     <div className="space-y-6">
@@ -60,35 +99,45 @@ const RankingPage = () => {
         {[
           {
             label: "Arena 2v2",
-            value: mockUser.characters[0]?.arenaRating2v2 ?? 0,
-            pos: user2v2?.position,
+            value: myPos2v2?.rating ?? "—",
+            pos: myPos2v2?.position,
             icon: Users,
             color: "bg-primary/10 text-primary",
           },
           {
             label: "Arena 3v3",
-            value: mockUser.characters[0]?.arenaRating3v3 ?? 0,
-            pos: user3v3?.position,
+            value: myPos3v3?.rating ?? "—",
+            pos: myPos3v3?.position,
             icon: Trophy,
             color: "bg-secondary/10 text-secondary",
           },
           {
             label: "Honorable Kills",
-            value: (mockUser.characters[0]?.honorableKills ?? 0).toLocaleString(),
-            pos: userHK?.position,
+            value: myPosHK?.kills?.toLocaleString() ?? "—",
+            pos: myPosHK?.position,
             icon: Swords,
             color: "bg-error/10 text-error",
           },
         ].map(({ label, value, pos, icon: Icon, color }) => (
           <div key={label} className="card-fantasy flex items-center gap-4 p-4">
-            <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg ${color}`}>
+            <div
+              className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg ${color}`}
+            >
               <Icon className="h-6 w-6" />
             </div>
             <div>
               <p className="text-sm text-base-content/60">{label}</p>
-              <p className="text-2xl font-bold">{value}</p>
-              {pos && (
-                <span className="badge badge-outline badge-xs mt-1">#{pos} no ranking</span>
+              {loading ? (
+                <Loader2 className="h-5 w-5 animate-spin text-base-content/20" />
+              ) : (
+                <>
+                  <p className="text-2xl font-bold">{value}</p>
+                  {pos && (
+                    <span className="badge badge-outline badge-xs mt-1">
+                      #{pos} no ranking
+                    </span>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -125,7 +174,9 @@ const RankingPage = () => {
             key={key}
             onClick={() => setTab(key)}
             className={`flex items-center gap-2 rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
-              tab === key ? "bg-base-100 shadow-sm" : "text-base-content/60 hover:text-base-content"
+              tab === key
+                ? "bg-base-100 shadow-sm"
+                : "text-base-content/60 hover:text-base-content"
             }`}
           >
             <Icon className="h-4 w-4" />
@@ -141,42 +192,92 @@ const RankingPage = () => {
           <h3 className="font-bold">
             {tabs.find((t) => t.key === tab)?.label}
           </h3>
-          <span className="badge badge-outline text-xs">{activeData.length} jogadores</span>
+          <span className="badge badge-outline text-xs">
+            {activeCount} jogadores
+          </span>
         </div>
-        <RankingTable
-          players={activeData}
-          type={activeType as "arena" | "hk"}
-          highlightPlayer={userCharName}
-        />
+
+        {loading ? (
+          <div className="flex items-center justify-center py-12 text-base-content/30">
+            <Loader2 className="h-6 w-6 animate-spin" />
+          </div>
+        ) : tab === "hk" ? (
+          <RankingTable
+            hkPlayers={filteredHK}
+            type="hk"
+            highlightPlayer={highlightName}
+          />
+        ) : (
+          <RankingTable
+            arenaPlayers={tab === "2v2" ? filtered2v2 : filtered3v3}
+            type="arena"
+            highlightPlayer={highlightName}
+          />
+        )}
       </div>
 
       {/* Hall da Fama */}
-      <div className="card-fantasy p-6">
-        <h3 className="mb-1 flex items-center gap-2 font-bold">
-          <Crown className="h-5 w-5 text-primary" />
-          Hall da Fama
-        </h3>
-        <p className="mb-4 text-sm text-base-content/60">Os melhores jogadores de cada categoria</p>
-        <div className="grid gap-4 sm:grid-cols-3">
-          {[
-            { label: "Arena 2v2", icon: Users, data: mockArena2v2Ranking[0], color: "" },
-            { label: "Arena 3v3", icon: Trophy, data: mockArena3v3Ranking[0], color: "border-primary/50 bg-primary/5" },
-            { label: "Honorable Kills", icon: Swords, data: mockHKRanking[0], color: "" },
-          ].map(({ label, icon: Icon, data, color }) => (
-            <div key={label} className={`rounded-lg border border-base-300 p-4 text-center ${color}`}>
-              <Icon className="mx-auto h-8 w-8 text-primary" />
-              <p className="mt-2 text-sm text-base-content/50">{label}</p>
-              <p className="mt-1 text-lg font-bold">{data?.name}</p>
-              <p className="text-2xl font-bold text-primary">
-                {label === "Honorable Kills"
-                  ? data?.rating.toLocaleString()
-                  : data?.rating}
-              </p>
-              <span className="badge badge-ghost badge-sm mt-2">{data?.class}</span>
-            </div>
-          ))}
+      {!loading && (arena2v2.length > 0 || arena3v3.length > 0 || hk.length > 0) && (
+        <div className="card-fantasy p-6">
+          <h3 className="mb-1 flex items-center gap-2 font-bold">
+            <Crown className="h-5 w-5 text-primary" />
+            Hall da Fama
+          </h3>
+          <p className="mb-4 text-sm text-base-content/60">
+            Os melhores jogadores de cada categoria
+          </p>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {[
+              {
+                label: "Arena 2v2",
+                icon: Users,
+                name: arena2v2[0]?.name,
+                value: arena2v2[0]?.rating,
+                cls: arena2v2[0]?.class,
+                color: "",
+              },
+              {
+                label: "Arena 3v3",
+                icon: Trophy,
+                name: arena3v3[0]?.name,
+                value: arena3v3[0]?.rating,
+                cls: arena3v3[0]?.class,
+                color: "border-primary/50 bg-primary/5",
+              },
+              {
+                label: "Honorable Kills",
+                icon: Swords,
+                name: hk[0]?.name,
+                value: hk[0]?.kills?.toLocaleString(),
+                cls: hk[0]?.class,
+                color: "",
+              },
+            ].map(({ label, icon: Icon, name, value, cls, color }) =>
+              name ? (
+                <div
+                  key={label}
+                  className={`rounded-lg border border-base-300 p-4 text-center ${color}`}
+                >
+                  <Icon className="mx-auto h-8 w-8 text-primary" />
+                  <p className="mt-2 text-sm text-base-content/50">{label}</p>
+                  <p className="mt-1 text-lg font-bold">{name}</p>
+                  <p className="text-2xl font-bold text-primary">{value}</p>
+                  <span className="badge badge-ghost badge-sm mt-2">{cls}</span>
+                </div>
+              ) : (
+                <div
+                  key={label}
+                  className="rounded-lg border border-dashed border-base-300 p-4 text-center text-base-content/30"
+                >
+                  <Icon className="mx-auto h-8 w-8 opacity-20" />
+                  <p className="mt-2 text-sm">{label}</p>
+                  <p className="mt-1 text-sm">Sem dados</p>
+                </div>
+              )
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
