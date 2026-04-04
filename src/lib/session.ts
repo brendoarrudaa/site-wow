@@ -18,14 +18,11 @@ declare module 'iron-session' {
   }
 }
 
-const sessionSecret = process.env.SESSION_SECRET
-
-if (!sessionSecret && process.env.NODE_ENV === 'production') {
-  throw new Error('SESSION_SECRET is required in production')
-}
+const sessionSecret =
+  process.env.SESSION_SECRET ?? 'dev-only-session-secret-change-me-32chars'
 
 export const sessionOptions: SessionOptions = {
-  password: sessionSecret ?? 'dev-only-session-secret-change-me-32chars',
+  password: sessionSecret,
   cookieName: 'wow_session',
   cookieOptions: {
     secure: process.env.NODE_ENV === 'production',
@@ -36,5 +33,9 @@ export const sessionOptions: SessionOptions = {
 }
 
 export async function getSession(req: IncomingMessage, res: ServerResponse) {
+  // Validate SESSION_SECRET at runtime in production
+  if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
+    throw new Error('SESSION_SECRET is required in production')
+  }
   return getIronSession<AppSessionData>(req, res, sessionOptions)
 }
