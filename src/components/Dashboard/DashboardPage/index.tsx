@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/router"
 import {
   Bell,
@@ -9,8 +9,11 @@ import {
   Trophy,
   MessageSquare,
   Loader2,
+  X,
+  AlertCircle,
+  Clock,
 } from "lucide-react"
-import { mockTickets, mockShopItems } from "@/lib/mock-data"
+import { mockShopItems } from "@/lib/mock-data"
 import StatsCards from "@/components/Dashboard/StatsCards"
 import ServerStatusBadge from "@/components/Dashboard/ServerStatusBadge"
 
@@ -24,6 +27,17 @@ export interface RealCharacter {
   silver: number
   copper: number
   online: boolean
+}
+
+interface RealTicket {
+  id: number
+  subject: string
+  status: "open" | "in-progress" | "resolved" | "closed"
+  category: string
+  priority: "low" | "medium" | "high"
+  created_at: string
+  updated_at: string
+  messageCount: number
 }
 
 const CLASS_COLORS: Record<string, string> = {
@@ -64,6 +78,27 @@ const rarityClass: Record<string, string> = {
   common: "text-base-content/50 border-base-content/30",
 }
 
+const PRIORITY_COLORS: Record<string, string> = {
+  high: "text-error",
+  medium: "text-warning",
+  low: "text-success",
+}
+
+const PRIORITY_LABELS: Record<string, string> = {
+  high: "Alta",
+  medium: "Média",
+  low: "Baixa",
+}
+
+const CATEGORY_LABELS: Record<string, string> = {
+  bug: "Bug",
+  account: "Conta",
+  character: "Personagem",
+  report: "Denúncia",
+  suggestion: "Sugestão",
+  other: "Outro",
+}
+
 interface DashboardPageProps {
   username: string
   email: string
@@ -73,9 +108,13 @@ const DashboardPage = ({ username, email }: DashboardPageProps) => {
   const router = useRouter()
   const [characters, setCharacters] = useState<RealCharacter[]>([])
   const [loading, setLoading] = useState(true)
+  const [tickets, setTickets] = useState<RealTicket[]>([])
+  const [ticketsLoading, setTicketsLoading] = useState(true)
+  const [notifOpen, setNotifOpen] = useState(false)
+  const notifRef = useRef<HTMLDivElement>(null)
 
   const featuredItems = mockShopItems.filter((item) => item.featured).slice(0, 3)
-  const openTickets = mockTickets.filter(
+  const openTickets = tickets.filter(
     (t) => t.status === "open" || t.status === "in-progress"
   )
 
@@ -87,11 +126,35 @@ const DashboardPage = ({ username, email }: DashboardPageProps) => {
       })
       .catch(() => {})
       .finally(() => setLoading(false))
+
+    fetch("/api/account/tickets")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.tickets) setTickets(data.tickets)
+      })
+      .catch(() => {})
+      .finally(() => setTicketsLoading(false))
   }, [])
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
+        setNotifOpen(false)
+      }
+    }
+    if (notifOpen) document.addEventListener("mousedown", handler)
+    return () => document.removeEventListener("mousedown", handler)
+  }, [notifOpen])
 
   const handleLogout = async () => {
     await fetch("/api/account/logout", { method: "POST" })
     router.push("/cadastro")
+  }
+
+  const formatDate = (dateStr: string) => {
+    const d = new Date(dateStr)
+    return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })
   }
 
   return (
@@ -112,16 +175,102 @@ const DashboardPage = ({ username, email }: DashboardPageProps) => {
 
         <div className="flex items-center gap-2">
           <ServerStatusBadge />
-          <div className="relative">
-            <button className="btn btn-ghost btn-sm btn-square">
+
+          {/* Notification bell */}
+          <div className="relative" ref={notifRef}>
+            <button
+              className="btn btn-ghost btn-sm btn-square"
+              onClick={() => setNotifOpen((v) => !v)}
+              aria-label="Notificações"
+            >
               <Bell className="h-4 w-4" />
             </button>
             {openTickets.length > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-error text-[10px] font-bold text-error-content">
+              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-error text-[10px] font-bold text-error-content pointer-events-none">
                 {openTickets.length}
               </span>
             )}
+
+            {/* Dropdown */}
+            {notifOpen && (
+              <div className="absolute right-0 top-10 z-50 w-80 rounded-xl border border-base-300 bg-base-100 shadow-2xl">
+                <div className="flex items-center justify-between border-b border-base-300 px-4 py-3">
+                  <span className="text-sm font-semibold">Notificações</span>
+                  <button
+                    className="btn btn-ghost btn-xs btn-square"
+                    onClick={() => setNotifOpen(false)}
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+
+                <div className="max-h-72 overflow-y-auto">
+                  {ticketsLoading ? (
+                    <div className="flex items-center justify-center gap-2 py-6 text-base-content/40 text-sm">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Carregando…
+                    </div>
+                  ) : openTickets.length === 0 ? (
+                    <div className="py-8 text-center text-sm text-base-content/40">
+                      <Bell className="mx-auto mb-2 h-8 w-8 opacity-20" />
+                      Nenhuma notificação
+                    </div>
+                  ) : (
+                    openTickets.map((ticket) => (
+                      <Link
+                        key={ticket.id}
+                        href={`/dashboard/tickets?id=${ticket.id}`}
+                        onClick={() => setNotifOpen(false)}
+                        className="flex items-start gap-3 border-b border-base-300/50 px-4 py-3 transition-colors hover:bg-base-200 last:border-b-0"
+                      >
+                        <div className="mt-0.5 shrink-0">
+                          {ticket.status === "in-progress" ? (
+                            <Clock className="h-4 w-4 text-primary" />
+                          ) : (
+                            <AlertCircle className="h-4 w-4 text-error" />
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-medium">{ticket.subject}</p>
+                          <div className="mt-0.5 flex items-center gap-2 text-xs text-base-content/50">
+                            <span>{CATEGORY_LABELS[ticket.category] ?? ticket.category}</span>
+                            <span>·</span>
+                            <span className={PRIORITY_COLORS[ticket.priority]}>
+                              {PRIORITY_LABELS[ticket.priority]}
+                            </span>
+                            <span>·</span>
+                            <span>{formatDate(ticket.updated_at)}</span>
+                          </div>
+                        </div>
+                        <span
+                          className={`mt-0.5 shrink-0 badge badge-sm text-[10px] ${
+                            ticket.status === "in-progress"
+                              ? "badge-primary"
+                              : "badge-outline"
+                          }`}
+                        >
+                          {ticket.status === "in-progress" ? "Em andamento" : "Aberto"}
+                        </span>
+                      </Link>
+                    ))
+                  )}
+                </div>
+
+                {openTickets.length > 0 && (
+                  <div className="border-t border-base-300 px-4 py-2">
+                    <Link
+                      href="/dashboard/tickets"
+                      onClick={() => setNotifOpen(false)}
+                      className="block text-center text-xs text-primary hover:underline"
+                    >
+                      Ver todos os tickets
+                    </Link>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
+
           <button onClick={handleLogout} className="btn btn-outline btn-sm gap-2">
             <LogOut className="h-4 w-4" />
             Sair
@@ -264,7 +413,7 @@ const DashboardPage = ({ username, email }: DashboardPageProps) => {
               >
                 <MessageSquare className="h-4 w-4" />
                 Abrir Ticket
-                {openTickets.length > 0 && (
+                {!ticketsLoading && openTickets.length > 0 && (
                   <span className="badge badge-error badge-sm ml-auto">
                     {openTickets.length}
                   </span>
@@ -312,7 +461,7 @@ const DashboardPage = ({ username, email }: DashboardPageProps) => {
           </div>
 
           {/* Open tickets */}
-          {openTickets.length > 0 && (
+          {!ticketsLoading && openTickets.length > 0 && (
             <div className="card-fantasy border-error/30 p-4">
               <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-base-content/60 uppercase tracking-wider">
                 <MessageSquare className="h-4 w-4 text-error" />
@@ -336,7 +485,7 @@ const DashboardPage = ({ username, email }: DashboardPageProps) => {
                       </span>
                     </div>
                     <p className="mt-1 text-xs text-base-content/50">
-                      #{ticket.id} — {ticket.updatedAt}
+                      #{ticket.id} — {formatDate(ticket.updated_at)}
                     </p>
                   </Link>
                 ))}
