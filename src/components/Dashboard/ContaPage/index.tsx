@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from 'react'
+import { buildIdempotencyKey } from '../../../lib/idempotency'
 import {
   User,
   Mail,
@@ -10,8 +11,8 @@ import {
   Swords,
   Loader2,
   Check,
-  X,
-} from "lucide-react"
+  X
+} from 'lucide-react'
 
 interface AccountInfo {
   joindate: string
@@ -27,82 +28,88 @@ interface ContaPageProps {
   email: string
 }
 
-const ContaPage = ({ username = "", email = "" }: ContaPageProps) => {
+const ContaPage = ({ username = '', email = '' }: ContaPageProps) => {
   const [info, setInfo] = useState<AccountInfo | null>(null)
   const [loading, setLoading] = useState(true)
 
   // Password change
   const [passwordDialog, setPasswordDialog] = useState(false)
-  const [currentPassword, setCurrentPassword] = useState("")
-  const [newPassword, setNewPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [passwordLoading, setPasswordLoading] = useState(false)
-  const [passwordError, setPasswordError] = useState("")
+  const [passwordError, setPasswordError] = useState('')
   const [passwordSuccess, setPasswordSuccess] = useState(false)
 
   useEffect(() => {
-    fetch("/api/account/info")
-      .then((r) => r.json())
+    fetch('/api/account/info')
+      .then(r => r.json())
       .then(setInfo)
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
 
   const handleChangePassword = async () => {
-    setPasswordError("")
+    setPasswordError('')
     setPasswordSuccess(false)
 
     if (!currentPassword || !newPassword || !confirmPassword) {
-      setPasswordError("Preencha todos os campos.")
+      setPasswordError('Preencha todos os campos.')
       return
     }
     if (newPassword.length < 6) {
-      setPasswordError("A nova senha deve ter pelo menos 6 caracteres.")
+      setPasswordError('A nova senha deve ter pelo menos 6 caracteres.')
       return
     }
     if (newPassword !== confirmPassword) {
-      setPasswordError("As senhas não coincidem.")
+      setPasswordError('As senhas não coincidem.')
       return
     }
 
     setPasswordLoading(true)
     try {
-      const res = await fetch("/api/account/change-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ currentPassword, newPassword }),
+      const res = await fetch('/api/account/change-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Idempotency-Key': buildIdempotencyKey(
+            'account-change-password',
+            username || 'self'
+          )
+        },
+        body: JSON.stringify({ currentPassword, newPassword })
       })
       const data = await res.json()
 
       if (!res.ok) {
-        setPasswordError(data.error || "Erro ao alterar senha.")
+        setPasswordError(data.error || 'Erro ao alterar senha.')
         return
       }
 
       setPasswordSuccess(true)
-      setCurrentPassword("")
-      setNewPassword("")
-      setConfirmPassword("")
+      setCurrentPassword('')
+      setNewPassword('')
+      setConfirmPassword('')
       setTimeout(() => {
         setPasswordDialog(false)
         setPasswordSuccess(false)
       }, 2000)
     } catch {
-      setPasswordError("Erro de conexão.")
+      setPasswordError('Erro de conexão.')
     } finally {
       setPasswordLoading(false)
     }
   }
 
   const formatDate = (dateStr: string | null) => {
-    if (!dateStr) return "—"
+    if (!dateStr) return '—'
     const d = new Date(dateStr)
-    return d.toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+    return d.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     })
   }
 
@@ -133,7 +140,7 @@ const ContaPage = ({ username = "", email = "" }: ContaPageProps) => {
               </div>
               <div>
                 <h3 className="text-xl font-bold">{username}</h3>
-                <p className="text-base-content/60">{email || "Sem e-mail"}</p>
+                <p className="text-base-content/60">{email || 'Sem e-mail'}</p>
                 {info && (
                   <span className="badge badge-outline mt-2 gap-1 text-xs">
                     <Calendar className="h-3 w-3" />
@@ -161,7 +168,7 @@ const ContaPage = ({ username = "", email = "" }: ContaPageProps) => {
                   Email
                 </label>
                 <input
-                  value={email || "—"}
+                  value={email || '—'}
                   disabled
                   className="input input-bordered w-full bg-base-200 text-sm"
                 />
@@ -171,7 +178,8 @@ const ContaPage = ({ username = "", email = "" }: ContaPageProps) => {
             <div className="flex items-start gap-3 rounded-lg border border-warning/50 bg-warning/10 p-3 text-sm">
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
               <span>
-                O nome de usuário não pode ser alterado. Para alterar o email, entre em contato com o suporte.
+                O nome de usuário não pode ser alterado. Para alterar o email,
+                entre em contato com o suporte.
               </span>
             </div>
           </div>
@@ -199,11 +207,11 @@ const ContaPage = ({ username = "", email = "" }: ContaPageProps) => {
               <button
                 onClick={() => {
                   setPasswordDialog(true)
-                  setPasswordError("")
+                  setPasswordError('')
                   setPasswordSuccess(false)
-                  setCurrentPassword("")
-                  setNewPassword("")
-                  setConfirmPassword("")
+                  setCurrentPassword('')
+                  setNewPassword('')
+                  setConfirmPassword('')
                 }}
                 className="btn btn-outline btn-sm"
               >
@@ -222,7 +230,11 @@ const ContaPage = ({ username = "", email = "" }: ContaPageProps) => {
                 <div>
                   <p className="font-medium">Status da Conta</p>
                   <p className="text-sm text-base-content/50">
-                    {loading ? "Carregando…" : info?.locked ? "Conta bloqueada" : "Conta ativa"}
+                    {loading
+                      ? 'Carregando…'
+                      : info?.locked
+                        ? 'Conta bloqueada'
+                        : 'Conta ativa'}
                   </p>
                 </div>
               </div>
@@ -230,11 +242,11 @@ const ContaPage = ({ username = "", email = "" }: ContaPageProps) => {
                 <span
                   className={`badge badge-outline text-xs ${
                     info.locked
-                      ? "border-error text-error"
-                      : "border-success text-success"
+                      ? 'border-error text-error'
+                      : 'border-success text-success'
                   }`}
                 >
-                  {info.locked ? "Bloqueada" : "Ativa"}
+                  {info.locked ? 'Bloqueada' : 'Ativa'}
                 </span>
               )}
             </div>
@@ -245,9 +257,10 @@ const ContaPage = ({ username = "", email = "" }: ContaPageProps) => {
                 <div className="flex items-start gap-3 rounded-lg border border-error/50 bg-error/10 p-3 text-sm">
                   <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-error" />
                   <span>
-                    {info.failedLogins} tentativa(s) de login falha(s) registrada(s).
+                    {info.failedLogins} tentativa(s) de login falha(s)
+                    registrada(s).
                     {info.failedLogins >= 10 &&
-                      " A conta foi bloqueada automaticamente por segurança."}
+                      ' A conta foi bloqueada automaticamente por segurança.'}
                   </span>
                 </div>
               </>
@@ -301,12 +314,14 @@ const ContaPage = ({ username = "", email = "" }: ContaPageProps) => {
                     Último IP
                   </span>
                   <span className="text-sm font-mono text-base-content/50">
-                    {info.lastIp || "—"}
+                    {info.lastIp || '—'}
                   </span>
                 </div>
               </>
             ) : (
-              <p className="text-sm text-base-content/40">Erro ao carregar dados.</p>
+              <p className="text-sm text-base-content/40">
+                Erro ao carregar dados.
+              </p>
             )}
           </div>
 
@@ -316,7 +331,8 @@ const ContaPage = ({ username = "", email = "" }: ContaPageProps) => {
               Dica de Segurança
             </h3>
             <p className="text-sm text-base-content/60">
-              Use uma senha forte e exclusiva para sua conta. A mesma senha é usada para entrar no site e no cliente do jogo.
+              Use uma senha forte e exclusiva para sua conta. A mesma senha é
+              usada para entrar no site e no cliente do jogo.
             </p>
           </div>
         </div>
@@ -361,7 +377,7 @@ const ContaPage = ({ username = "", email = "" }: ContaPageProps) => {
                       type="password"
                       className="input input-bordered w-full text-sm"
                       value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      onChange={e => setCurrentPassword(e.target.value)}
                     />
                   </div>
                   <div className="space-y-1">
@@ -372,7 +388,7 @@ const ContaPage = ({ username = "", email = "" }: ContaPageProps) => {
                       type="password"
                       className="input input-bordered w-full text-sm"
                       value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
+                      onChange={e => setNewPassword(e.target.value)}
                     />
                   </div>
                   <div className="space-y-1">
@@ -383,7 +399,7 @@ const ContaPage = ({ username = "", email = "" }: ContaPageProps) => {
                       type="password"
                       className="input input-bordered w-full text-sm"
                       value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      onChange={e => setConfirmPassword(e.target.value)}
                     />
                   </div>
                 </div>
@@ -411,7 +427,7 @@ const ContaPage = ({ username = "", email = "" }: ContaPageProps) => {
                     {passwordLoading ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                      "Salvar"
+                      'Salvar'
                     )}
                   </button>
                 </div>
