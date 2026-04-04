@@ -2,22 +2,21 @@ import { getIronSession } from 'iron-session'
 import { getPool } from '@/lib/db'
 import { sessionOptions } from '@/lib/session'
 
-// AzerothCore at_login bitmask flags
-const AT_LOGIN_FLAGS = {
-  'name-change':    1,   // AT_LOGIN_RENAME
-  'appearance':     8,   // AT_LOGIN_CUSTOMIZE
-  'race-change':    64,  // AT_LOGIN_CHANGE_RACE
-  'faction-change': 128, // AT_LOGIN_CHANGE_FACTION
-}
-
-// Homebind coordinates for unstuck (capital cities)
 const HORDE_RACES = new Set([2, 5, 6, 8, 10])
 
-// Orgrimmar for Horde, Stormwind for Alliance
 const UNSTUCK_POS = {
-  horde:    { map: 1,   x: 1629.36, y: -4373.34, z: 31.26 },  // Orgrimmar
-  alliance: { map: 0,   x: -8833.38, y: 628.62,  z: 94.01 },  // Stormwind
+  horde:    { map: 1, x: 1629.36, y: -4373.34, z: 31.26 },
+  alliance: { map: 0, x: -8833.38, y: 628.62, z: 94.01 },
 }
+
+// Services that require the game client UI (set at_login flag)
+const AT_LOGIN_FLAGS = {
+  'appearance':     8,
+  'race-change':    64,
+  'faction-change': 128,
+}
+
+const USERNAME_RE = /^[A-Za-z]{2,12}$/
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end()
@@ -25,7 +24,7 @@ export default async function handler(req, res) {
   const session = await getIronSession(req, res, sessionOptions)
   if (!session.user) return res.status(401).json({ error: 'Não autenticado.' })
 
-  const { serviceId, characterGuid } = req.body
+  const { serviceId, characterGuid, newName } = req.body
 
   if (typeof serviceId !== 'string' || typeof characterGuid !== 'number') {
     return res.status(400).json({ error: 'Dados inválidos.' })
@@ -34,7 +33,6 @@ export default async function handler(req, res) {
   const pool = getPool()
 
   try {
-    // Verify character belongs to this account
     const [charRows] = await pool.query(
       'SELECT guid, name, race, online, at_login FROM acore_characters.characters WHERE guid = ? AND account = ?',
       [characterGuid, session.user.id]
@@ -46,20 +44,11 @@ export default async function handler(req, res) {
 
     const character = charRows[0]
 
-    // Character must be offline
     if (character.online === 1) {
       return res.status(400).json({ error: 'O personagem precisa estar deslogado para usar este serviço.' })
     }
 
-    // Block if character already has a pending service (at_login != 0)
-    // Unstuck is allowed even with pending flags (it only changes position)
-    if (serviceId !== 'unstuck' && character.at_login !== 0) {
-      return res.status(400).json({
-        error: 'Este personagem já tem um serviço pendente. Entre no jogo para aplicá-lo antes de usar outro.',
-      })
-    }
-
-    // Handle unstuck separately (position update, not at_login flag)
+    // ── Unstuck (direct — changes position) ──────────────────────────────
     if (serviceId === 'unstuck') {
       const isHorde = HORDE_RACES.has(character.race)
       const pos = isHorde ? UNSTUCK_POS.horde : UNSTUCK_POS.alliance
@@ -74,26 +63,66 @@ export default async function handler(req, res) {
       const city = isHorde ? 'Orgrimmar' : 'Stormwind'
       return res.status(200).json({
         success: true,
-        message: `${character.name} será teleportado para ${city} no próximo login.`,
+        message: `${character.name} foi teleportado para ${city}. Já pode logar!`,
       })
     }
 
-    // Handle reset talents (set at_login flag 4)
+    // ── Reset Talents (direct — clears talent table) ─────────────────────
     if (serviceId === 'level-reset') {
       await pool.query(
-        'UPDATE acore_characters.characters SET at_login = at_login | 4 WHERE guid = ?',
+        'DELETE FROM acore_characters.character_talent WHERE guid = ?',
         [characterGuid]
       )
+
       return res.status(200).json({
         success: true,
-        message: `Os talentos de ${character.name} serão resetados no próximo login.`,
+        message: `Os talentos de ${character.name} foram resetados. Já pode logar e redistribuir!`,
       })
     }
 
-    // Handle at_login flag services
+    // ── Name Change (direct — updates name in DB) ────────────────────────
+    if (serviceId === 'name-change') {
+      if (typeof newName !== 'string' || !USERNAME_RE.test(newName)) {
+        return res.status(400).json({
+          error: 'O nome deve ter entre 2 e 12 letras (sem números ou espaços).',
+        })
+      }
+
+      // Check if name is already taken
+      const [existing] = await pool.query(
+        'SELECT guid FROM acore_characters.characters WHERE LOWER(name) = LOWER(?) AND guid != ?',
+        [newName, characterGuid]
+      )
+
+      if (existing.length > 0) {
+        return res.status(400).json({ error: `O nome "${newName}" já está em uso.` })
+      }
+
+      // Capitalize first letter
+      const formattedName = newName.charAt(0).toUpperCase() + newName.slice(1).toLowerCase()
+
+      await pool.query(
+        'UPDATE acore_characters.characters SET name = ? WHERE guid = ?',
+        [formattedName, characterGuid]
+      )
+
+      return res.status(200).json({
+        success: true,
+        message: `Nome alterado de ${character.name} para ${formattedName}!`,
+      })
+    }
+
+    // ── Services that need game client (at_login flag) ───────────────────
     const flag = AT_LOGIN_FLAGS[serviceId]
     if (!flag) {
       return res.status(400).json({ error: 'Serviço desconhecido.' })
+    }
+
+    // Check if this specific flag is already set
+    if ((character.at_login & flag) !== 0) {
+      return res.status(400).json({
+        error: 'Este serviço já está ativado para este personagem. Entre no jogo para aplicá-lo.',
+      })
     }
 
     await pool.query(
@@ -102,7 +131,6 @@ export default async function handler(req, res) {
     )
 
     const serviceNames = {
-      'name-change':    'Troca de Nome',
       'appearance':     'Mudança de Aparência',
       'race-change':    'Troca de Raça',
       'faction-change': 'Troca de Facção',
@@ -110,7 +138,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       success: true,
-      message: `${serviceNames[serviceId]} ativado para ${character.name}. A alteração será feita no próximo login no jogo.`,
+      message: `${serviceNames[serviceId]} ativado para ${character.name}. Entre no jogo — a tela de alteração aparecerá automaticamente.`,
     })
   } catch (err) {
     console.error('[services]', err)
