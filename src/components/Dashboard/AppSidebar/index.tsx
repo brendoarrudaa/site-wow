@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { useRouter } from "next/router"
+import { useEffect, useState } from "react"
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -12,12 +13,7 @@ import {
   LogOut,
   Swords,
   ChevronUp,
-  Coins,
-  Sparkles,
-  MoreVertical,
 } from "lucide-react"
-import { mockUser, mockTickets } from "@/lib/mock-data"
-import { useState } from "react"
 
 const mainNavItems = [
   { title: "Visão Geral", href: "/dashboard", icon: LayoutDashboard },
@@ -36,12 +32,47 @@ const supportNavItems = [
   { title: "Configurações", href: "/dashboard/conta", icon: Settings },
 ]
 
+interface SessionUser {
+  username: string
+  email: string
+}
+
 const AppSidebar = () => {
-  const { pathname } = useRouter()
+  const router = useRouter()
+  const { pathname } = router
   const [userMenuOpen, setUserMenuOpen] = useState(false)
-  const openTickets = mockTickets.filter(
-    (t) => t.status === "open" || t.status === "in-progress"
-  ).length
+  const [user, setUser] = useState<SessionUser | null>(null)
+  const [openTickets, setOpenTickets] = useState(0)
+
+  useEffect(() => {
+    fetch("/api/account/session")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.user) setUser(data.user)
+      })
+      .catch(() => {})
+
+    fetch("/api/account/tickets")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.tickets) {
+          const open = data.tickets.filter(
+            (t: { status: string }) =>
+              t.status === "open" || t.status === "in-progress"
+          ).length
+          setOpenTickets(open)
+        }
+      })
+      .catch(() => {})
+  }, [])
+
+  const handleLogout = async () => {
+    await fetch("/api/account/logout", { method: "POST" })
+    router.push("/cadastro")
+  }
+
+  const username = user?.username || ""
+  const email = user?.email || ""
 
   return (
     <aside className="flex h-full w-64 flex-col border-r border-base-300 bg-base-200">
@@ -52,7 +83,7 @@ const AppSidebar = () => {
             <Swords className="h-5 w-5" />
           </div>
           <div className="flex flex-col">
-            <span className="text-lg font-bold text-primary">Frostmourne</span>
+            <span className="text-lg font-bold text-primary">Azeroth Legacy</span>
             <span className="text-xs text-base-content/50">WotLK 3.3.5a</span>
           </div>
         </Link>
@@ -60,31 +91,26 @@ const AppSidebar = () => {
 
       {/* Scrollable content */}
       <div className="flex-1 overflow-y-auto">
-        {/* Points display */}
-        <div className="mx-3 mt-4 rounded-lg border border-base-300 bg-base-100 p-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Coins className="h-4 w-4 text-primary" />
-              <span className="text-sm text-base-content/60">Pontos de Doação</span>
-            </div>
-            <span className="font-bold text-primary">
-              {mockUser.donationPoints.toLocaleString()}
-            </span>
-          </div>
-          <div className="mt-2 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-secondary" />
-              <span className="text-sm text-base-content/60">Pontos de Voto</span>
-            </div>
-            <span className="font-bold text-secondary">{mockUser.votePoints}</span>
-          </div>
-        </div>
-
         {/* Nav groups */}
         <nav className="mt-4 px-2">
-          <NavGroup label="Principal" items={mainNavItems} pathname={pathname} openTickets={0} />
-          <NavGroup label="Jogo" items={gameNavItems} pathname={pathname} openTickets={0} />
-          <NavGroup label="Suporte" items={supportNavItems} pathname={pathname} openTickets={openTickets} />
+          <NavGroup
+            label="Principal"
+            items={mainNavItems}
+            pathname={pathname}
+            openTickets={0}
+          />
+          <NavGroup
+            label="Jogo"
+            items={gameNavItems}
+            pathname={pathname}
+            openTickets={0}
+          />
+          <NavGroup
+            label="Suporte"
+            items={supportNavItems}
+            pathname={pathname}
+            openTickets={openTickets}
+          />
         </nav>
       </div>
 
@@ -95,14 +121,20 @@ const AppSidebar = () => {
           className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left transition-colors hover:bg-base-300"
         >
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-primary bg-primary text-primary-content text-sm font-bold">
-            {mockUser.username.slice(0, 2).toUpperCase()}
+            {username ? username.slice(0, 2).toUpperCase() : "??"}
           </div>
           <div className="flex min-w-0 flex-col">
-            <span className="truncate text-sm font-medium">{mockUser.username}</span>
-            <span className="truncate text-xs text-base-content/50">{mockUser.email}</span>
+            <span className="truncate text-sm font-medium">
+              {username || "…"}
+            </span>
+            <span className="truncate text-xs text-base-content/50">
+              {email || "—"}
+            </span>
           </div>
           <ChevronUp
-            className={`ml-auto h-4 w-4 shrink-0 transition-transform ${userMenuOpen ? "" : "rotate-180"}`}
+            className={`ml-auto h-4 w-4 shrink-0 transition-transform ${
+              userMenuOpen ? "" : "rotate-180"
+            }`}
           />
         </button>
 
@@ -125,7 +157,10 @@ const AppSidebar = () => {
               Configurações
             </Link>
             <div className="my-1 h-px bg-base-300" />
-            <button className="flex w-full items-center gap-2 rounded-b-lg px-3 py-2 text-sm text-error transition-colors hover:bg-base-200">
+            <button
+              onClick={handleLogout}
+              className="flex w-full items-center gap-2 rounded-b-lg px-3 py-2 text-sm text-error transition-colors hover:bg-base-200"
+            >
               <LogOut className="h-4 w-4" />
               Sair
             </button>
@@ -138,7 +173,12 @@ const AppSidebar = () => {
 
 interface NavGroupProps {
   label: string
-  items: { title: string; href: string; icon: React.ElementType; badge?: string }[]
+  items: {
+    title: string
+    href: string
+    icon: React.ElementType
+    badge?: string
+  }[]
   pathname: string
   openTickets: number
 }
@@ -151,7 +191,8 @@ const NavGroup = ({ label, items, pathname, openTickets }: NavGroupProps) => (
     <ul className="flex flex-col gap-0.5">
       {items.map((item) => {
         const isActive = pathname === item.href
-        const ticketBadge = item.title === "Tickets" && openTickets > 0 ? openTickets : null
+        const ticketBadge =
+          item.title === "Tickets" && openTickets > 0 ? openTickets : null
         return (
           <li key={item.href} className="relative">
             <Link
