@@ -8,7 +8,7 @@ import { sessionOptions } from '@/lib/session'
 const Guild = () => {
   return (
     <>
-      <SEO title="Minha Guild" description="Informações da sua guild no servidor Frostmourne." path="/dashboard/guild" />
+      <SEO title="Minha Guild" description="Informações da sua guild no Azeroth Legacy." path="/dashboard/guild" />
       <DashboardLayout>
         <GuildPage />
       </DashboardLayout>
