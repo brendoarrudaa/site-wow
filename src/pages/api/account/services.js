@@ -36,7 +36,7 @@ export default async function handler(req, res) {
   try {
     // Verify character belongs to this account
     const [charRows] = await pool.query(
-      'SELECT guid, name, race, online FROM acore_characters.characters WHERE guid = ? AND account = ?',
+      'SELECT guid, name, race, online, at_login FROM acore_characters.characters WHERE guid = ? AND account = ?',
       [characterGuid, session.user.id]
     )
 
@@ -49,6 +49,14 @@ export default async function handler(req, res) {
     // Character must be offline
     if (character.online === 1) {
       return res.status(400).json({ error: 'O personagem precisa estar deslogado para usar este serviço.' })
+    }
+
+    // Block if character already has a pending service (at_login != 0)
+    // Unstuck is allowed even with pending flags (it only changes position)
+    if (serviceId !== 'unstuck' && character.at_login !== 0) {
+      return res.status(400).json({
+        error: 'Este personagem já tem um serviço pendente. Entre no jogo para aplicá-lo antes de usar outro.',
+      })
     }
 
     // Handle unstuck separately (position update, not at_login flag)
