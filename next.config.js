@@ -3,12 +3,12 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 const scriptSrc = [
   "'self'",
   "'unsafe-inline'",
-  "'unsafe-eval'",
   'https://unpkg.com',
   'https://identity.netlify.com'
 ]
 
 if (isDevelopment) {
+  scriptSrc.push("'unsafe-eval'")
   scriptSrc.push('blob:')
 }
 
@@ -21,13 +21,19 @@ const connectSrc = [
 ]
 
 if (isDevelopment) {
-  connectSrc.push('ws:', 'wss:', 'http://localhost:*', 'http://127.0.0.1:*', 'https://unpkg.com')
+  connectSrc.push(
+    'ws:',
+    'wss:',
+    'http://localhost:*',
+    'http://127.0.0.1:*',
+    'https://unpkg.com'
+  )
 }
 
 const contentSecurityPolicy = [
   "default-src 'self'",
   `script-src ${scriptSrc.join(' ')}`,
-  "style-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https:",
   `connect-src ${connectSrc.join(' ')}`,
@@ -92,7 +98,7 @@ module.exports = {
   async rewrites() {
     return [
       { source: '/admin', destination: '/admin/index.html' },
-      { source: '/config.yml', destination: '/admin/config.yml' },
+      { source: '/config.yml', destination: '/admin/config.yml' }
     ]
   },
   async headers() {
@@ -112,7 +118,7 @@ module.exports = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://unpkg.com https://identity.netlify.com",
+              `script-src 'self' 'unsafe-inline' ${isDevelopment ? "'unsafe-eval' " : ''}blob: https://unpkg.com https://identity.netlify.com`,
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https:",
               "font-src 'self' data: https:",
@@ -138,7 +144,7 @@ module.exports = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://unpkg.com https://identity.netlify.com",
+              `script-src 'self' 'unsafe-inline' ${isDevelopment ? "'unsafe-eval' " : ''}blob: https://unpkg.com https://identity.netlify.com`,
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https:",
               "font-src 'self' data: https:",

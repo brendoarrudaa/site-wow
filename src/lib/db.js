@@ -12,8 +12,19 @@ export function getPool() {
       database: 'acore_auth',
       waitForConnections: true,
       connectionLimit: 10,
-      charset: 'utf8mb4',
+      charset: 'utf8mb4'
     })
   }
   return pool
+}
+
+export async function query(sql, params) {
+  const pool = getPool()
+  const [rows] = await pool.execute(sql, params)
+  return rows
+}
+
+export async function getConnection() {
+  const pool = getPool()
+  return pool.getConnection()
 }
