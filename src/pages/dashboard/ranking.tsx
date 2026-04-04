@@ -8,7 +8,7 @@ import { sessionOptions } from '@/lib/session'
 const Ranking = () => {
   return (
     <>
-      <SEO title="Ranking PvP" description="Ranking de PvP do servidor Frostmourne." path="/dashboard/ranking" />
+      <SEO title="Ranking PvP" description="Ranking de PvP do Azeroth Legacy." path="/dashboard/ranking" />
       <DashboardLayout>
         <RankingPage />
       </DashboardLayout>
