@@ -199,10 +199,103 @@ Isso significa que **o banco vazado sozinho não expõe as senhas** dos jogadore
 
 | Método | Rota | Descrição |
 |---|---|---|
-| `POST` | `/api/account/register` | Cria conta |
+| `POST` | `/api/account/register` | Inicia cadastro (pendente verificação) |
+| `POST` | `/api/account/verify-code` | Confirma código de e-mail e cria conta |
+| `POST` | `/api/account/resend-code` | Reenvia código de verificação |
 | `POST` | `/api/account/login` | Autentica e cria sessão |
 | `POST` | `/api/account/logout` | Destroi a sessão |
-| `GET` | `/api/account/session` | Retorna usuário da sessão atual |
+| `GET`  | `/api/account/session` | Retorna usuário da sessão atual |
+| `GET`  | `/api/account/info` | Dados da conta (joindate, last login, etc.) |
+| `POST` | `/api/account/change-password` | Altera senha (exige senha atual) |
+| `POST` | `/api/account/reset-request` | Solicita reset de senha por e-mail |
+| `POST` | `/api/account/reset-confirm` | Confirma reset de senha com token |
+| `GET`  | `/api/account/characters` | Lista personagens da conta |
+| `GET`  | `/api/account/armory` | Equipamentos e stats dos personagens |
+| `GET`  | `/api/account/guild` | Informações da guild do personagem |
+| `POST` | `/api/account/services` | Executa serviço de personagem |
+| `GET`  | `/api/account/tickets` | Lista tickets de suporte |
+| `POST` | `/api/account/tickets` | Cria novo ticket |
+| `GET`  | `/api/account/ticket-messages` | Mensagens de um ticket |
+| `POST` | `/api/account/ticket-messages` | Responde um ticket |
+| `GET`  | `/api/ranking` | Ranking PvP (arena 2v2, 3v3, HK) |
+| `GET`  | `/api/server/status` | Status do servidor (online/offline, players) |
+
+---
+
+## Dashboard
+
+O painel do jogador (`/dashboard`) é protegido por sessão e oferece acesso a todas as funcionalidades da conta e personagens.
+
+### Páginas
+
+| Rota | Componente | Descrição |
+|---|---|---|
+| `/dashboard` | DashboardPage | Visão geral — personagens, stats, atalhos rápidos |
+| `/dashboard/servicos` | ServicosPage | Serviços de personagem gratuitos |
+| `/dashboard/ranking` | RankingPage | Ranking PvP do servidor |
+| `/dashboard/armory` | ArmoryPage | Equipamentos e estatísticas dos personagens |
+| `/dashboard/guild` | GuildPage | Informações da guild (membros, ranks, MOTD) |
+| `/dashboard/tickets` | TicketsPage | Sistema de tickets de suporte |
+| `/dashboard/conta` | ContaPage | Configurações da conta e troca de senha |
+| `/dashboard/loja` | LojaPage | Loja de itens (em desenvolvimento) |
+
+### Serviços de personagem
+
+Serviços gratuitos disponíveis na página `/dashboard/servicos`. Todos exigem que o personagem esteja **offline**.
+
+| Serviço | Tipo | Funcionamento |
+|---|---|---|
+| Destravar (Unstuck) | Instantâneo | Teleporta para Orgrimmar (Horda) ou Stormwind (Aliança) |
+| Reset de Talentos | Instantâneo | Remove todos os talentos para redistribuição |
+| Troca de Nome | Instantâneo | Altera o nome diretamente no banco (2-12 letras, verifica duplicatas) |
+| Mudança de Aparência | Via jogo | Define flag `at_login=8` — tela de customização no próximo login |
+| Troca de Raça | Via jogo | Define flag `at_login=64` — troca de raça no próximo login |
+| Troca de Facção | Via jogo | Define flag `at_login=128` — troca de facção no próximo login |
+
+### Ranking PvP
+
+A API `/api/ranking` consulta diretamente as tabelas de arena e personagens do AzerothCore:
+
+- **Arena 2v2** — `arena_team` (type=2) + `arena_team_member` → ordenado por `personalRating`
+- **Arena 3v3** — `arena_team` (type=3) + `arena_team_member` → ordenado por `personalRating`
+- **Honorable Kills** — `characters.totalKills` → top 50
+
+Inclui nome da guild (via JOIN) e facção (detectada pela raça). Cache de 60s via `s-maxage`.
+
+### Armory
+
+A API `/api/account/armory` retorna para cada personagem da conta:
+
+- Classe, raça, level, gold, tempo jogado, kills totais
+- Equipamentos por slot (head, chest, legs, weapons, etc.) com nome do item, item level e raridade
+- Item level médio calculado a partir dos itens equipados
+
+Consulta as tabelas `characters`, `character_inventory` + `item_instance` + `item_template` do banco `acore_characters` e `acore_world`.
+
+### Guild
+
+A API `/api/account/guild` retorna:
+
+- Nome da guild, facção, MOTD (Message of the Day)
+- Lista completa de membros com nome, classe, raça, level, rank e status online
+- Rank do jogador atual na guild
+
+### Tickets de Suporte
+
+Sistema de tickets com criação, listagem e troca de mensagens:
+
+- Categorias: Bug, Conta, Personagem, Denúncia, Sugestão, Outro
+- Prioridades: Baixa, Média, Alta
+- Status: Aberto, Em Progresso, Resolvido, Fechado
+- Mensagens com distinção visual staff/jogador
+
+### Bancos de dados utilizados
+
+| Banco | Tabelas consultadas |
+|---|---|
+| `acore_auth` | `account`, `account_pending_verifications` |
+| `acore_characters` | `characters`, `character_inventory`, `item_instance`, `character_talent`, `arena_team`, `arena_team_member`, `guild`, `guild_member`, `guild_rank` |
+| `acore_world` | `item_template` |
 
 ---
 
@@ -211,18 +304,61 @@ Isso significa que **o banco vazado sozinho não expõe as senhas** dos jogadore
 ```
 src/
 ├── lib/
-│   ├── db.js          # Pool de conexão MySQL (acore_auth)
-│   ├── session.js     # Configuração do iron-session
-│   ├── srp6.js        # Implementação SRP6 compatível com AzerothCore
-│   └── rateLimit.js   # Rate limiter in-memory por IP
+│   ├── db.js              # Pool de conexão MySQL (acore_auth + acore_characters)
+│   ├── session.js         # Configuração do iron-session
+│   ├── srp6.js            # Implementação SRP6 compatível com AzerothCore
+│   ├── rateLimit.js       # Rate limiter in-memory por IP
+│   └── emailVerification.js # Helpers de verificação de e-mail (Resend)
+├── components/
+│   └── Dashboard/
+│       ├── DashboardLayout/   # Layout com sidebar e navegação
+│       ├── DashboardPage/     # Página principal do painel
+│       ├── ServicosPage/      # Serviços de personagem
+│       ├── RankingPage/       # Ranking PvP
+│       ├── RankingTable/      # Tabela reutilizável de ranking
+│       ├── ArmoryPage/        # Equipamentos e stats
+│       ├── GuildPage/         # Informações da guild
+│       ├── TicketsPage/       # Tickets de suporte
+│       ├── ContaPage/         # Configurações da conta
+│       ├── LojaPage/          # Loja (mock data)
+│       ├── StatsCards/        # Cards de estatísticas
+│       ├── CharacterCard/     # Card de personagem
+│       ├── ShopItemCard/      # Card de item da loja
+│       ├── ServerStatusBadge/ # Badge de status do servidor
+│       └── AppSidebar/        # Sidebar do dashboard
 └── pages/
-    ├── cadastro.tsx   # Página de login/cadastro
+    ├── cadastro.tsx           # Página de login/cadastro
+    ├── recuperar-senha.tsx    # Recuperação de senha
+    ├── dashboard.tsx          # Dashboard principal
+    ├── dashboard/
+    │   ├── servicos.tsx
+    │   ├── ranking.tsx
+    │   ├── armory.tsx
+    │   ├── guild.tsx
+    │   ├── tickets.tsx
+    │   ├── conta.tsx
+    │   └── loja.tsx
     └── api/
+        ├── server/
+        │   └── status.js
+        ├── ranking.js
         └── account/
             ├── register.js
+            ├── verify-code.js
+            ├── resend-code.js
             ├── login.js
             ├── logout.js
-            └── session.js
+            ├── session.js
+            ├── info.js
+            ├── change-password.js
+            ├── reset-request.js
+            ├── reset-confirm.js
+            ├── characters.js
+            ├── armory.js
+            ├── guild.js
+            ├── services.js
+            ├── tickets.js
+            └── ticket-messages.js
 ```
 
 ---

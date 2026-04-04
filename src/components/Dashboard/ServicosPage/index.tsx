@@ -13,6 +13,7 @@ import {
   Loader2,
   Swords,
   X,
+  Info,
 } from "lucide-react"
 
 interface RealCharacter {
@@ -47,51 +48,55 @@ interface ServiceDef {
   name: string
   description: string
   icon: React.ComponentType<{ className?: string }>
-  free: boolean
+  mode: "direct" | "game"
+  directLabel?: string
 }
 
 const SERVICES: ServiceDef[] = [
   {
     id: "unstuck",
     name: "Destravar Personagem",
-    description: "Teleporte seu personagem preso para a cidade inicial da sua facção.",
+    description: "Teleporte seu personagem para a cidade inicial da facção.",
     icon: MapPin,
-    free: true,
+    mode: "direct",
+    directLabel: "Aplicado na hora",
   },
   {
     id: "level-reset",
     name: "Reset de Talentos",
-    description: "Resete os talentos do seu personagem gratuitamente.",
+    description: "Remove todos os talentos do personagem para redistribuir.",
     icon: RotateCcw,
-    free: true,
+    mode: "direct",
+    directLabel: "Aplicado na hora",
   },
   {
     id: "name-change",
     name: "Troca de Nome",
-    description: "Escolha um novo nome para o seu personagem no próximo login.",
+    description: "Escolha um novo nome para o seu personagem (2-12 letras).",
     icon: Edit,
-    free: true,
+    mode: "direct",
+    directLabel: "Aplicado na hora",
   },
   {
     id: "appearance",
     name: "Mudança de Aparência",
-    description: "Altere a aparência visual do seu personagem no próximo login.",
+    description: "Altere a aparência do personagem na tela de login do jogo.",
     icon: Palette,
-    free: true,
+    mode: "game",
   },
   {
     id: "race-change",
     name: "Troca de Raça",
-    description: "Mude a raça do seu personagem mantendo a mesma facção.",
+    description: "Mude a raça na tela de login do jogo (mesma facção).",
     icon: Users,
-    free: true,
+    mode: "game",
   },
   {
     id: "faction-change",
     name: "Troca de Facção",
-    description: "Mude seu personagem de Horda para Aliança ou vice-versa.",
+    description: "Mude de Horda para Aliança ou vice-versa na tela de login.",
     icon: Repeat,
-    free: true,
+    mode: "game",
   },
 ]
 
@@ -104,24 +109,35 @@ const ServicosPage = () => {
   const [confirmService, setConfirmService] = useState<string | null>(null)
   const [executing, setExecuting] = useState(false)
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null)
+  const [newName, setNewName] = useState("")
 
-  useEffect(() => {
+  const loadCharacters = () => {
     fetch("/api/account/characters")
       .then((r) => r.json())
       .then((data) => {
         if (data.characters?.length) {
           setCharacters(data.characters)
-          setSelectedGuid(data.characters[0].guid)
+          if (!selectedGuid) setSelectedGuid(data.characters[0].guid)
         }
       })
       .catch(() => {})
       .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    loadCharacters()
   }, [])
 
   const character = characters.find((c) => c.guid === selectedGuid) ?? null
   const service = SERVICES.find((s) => s.id === confirmService) ?? null
-  const faction = character ? (HORDE_RACES.has(character.race) ? "Horda" : "Aliança") : null
-  const classColor = character ? (CLASS_COLORS[character.class] ?? "text-base-content") : ""
+  const faction = character
+    ? HORDE_RACES.has(character.race)
+      ? "Horda"
+      : "Aliança"
+    : null
+  const classColor = character
+    ? (CLASS_COLORS[character.class] ?? "text-base-content")
+    : ""
 
   const handleExecute = async () => {
     if (!confirmService || !character) return
@@ -129,11 +145,19 @@ const ServicosPage = () => {
     setExecuting(true)
     setResult(null)
 
+    const body: Record<string, unknown> = {
+      serviceId: confirmService,
+      characterGuid: character.guid,
+    }
+    if (confirmService === "name-change") {
+      body.newName = newName
+    }
+
     try {
       const res = await fetch("/api/account/services", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ serviceId: confirmService, characterGuid: character.guid }),
+        body: JSON.stringify(body),
       })
       const data = await res.json()
 
@@ -141,6 +165,10 @@ const ServicosPage = () => {
         setResult({ success: false, message: data.error || "Erro ao executar serviço." })
       } else {
         setResult({ success: true, message: data.message })
+        // Reload characters to reflect name change
+        if (confirmService === "name-change") {
+          loadCharacters()
+        }
       }
     } catch {
       setResult({ success: false, message: "Erro de conexão." })
@@ -152,6 +180,7 @@ const ServicosPage = () => {
   const closeModal = () => {
     setConfirmService(null)
     setResult(null)
+    setNewName("")
   }
 
   return (
@@ -161,7 +190,7 @@ const ServicosPage = () => {
           Serviços de Personagem
         </h1>
         <p className="text-sm text-base-content/60">
-          Teleporte, troca de facção, raça e muito mais
+          Teleporte, troca de facção, raça e muito mais — tudo grátis
         </p>
       </div>
 
@@ -202,7 +231,7 @@ const ServicosPage = () => {
                     </span>
                   </span>
                 ) : (
-                  <span className="text-base-content/40">Selecione um personagem</span>
+                  <span className="text-base-content/40">Selecione</span>
                 )}
                 <ChevronDown className="h-4 w-4 text-base-content/50" />
               </button>
@@ -275,7 +304,14 @@ const ServicosPage = () => {
                 <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
                   <Icon className="h-6 w-6 text-primary" />
                 </div>
-                <span className="badge badge-success badge-sm">Grátis</span>
+                <div className="flex flex-col items-end gap-1">
+                  <span className="badge badge-success badge-sm">Grátis</span>
+                  {svc.mode === "direct" ? (
+                    <span className="text-[10px] text-success">Instantâneo</span>
+                  ) : (
+                    <span className="text-[10px] text-base-content/40">Via jogo</span>
+                  )}
+                </div>
               </div>
               <h3 className="mt-4 font-bold">{svc.name}</h3>
               <p className="mt-1 flex-1 text-sm text-base-content/60">
@@ -287,6 +323,7 @@ const ServicosPage = () => {
                 onClick={() => {
                   setConfirmService(svc.id)
                   setResult(null)
+                  setNewName("")
                 }}
               >
                 {character ? "Usar Serviço" : "Selecione um personagem"}
@@ -300,24 +337,25 @@ const ServicosPage = () => {
       <div className="card-fantasy p-6">
         <h3 className="mb-4 font-bold">Informações Importantes</h3>
         <div className="grid gap-4 sm:grid-cols-2">
-          {[
-            {
-              title: "Deslogue antes de usar serviços",
-              desc: "Certifique-se de que o personagem está deslogado do jogo antes de executar qualquer serviço.",
-            },
-            {
-              title: "Alterações no próximo login",
-              desc: "Os serviços (exceto unstuck) são aplicados quando o personagem entrar no jogo novamente.",
-            },
-          ].map(({ title, desc }) => (
-            <div key={title} className="flex items-start gap-3">
-              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
-              <div>
-                <p className="font-medium">{title}</p>
-                <p className="text-sm text-base-content/60">{desc}</p>
-              </div>
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
+            <div>
+              <p className="font-medium">Deslogue antes de usar serviços</p>
+              <p className="text-sm text-base-content/60">
+                O personagem deve estar deslogado do jogo.
+              </p>
             </div>
-          ))}
+          </div>
+          <div className="flex items-start gap-3">
+            <Info className="mt-0.5 h-5 w-5 shrink-0 text-info" />
+            <div>
+              <p className="font-medium">Serviços instantâneos vs via jogo</p>
+              <p className="text-sm text-base-content/60">
+                Unstuck, reset de talentos e troca de nome são aplicados na
+                hora. Aparência, raça e facção requerem o login no jogo.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -330,10 +368,15 @@ const ServicosPage = () => {
               <div>
                 <h2 className="text-lg font-semibold">{service.name}</h2>
                 <p className="text-sm text-base-content/60">
-                  Confirme a execução do serviço
+                  {service.mode === "direct"
+                    ? "Será aplicado imediatamente"
+                    : "Será ativado no próximo login no jogo"}
                 </p>
               </div>
-              <button className="btn btn-ghost btn-sm btn-square" onClick={closeModal}>
+              <button
+                className="btn btn-ghost btn-sm btn-square"
+                onClick={closeModal}
+              >
                 <X className="h-4 w-4" />
               </button>
             </div>
@@ -379,14 +422,41 @@ const ServicosPage = () => {
                   </div>
                 </div>
 
+                {/* Name input for name-change */}
+                {confirmService === "name-change" && (
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-base-content/60">
+                      Novo nome do personagem
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ex: Arthas"
+                      className="input input-bordered input-sm w-full"
+                      value={newName}
+                      onChange={(e) => setNewName(e.target.value)}
+                      maxLength={12}
+                    />
+                    <p className="text-xs text-base-content/40">
+                      2 a 12 letras, sem números ou espaços
+                    </p>
+                  </div>
+                )}
+
                 {/* Service-specific warnings */}
                 {confirmService === "unstuck" && (
                   <div className="flex items-start gap-3 rounded-lg border border-warning/50 bg-warning/10 p-3 text-sm">
                     <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
                     <span>
-                      Seu personagem será teleportado para{" "}
+                      Será teleportado para{" "}
                       {faction === "Horda" ? "Orgrimmar" : "Stormwind"}.
-                      Certifique-se de que está deslogado.
+                    </span>
+                  </div>
+                )}
+                {confirmService === "level-reset" && (
+                  <div className="flex items-start gap-3 rounded-lg border border-warning/50 bg-warning/10 p-3 text-sm">
+                    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
+                    <span>
+                      Todos os talentos serão removidos. Você poderá redistribuí-los no jogo.
                     </span>
                   </div>
                 )}
@@ -394,8 +464,8 @@ const ServicosPage = () => {
                   <div className="flex items-start gap-3 rounded-lg border border-error/50 bg-error/10 p-3 text-sm">
                     <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-error" />
                     <span>
-                      Trocar de facção irá remover seu personagem da guild atual
-                      e resetar sua reputação com facções opostas.
+                      Trocar de facção remove o personagem da guild e reseta
+                      reputações com facções opostas.
                     </span>
                   </div>
                 )}
@@ -404,8 +474,7 @@ const ServicosPage = () => {
                   <div className="flex items-start gap-3 rounded-lg border border-error/50 bg-error/10 p-3 text-sm">
                     <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-error" />
                     <span>
-                      O personagem está online. Deslogue do jogo antes de
-                      executar o serviço.
+                      O personagem está online. Deslogue do jogo antes.
                     </span>
                   </div>
                 )}
@@ -417,7 +486,10 @@ const ServicosPage = () => {
                   <button
                     className="btn btn-primary btn-sm gap-2"
                     onClick={handleExecute}
-                    disabled={executing}
+                    disabled={
+                      executing ||
+                      (confirmService === "name-change" && newName.length < 2)
+                    }
                   >
                     {executing ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
