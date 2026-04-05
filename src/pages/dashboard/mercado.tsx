@@ -178,7 +178,7 @@ export default function MercadoPage({ user }: { user: SessionUser }) {
               <h3 className="text-lg font-bold">Filtros</h3>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 items-end md:grid-cols-3 gap-4">
               {/* Search */}
               <div className="form-control">
                 <label className="label">

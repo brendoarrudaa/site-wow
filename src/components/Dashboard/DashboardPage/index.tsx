@@ -169,15 +169,18 @@ const DashboardPage = ({ username, email, gmLevel }: DashboardPageProps) => {
       {/* Welcome header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-content text-xl font-bold shadow-lg"
-            style={{ boxShadow: '0 0 24px color-mix(in oklch, var(--color-gold) 20%, transparent)' }}
+          <div
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-content text-xl font-bold shadow-lg"
+            style={{
+              boxShadow:
+                '0 0 24px color-mix(in oklch, var(--color-gold) 20%, transparent)'
+            }}
           >
             {username.slice(0, 2).toUpperCase()}
           </div>
           <div>
             <h1 className="text-2xl font-bold font-serif glow-text">
-              Bem-vindo,{' '}
-              <span className="text-gradient-gold">{username}</span>
+              Bem-vindo, <span className="text-gradient-gold">{username}</span>
             </h1>
             <p className="text-sm text-base-content/50">{email}</p>
           </div>
@@ -305,8 +308,12 @@ const DashboardPage = ({ username, email, gmLevel }: DashboardPageProps) => {
         <div className="card-fantasy border-gold-glow">
           <div className="card-body">
             <div className="mb-3 flex items-center justify-between gap-3">
-              <h2 className="text-lg font-bold font-serif text-gradient-gold">Atalhos de GM</h2>
-              <span className="badge badge-warning font-semibold">GM {gmLevel}</span>
+              <h2 className="text-lg font-bold font-serif text-gradient-gold">
+                Atalhos de GM
+              </h2>
+              <span className="badge badge-warning font-semibold">
+                GM {gmLevel}
+              </span>
             </div>
 
             <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
@@ -368,7 +375,9 @@ const DashboardPage = ({ username, email, gmLevel }: DashboardPageProps) => {
         {/* Characters — 2 cols */}
         <div className="space-y-4 lg:col-span-2">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold font-serif text-gradient-gold">Seus Personagens</h2>
+            <h2 className="text-xl font-bold font-serif text-gradient-gold">
+              Seus Personagens
+            </h2>
             {!loading && (
               <span className="badge badge-ghost text-xs">
                 {characters.length}{' '}
@@ -512,7 +521,7 @@ const DashboardPage = ({ username, email, gmLevel }: DashboardPageProps) => {
                 <MessageSquare className="h-4 w-4" />
                 Abrir Ticket
                 {!ticketsLoading && openTickets.length > 0 && (
-                  <span className="badge badge-error badge-sm ml-auto">
+                  <span className="badge w-3 h-3 p-2 rounded-full badge-error badge-sm ml-auto">
                     {openTickets.length}
                   </span>
                 )}

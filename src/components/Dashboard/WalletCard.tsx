@@ -86,16 +86,16 @@ export default function WalletCard() {
       </div>
 
       {/* VP Card */}
-      <div className="card bg-linear-to-br from-secondary/20 to-secondary/5 border border-secondary/30 shadow-lg hover:shadow-xl transition-shadow">
+      <div className="card bg-linear-to-br from-primary/20 to-primary/5 border border-primary/30 shadow-lg hover:shadow-xl transition-shadow">
         <div className="card-body">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-secondary/20 rounded-full">
-                <TrendingUp className="h-6 w-6 text-secondary" />
+              <div className="p-3 bg-primary/20 rounded-full">
+                <TrendingUp className="h-6 w-6 text-primary" />
               </div>
               <div>
                 <p className="text-sm text-base-content/70">Vote Points</p>
-                <h3 className="text-3xl font-bold text-secondary">
+                <h3 className="text-3xl font-bold text-primary">
                   {balance?.vp?.toLocaleString() || 0}
                 </h3>
               </div>
