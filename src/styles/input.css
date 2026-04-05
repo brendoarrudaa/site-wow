@@ -135,10 +135,6 @@
 
 /* ─── BASE ───────────────────────────────────────────────────────────── */
 @layer base {
-  * {
-    border-color: var(--color-border, hsl(var(--border)));
-  }
-
   body {
     background-color: var(--color-base-100);
     color: var(--color-base-content);
@@ -204,6 +200,10 @@
   .border-gold-glow {
     border-color: color-mix(in oklch, var(--color-gold) 22%, transparent);
     box-shadow: 0 0 14px color-mix(in oklch, var(--color-gold) 6%, transparent);
+  }
+
+  .btn {
+    border-color: var(--btn-border);
   }
 
   /* Cards */
@@ -375,4 +375,8 @@
     border: 1px solid var(--color-border-strong);
     box-shadow: 0 8px 32px color-mix(in oklch, var(--color-base-100) 50%, transparent);
   }
+}
+
+.btn:not(.btn-outline) {
+  border-width: 0;
 }
