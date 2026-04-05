@@ -48,6 +48,24 @@ const RARITY_BG = {
   LEGENDARY: 'bg-orange-500/20 border-orange-500/30'
 } as const
 
+const CATEGORY_LABEL: Record<string, string> = {
+  MOUNT:      'Montaria',
+  PET:        'Pet',
+  TRANSMOG:   'Transmog',
+  CONSUMABLE: 'Consumivel',
+  BAG:        'Bolsa',
+  SERVICE:    'Servico',
+  OTHER:      'Outro'
+}
+
+const RARITY_LABEL: Record<string, string> = {
+  COMMON:    'Comum',
+  UNCOMMON:  'Incomum',
+  RARE:      'Raro',
+  EPIC:      'Epico',
+  LEGENDARY: 'Lendario'
+}
+
 export default function MercadoPage({ user }: { user: SessionUser }) {
   const [listings, setListings] = useState<MarketplaceListing[]>([])
   const [loading, setLoading] = useState(true)
@@ -261,53 +279,55 @@ export default function MercadoPage({ user }: { user: SessionUser }) {
                     key={listing.id}
                     className={`card border-2 ${getRarityBg(listing.rarity)} shadow-lg hover:shadow-xl transition-all`}
                   >
-                    <div className="card-body">
-                      {/* Item Name */}
-                      <h3
-                        className={`text-lg font-bold ${getRarityColor(listing.rarity)}`}
-                      >
-                        {listing.item_name || `Item #${listing.item_entry}`}
-                      </h3>
-
-                      {/* Badges */}
-                      <div className="flex gap-2 mb-2">
-                        <span className="badge badge-sm">
-                          {listing.category}
-                        </span>
-                        <span
-                          className={`badge badge-sm ${getRarityColor(listing.rarity)}`}
+                    <div className="card-body justify-between">
+                      <div>
+                        {/* Item Name */}
+                        <h3
+                          className={`text-lg font-bold ${getRarityColor(listing.rarity)}`}
                         >
-                          {listing.rarity}
-                        </span>
-                      </div>
+                          {listing.item_name || `Item #${listing.item_entry}`}
+                        </h3>
 
-                      {/* Seller */}
-                      <div className="text-sm text-base-content/70 mb-2">
-                        Vendedor:{' '}
-                        <span className="font-semibold">
-                          {listing.character_name}
-                        </span>
-                      </div>
+                        {/* Badges */}
+                        <div className="flex gap-2 mb-2">
+                          <span className="badge p-2 badge-sm">
+                            {CATEGORY_LABEL[listing.category] ?? listing.category}
+                          </span>
+                          <span
+                            className={`badge p-2 badge-sm ${getRarityColor(listing.rarity)}`}
+                          >
+                            {RARITY_LABEL[listing.rarity] ?? listing.rarity}
+                          </span>
+                        </div>
 
-                      {/* Price */}
-                      <div className="divider my-2"></div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-base-content/70">
-                          Preço:
-                        </span>
-                        <span className="text-xl font-bold text-primary">
-                          {listing.price.toLocaleString()} DP
-                        </span>
-                      </div>
+                        {/* Seller */}
+                        <div className="text-sm text-base-content/70 mb-2">
+                          Vendedor:{' '}
+                          <span className="font-semibold">
+                            {listing.character_name}
+                          </span>
+                        </div>
 
-                      {/* Created At */}
-                      <div className="flex items-center gap-2 text-xs text-base-content/60 mt-2">
-                        <Clock className="h-4 w-4" />
-                        <span>
-                          {new Date(listing.created_at).toLocaleDateString(
-                            'pt-BR'
-                          )}
-                        </span>
+                        {/* Price */}
+                        <div className="divider my-2"></div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-base-content/70">
+                            Preço:
+                          </span>
+                          <span className="text-xl font-bold text-primary">
+                            {listing.price.toLocaleString()} DP
+                          </span>
+                        </div>
+
+                        {/* Created At */}
+                        <div className="flex items-center gap-2 text-xs text-base-content/60 mt-2">
+                          <Clock className="h-4 w-4" />
+                          <span>
+                            {new Date(listing.created_at).toLocaleDateString(
+                              'pt-BR'
+                            )}
+                          </span>
+                        </div>
                       </div>
 
                       {/* Buy Button */}

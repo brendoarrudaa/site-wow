@@ -101,6 +101,24 @@ const STATUS_LABEL: Record<AuctionStatus, string> = {
   CANCELLED: 'Cancelado'
 }
 
+const CATEGORY_LABEL: Record<string, string> = {
+  MOUNT:      'Montaria',
+  PET:        'Pet',
+  TRANSMOG:   'Transmog',
+  CONSUMABLE: 'Consumivel',
+  BAG:        'Bolsa',
+  SERVICE:    'Servico',
+  OTHER:      'Outro'
+}
+
+const RARITY_LABEL: Record<string, string> = {
+  COMMON:    'Comum',
+  UNCOMMON:  'Incomum',
+  RARE:      'Raro',
+  EPIC:      'Epico',
+  LEGENDARY: 'Lendario'
+}
+
 const DURATION_OPTIONS = [
   { value: 2, label: '2 horas' },
   { value: 6, label: '6 horas' },
@@ -259,14 +277,14 @@ function AdminAuctionCard({
               </span>
               {auction.category && (
                 <span className="badge badge-xs p-2 badge-ghost">
-                  {auction.category}
+                  {CATEGORY_LABEL[auction.category] ?? auction.category}
                 </span>
               )}
               {auction.rarity && (
                 <span
                   className={`badge badge-xs p-2 badge-outline ${rarityColor}`}
                 >
-                  {auction.rarity}
+                  {RARITY_LABEL[auction.rarity] ?? auction.rarity}
                 </span>
               )}
             </div>
@@ -907,14 +925,14 @@ export default function LeilaoPage({
 
                           <div className="flex flex-wrap gap-2 mb-2">
                             {auction.category && (
-                              <span className="badge badge-sm">
-                                {auction.category}
+                              <span className="badge p-2 badge-sm">
+                                {CATEGORY_LABEL[auction.category] ?? auction.category}
                               </span>
                             )}
                             <span
                               className={`badge badge-sm badge-outline ${rarityColor}`}
                             >
-                              {auction.rarity}
+                              {RARITY_LABEL[auction.rarity] ?? auction.rarity}
                             </span>
                           </div>
 
