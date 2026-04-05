@@ -16,15 +16,22 @@ import {
 } from 'lucide-react'
 
 const TYPE_LABELS = {
-  AUCTION_WON: 'Leilão Vencido',
-  MARKETPLACE_BUY: 'Compra Marketplace',
+  AUCTION_WIN: 'Leilão',
+  MARKETPLACE_PURCHASE: 'Marketplace',
   MARKETPLACE_SELL_REMOVE: 'Remover Item Vendido'
 } as const
 
 const TYPE_COLORS = {
-  AUCTION_WON: 'badge-primary',
-  MARKETPLACE_BUY: 'badge-success',
+  AUCTION_WIN: 'badge-primary',
+  MARKETPLACE_PURCHASE: 'badge-success',
   MARKETPLACE_SELL_REMOVE: 'badge-warning'
+} as const
+
+const STATUS_LABELS = {
+  PENDING: 'Pendente',
+  IN_PROGRESS: 'Em Progresso',
+  DELIVERED: 'Entregue',
+  FAILED: 'Falhou'
 } as const
 
 const STATUS_COLORS = {
@@ -105,6 +112,10 @@ export default function EntregasPage({ user }: { user: SessionUser }) {
 
   const getStatusColor = (status: keyof typeof STATUS_COLORS) => {
     return STATUS_COLORS[status] || 'badge-neutral'
+  }
+
+  const getStatusLabel = (status: keyof typeof STATUS_LABELS) => {
+    return STATUS_LABELS[status] || status
   }
 
   const stats = {
@@ -230,7 +241,9 @@ export default function EntregasPage({ user }: { user: SessionUser }) {
                       <tr key={item.id}>
                         <td className="font-mono text-xs">#{item.id}</td>
                         <td>
-                          <span className={`badge ${getTypeColor(item.type)}`}>
+                          <span
+                            className={`badge p-2 ${getTypeColor(item.type)}`}
+                          >
                             {getTypeLabel(item.type)}
                           </span>
                         </td>
@@ -251,7 +264,7 @@ export default function EntregasPage({ user }: { user: SessionUser }) {
                           <span
                             className={`badge p-2 ${getStatusColor(item.status)}`}
                           >
-                            {item.status}
+                            {getStatusLabel(item.status)}
                           </span>
                         </td>
                         <td className="text-sm text-base-content/70">
