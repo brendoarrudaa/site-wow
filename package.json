@@ -6,6 +6,7 @@
   "author": "Azeroth Legacy",
   "dependencies": {
     "algoliasearch": "^5.49.2",
+    "cally": "^0.9.2",
     "daisyui": "^5.5.19",
     "date-fns": "^4.1.0",
     "decap-cms-locales": "^3.5.1",

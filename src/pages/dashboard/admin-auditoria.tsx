@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import type { GetServerSidePropsContext } from 'next'
 import DashboardLayout from '../../components/Dashboard/DashboardLayout'
 import SEO from '../../components/SEO'
@@ -136,6 +136,64 @@ function prettyJson(raw: string | null | undefined) {
   } catch {
     return String(raw)
   }
+}
+
+// ── CallyDatePicker ───────────────────────────────────────────────────────────
+
+function CallyDatePicker({
+  id,
+  label,
+  value,
+  onChange
+}: {
+  id: string
+  label: string
+  value: string
+  onChange: (v: string) => void
+}) {
+  useEffect(() => {
+    import('cally')
+  }, [])
+
+  const popoverId = `cally-popover-${id}`
+
+  return (
+    <div className="form-control">
+      <label className="label py-1">
+        <span className="label-text text-xs">{label}</span>
+      </label>
+      <button
+        {...({ popovertarget: popoverId } as any)}
+        id={id}
+        style={{ anchorName: `--${id}` } as any}
+        className="input input-sm input-bordered w-full text-left text-sm"
+      >
+        {value || 'Selecionar'}
+      </button>
+      <div
+        {...({ popover: '' } as any)}
+        id={popoverId}
+        className="dropdown bg-base-100 rounded-box shadow-lg p-0 border border-base-300"
+        style={{ positionAnchor: `--${id}` } as any}
+      >
+        {/* @ts-ignore */}
+        <calendar-date
+          className="cally"
+          value={value}
+          onChange={(e: any) => {
+            onChange(e.target.value)
+            ;(document.getElementById(popoverId) as any)?.hidePopover?.()
+          }}
+        >
+          <svg aria-label="Anterior" className="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
+          <svg aria-label="Próximo" className="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+          {/* @ts-ignore */}
+          <calendar-month />
+          {/* @ts-ignore */}
+        </calendar-date>
+      </div>
+    </div>
+  )
 }
 
 // ── ExpandableCell ────────────────────────────────────────────────────────────
@@ -410,33 +468,19 @@ export default function AuditoriaPage({ user }: { user: SessionUser }) {
                 />
               </div>
 
-              <div className="form-control">
-                <label className="label py-1">
-                  <span className="label-text text-xs">Data Inicial</span>
-                </label>
-                <input
-                  type="date"
-                  className="input input-bordered input-sm"
-                  value={filters.date_from}
-                  onChange={e =>
-                    setFilters(f => ({ ...f, date_from: e.target.value }))
-                  }
-                />
-              </div>
+              <CallyDatePicker
+                id="audit-date-from"
+                label="Data Inicial"
+                value={filters.date_from}
+                onChange={v => setFilters(f => ({ ...f, date_from: v }))}
+              />
 
-              <div className="form-control">
-                <label className="label py-1">
-                  <span className="label-text text-xs">Data Final</span>
-                </label>
-                <input
-                  type="date"
-                  className="input input-bordered input-sm"
-                  value={filters.date_to}
-                  onChange={e =>
-                    setFilters(f => ({ ...f, date_to: e.target.value }))
-                  }
-                />
-              </div>
+              <CallyDatePicker
+                id="audit-date-to"
+                label="Data Final"
+                value={filters.date_to}
+                onChange={v => setFilters(f => ({ ...f, date_to: v }))}
+              />
             </div>
 
             <div className="flex gap-2 mt-3">
