@@ -50,6 +50,24 @@ const RARITY_BG: Record<string, string> = {
   LEGENDARY: 'bg-orange-500/20 border-orange-500/30'
 }
 
+const CATEGORY_LABEL: Record<string, string> = {
+  MOUNT:       'Montaria',
+  PET:         'Pet',
+  TRANSMOG:    'Transmog',
+  CONSUMABLE:  'Consumivel',
+  BAG:         'Bolsa',
+  SERVICE:     'Servico',
+  OTHER:       'Outro'
+}
+
+const RARITY_LABEL: Record<string, string> = {
+  COMMON:    'Comum',
+  UNCOMMON:  'Incomum',
+  RARE:      'Raro',
+  EPIC:      'Epico',
+  LEGENDARY: 'Lendario'
+}
+
 export default function AprovacoesPage({ user }: { user: DashboardUser }) {
   const [listings, setListings] = useState<MarketplaceListing[]>([])
   const [loading, setLoading] = useState(true)
@@ -216,13 +234,13 @@ export default function AprovacoesPage({ user }: { user: DashboardUser }) {
                             {listing.item_name || `Item #${listing.item_entry}`}
                           </h3>
                           <div className="flex flex-wrap gap-2 mt-1 mb-3">
-                            <span className="badge badge-sm">
-                              {listing.category}
+                            <span className="badge badge-sm p-2">
+                              {CATEGORY_LABEL[listing.category] ?? listing.category}
                             </span>
                             <span
                               className={`badge badge-sm badge-outline ${RARITY_COLOR[listing.rarity] ?? ''}`}
                             >
-                              {listing.rarity}
+                              {RARITY_LABEL[listing.rarity] ?? listing.rarity}
                             </span>
                           </div>
                           <div className="space-y-1 text-sm text-base-content/70">

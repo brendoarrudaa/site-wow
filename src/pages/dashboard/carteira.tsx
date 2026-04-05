@@ -4,7 +4,15 @@ import DashboardLayout from '../../components/Dashboard/DashboardLayout'
 import SEO from '../../components/SEO'
 import WalletCard from '../../components/Dashboard/WalletCard'
 import { getSession, type SessionUser } from '../../lib/session'
-import { ArrowDownCircle, ArrowUpCircle, Clock, FileText, CheckCircle, Calendar, Zap } from 'lucide-react'
+import {
+  ArrowDownCircle,
+  ArrowUpCircle,
+  Clock,
+  FileText,
+  CheckCircle,
+  Calendar,
+  Zap
+} from 'lucide-react'
 
 const TRANSACTION_LABELS = {
   CREDIT_DP: 'Crédito de DP',
@@ -89,11 +97,16 @@ export default function CarteiraPage({ user }: { user: SessionUser }) {
       <SEO title="Carteira" path="/dashboard/carteira" noindex />
       <div className="space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-primary">Carteira</h1>
-          <p className="text-base-content/70 mt-2">
-            Gerencie seus Donation Points e Check Points
-          </p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-primary">Carteira</h1>
+            <p className="text-base-content/70 mt-2">
+              Gerencie seus Donation Points e Check Points
+            </p>
+          </div>
+          <div>
+            <button className="btn btn-primary">Donation</button>
+          </div>
         </div>
 
         {/* Saldo Cards */}
@@ -104,12 +117,19 @@ export default function CarteiraPage({ user }: { user: SessionUser }) {
           <div className="card-body">
             <div className="flex items-center gap-2 mb-4">
               <CheckCircle className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-bold text-primary">Como ganhar Check Points</h2>
+              <h2 className="text-lg font-bold text-primary">
+                Como ganhar Check Points
+              </h2>
             </div>
             <p className="text-sm text-base-content/70 mb-4">
-              Check Points (CP) são ganhos automaticamente ao jogar. Fique online por pelo menos
-              <span className="font-semibold text-base-content"> 5 minutos</span> no jogo e
-              os pontos serão creditados na sua carteira — uma vez por dia por conta.
+              Check Points (CP) são ganhos automaticamente ao jogar. Fique
+              online por pelo menos
+              <span className="font-semibold text-base-content">
+                {' '}
+                5 minutos
+              </span>{' '}
+              no jogo e os pontos serão creditados na sua carteira — uma vez por
+              dia por conta.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="flex items-start gap-3 bg-base-100/60 rounded-xl p-3">
@@ -119,7 +139,8 @@ export default function CarteiraPage({ user }: { user: SessionUser }) {
                 <div>
                   <p className="text-sm font-semibold">5 min online</p>
                   <p className="text-xs text-base-content/60">
-                    Fique 5 minutos in-game para receber os pontos automaticamente
+                    Fique 5 minutos in-game para receber os pontos
+                    automaticamente
                   </p>
                 </div>
               </div>
@@ -139,7 +160,9 @@ export default function CarteiraPage({ user }: { user: SessionUser }) {
                   <Calendar className="h-4 w-4 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold">+20 CP no fim de semana</p>
+                  <p className="text-sm font-semibold">
+                    +20 CP no fim de semana
+                  </p>
                   <p className="text-xs text-base-content/60">
                     Sábado e domingo o bônus é dobrado — aproveite!
                   </p>

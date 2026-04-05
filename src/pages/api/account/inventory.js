@@ -12,7 +12,7 @@ export default async function handler(req, res) {
       return res.status(401).json({ success: false, error: 'Não autenticado' })
     }
 
-    const { character_guid } = req.query
+    const character_guid = req.query.character_guid ?? req.query.characterGuid
 
     if (!character_guid) {
       return res

@@ -196,13 +196,13 @@ const LojaPage = () => {
                 <Sparkles className="h-5 w-5 text-secondary" />
               </div>
               <div>
-                <h4 className="font-semibold">Pontos de Voto (VP)</h4>
+                <h4 className="font-semibold">Check Points (CP)</h4>
                 <p className="text-sm text-base-content/60">
-                  Ganhe votando no servidor diariamente
+                  Fique 5 minutos online no jogo e ganhe CP diariamente
                 </p>
               </div>
             </div>
-            <button className="btn btn-outline btn-sm mt-3 w-full">Votar Agora</button>
+            <button className="btn btn-outline btn-sm mt-3 w-full" disabled>Automático</button>
           </div>
         </div>
       </div>

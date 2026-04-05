@@ -82,7 +82,7 @@ export default async function handler(req, res) {
 
       // Aprova
       await connection.query(
-        "UPDATE wow_marketplace.marketplace_listings SET status = 'ACTIVE', approved_by = ?, approved_at = NOW() WHERE id = ?",
+        "UPDATE wow_marketplace.marketplace_listings SET status = 'ACTIVE', approved_by = ? WHERE id = ?",
         [session.user.id, listingId]
       )
 

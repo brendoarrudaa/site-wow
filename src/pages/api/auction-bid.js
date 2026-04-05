@@ -16,7 +16,7 @@ const limiter = rateLimit({ limit: 30, interval: 60 * 1000 })
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ success: false, error: 'Method not allowed' })
+    return res.status(405).json({ success: false, error: 'Método não permitido.' })
   }
 
   if (!assertSameOrigin(req, res)) return
@@ -27,7 +27,7 @@ export default async function handler(req, res) {
     if (!session.user) {
       return res
         .status(401)
-        .json({ success: false, error: 'Not authenticated' })
+        .json({ success: false, error: 'Não autenticado.' })
     }
 
     const auctionId = Number(req.body?.auction_id)
@@ -37,21 +37,21 @@ export default async function handler(req, res) {
     if (!Number.isInteger(auctionId) || auctionId <= 0) {
       return res.status(400).json({
         success: false,
-        error: 'Invalid required field: auction_id'
+        error: 'Campo obrigatorio invalido: auction_id'
       })
     }
 
     if (!Number.isInteger(bidAmount) || bidAmount <= 0) {
       return res.status(400).json({
         success: false,
-        error: 'Invalid required field: bid_amount'
+        error: 'Campo obrigatorio invalido: bid_amount'
       })
     }
 
     if (bidAmount < 10) {
       return res.status(400).json({
         success: false,
-        error: 'Bid amount must be at least 10 DP'
+        error: 'O lance minimo e de 10 DP'
       })
     }
 
@@ -83,17 +83,25 @@ export default async function handler(req, res) {
         await connection.rollback()
         return res.status(404).json({
           success: false,
-          error: 'Auction not found or already closed'
+          error: 'Leilao nao encontrado ou ja encerrado.'
         })
       }
 
       const auction = auctions[0]
 
-      if (auction.created_by === session.user.id) {
+      // Verifica se o usuário é GM (gmlevel >= 2) — GMs podem testar sem restrições
+      const [gmRows] = await connection.query(
+        'SELECT 1 FROM acore_auth.account_access WHERE id = ? AND gmlevel >= 2 LIMIT 1',
+        [session.user.id]
+      )
+      const isGM = gmRows.length > 0
+
+      // Apenas não-GMs são bloqueados de dar lance no próprio leilão
+      if (!isGM && auction.created_by === session.user.id) {
         await connection.rollback()
         return res.status(400).json({
           success: false,
-          error: 'You cannot bid on your own auction'
+          error: 'Voce nao pode dar lances no seu proprio leilao.'
         })
       }
 
@@ -107,16 +115,16 @@ export default async function handler(req, res) {
         await connection.rollback()
         return res.status(400).json({
           success: false,
-          error: `Bid must be at least ${minimumBid} DP (minimum 5% increment)`
+          error: `Lance minimo: ${minimumBid} DP (incremento minimo de 5%)`
         })
       }
 
-      // Verifica se usuário não está dando lance em seu próprio leilão
-      if (auction.current_bidder_id === session.user.id) {
+      // Apenas não-GMs são bloqueados de superar o próprio lance
+      if (!isGM && auction.current_bidder_id === session.user.id) {
         await connection.rollback()
         return res.status(400).json({
           success: false,
-          error: 'You already have the highest bid on this auction'
+          error: 'Voce ja possui o maior lance neste leilao.'
         })
       }
 
@@ -145,7 +153,7 @@ export default async function handler(req, res) {
         await connection.rollback()
         return res.status(400).json({
           success: false,
-          error: `Insufficient balance. You have ${wallet.dp} DP, need ${bidAmount} DP`
+          error: `Saldo insuficiente. Voce tem ${wallet.dp} DP e precisa de ${bidAmount} DP.`
         })
       }
 
@@ -256,7 +264,7 @@ export default async function handler(req, res) {
 
       return res.status(200).json({
         success: true,
-        message: 'Bid placed successfully',
+        message: 'Lance realizado com sucesso!',
         data: {
           auction_id: auctionId,
           bid_amount: bidAmount,
@@ -274,7 +282,7 @@ export default async function handler(req, res) {
     console.error('Error placing bid:', error)
     return res.status(500).json({
       success: false,
-      error: 'Internal server error'
+      error: 'Erro interno do servidor.'
     })
   }
 }

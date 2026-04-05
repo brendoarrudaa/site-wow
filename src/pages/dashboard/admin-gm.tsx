@@ -740,7 +740,7 @@ export default function AdminGmPage({ user, gmLevel }: AdminGmPageProps) {
                   <div className="flex items-center gap-2 mb-3">
                     <Ban className="h-4 w-4 text-error" />
                     <h3 className="font-bold">Banir conta</h3>
-                    <span className="badge badge-xs badge-success">DB</span>
+                    <span className="badge badge-xs badge-success p-2">DB</span>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <input
@@ -798,7 +798,7 @@ export default function AdminGmPage({ user, gmLevel }: AdminGmPageProps) {
                   <div className="flex items-center gap-2 mb-3">
                     <ShieldOff className="h-4 w-4 text-success" />
                     <h3 className="font-bold">Remover ban</h3>
-                    <span className="badge badge-xs badge-success">DB</span>
+                    <span className="badge badge-xs badge-success p-2">DB</span>
                   </div>
                   <div className="flex gap-3">
                     <input
@@ -834,7 +834,7 @@ export default function AdminGmPage({ user, gmLevel }: AdminGmPageProps) {
                   <div className="flex items-center gap-2 mb-3">
                     <LogOut className="h-4 w-4 text-warning" />
                     <h3 className="font-bold">Kick</h3>
-                    <span className="badge badge-xs badge-info">SOAP</span>
+                    <span className="badge badge-xs p-2 badge-info">SOAP</span>
                     <span className="text-xs text-base-content/40">
                       Player precisa estar online
                     </span>
@@ -886,7 +886,7 @@ export default function AdminGmPage({ user, gmLevel }: AdminGmPageProps) {
                   <div className="flex items-center gap-2 mb-3">
                     <Coins className="h-4 w-4 text-warning" />
                     <h3 className="font-bold">Modificar dinheiro</h3>
-                    <span className="badge badge-xs badge-success">DB</span>
+                    <span className="badge badge-xs p-2 badge-success">DB</span>
                   </div>
                   <p className="text-xs text-base-content/50 mb-3">
                     Valor em gold (positivo = adicionar, negativo = remover). 1
@@ -937,7 +937,7 @@ export default function AdminGmPage({ user, gmLevel }: AdminGmPageProps) {
                   <div className="flex items-center gap-2 mb-3">
                     <TrendingUp className="h-4 w-4 text-primary" />
                     <h3 className="font-bold">Definir nível</h3>
-                    <span className="badge badge-xs badge-success">DB</span>
+                    <span className="badge badge-xs badge-success p-2">DB</span>
                   </div>
                   <p className="text-xs text-base-content/50 mb-3">
                     Personagem deve reconectar para aplicar o novo nível.
@@ -989,7 +989,7 @@ export default function AdminGmPage({ user, gmLevel }: AdminGmPageProps) {
                   <div className="flex items-center gap-2 mb-3">
                     <HeartPulse className="h-4 w-4 text-success" />
                     <h3 className="font-bold">Reviver personagem</h3>
-                    <span className="badge badge-xs badge-info">SOAP</span>
+                    <span className="badge badge-xs p-2 badge-info">SOAP</span>
                     <span className="text-xs text-base-content/40">
                       Personagem precisa estar online
                     </span>
@@ -1027,7 +1027,7 @@ export default function AdminGmPage({ user, gmLevel }: AdminGmPageProps) {
             <div className="flex flex-wrap gap-4 mt-6 pt-4 border-t border-base-300 text-xs text-base-content/50">
               <span className="flex items-center gap-1.5">
                 <Database className="h-3 w-3 text-success" />
-                <span className="p-2 text-white badge badge-xs badge-success">
+                <span className="text-white badge badge-xs badge-success p-2">
                   DB
                 </span>{' '}
                 Funciona mesmo com servidor offline
@@ -1118,7 +1118,7 @@ export default function AdminGmPage({ user, gmLevel }: AdminGmPageProps) {
                   <div className="flex items-center gap-2 mb-2 pb-1 border-b border-base-300">
                     <span className="text-primary">{s.icon}</span>
                     <h3 className="font-bold">{s.title}</h3>
-                    <span className="badge badge-xs badge-ghost ml-auto">
+                    <span className="badge badge-xs p-2 badge-ghost ml-auto">
                       {s.commands.length} comandos
                     </span>
                   </div>

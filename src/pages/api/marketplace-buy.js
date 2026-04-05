@@ -74,7 +74,7 @@ export default async function handler(req, res) {
       const listing = listings[0]
 
       // Verifica se não está comprando do próprio item
-      if (listing.seller_account_id === session.user.id) {
+      if (listing.seller_id === session.user.id) {
         await connection.rollback()
         return res.status(400).json({
           success: false,
@@ -142,17 +142,17 @@ export default async function handler(req, res) {
       // Busca wallet do vendedor com lock
       let [sellerWallets] = await connection.query(
         'SELECT * FROM wow_marketplace.wallets WHERE account_id = ? FOR UPDATE',
-        [listing.seller_account_id]
+        [listing.seller_id]
       )
 
       if (sellerWallets.length === 0) {
         await connection.query(
           'INSERT INTO wow_marketplace.wallets (account_id, dp, vp) VALUES (?, 0, 0)',
-          [listing.seller_account_id]
+          [listing.seller_id]
         )
         ;[sellerWallets] = await connection.query(
           'SELECT * FROM wow_marketplace.wallets WHERE account_id = ? FOR UPDATE',
-          [listing.seller_account_id]
+          [listing.seller_id]
         )
       }
 
@@ -161,7 +161,7 @@ export default async function handler(req, res) {
       // Crédito para o vendedor (95%)
       await connection.query(
         'UPDATE wow_marketplace.wallets SET dp = dp + ? WHERE account_id = ?',
-        [sellerReceives, listing.seller_account_id]
+        [sellerReceives, listing.seller_id]
       )
 
       // Log transação - venda
@@ -171,7 +171,7 @@ export default async function handler(req, res) {
           reference_type, reference_id, notes)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
-          listing.seller_account_id,
+          listing.seller_id,
           'MARKETPLACE_SALE',
           sellerReceives,
           sellerWallet.dp,
@@ -190,7 +190,7 @@ export default async function handler(req, res) {
           reference_type, reference_id, notes)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
-          listing.seller_account_id,
+          listing.seller_id,
           'MARKETPLACE_FEE',
           -fee,
           sellerWallet.dp + sellerReceives,
@@ -205,7 +205,7 @@ export default async function handler(req, res) {
       // Atualiza listing
       await connection.query(
         `UPDATE wow_marketplace.marketplace_listings
-         SET status = 'SOLD', buyer_account_id = ?, sold_at = NOW(),
+         SET status = 'SOLD', buyer_id = ?, sold_at = NOW(),
              seller_received = ?, marketplace_fee = ?
          WHERE id = ?`,
         [session.user.id, sellerReceives, fee, listingId]
@@ -214,37 +214,16 @@ export default async function handler(req, res) {
       // Cria fulfillment para o comprador (receber item)
       await connection.query(
         `INSERT INTO wow_marketplace.fulfillment_queue
-         (type, account_id, character_guid, item_entry, item_count,
-          reference_type, reference_id, priority)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+         (type, account_id, character_guid, item_entry, item_count, reference_id, priority)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [
-          'MARKETPLACE_BUY',
+          'MARKETPLACE_PURCHASE',
           session.user.id,
           null, // GM escolhe personagem na entrega
           listing.item_entry,
           listing.item_count,
-          'MARKETPLACE_LISTING',
           listingId,
           5
-        ]
-      )
-
-      // Cria fulfillment para remover item do vendedor
-      await connection.query(
-        `INSERT INTO wow_marketplace.fulfillment_queue
-         (type, account_id, character_guid, character_name, item_entry, item_count,
-          reference_type, reference_id, priority)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          'MARKETPLACE_SELL_REMOVE',
-          listing.seller_account_id,
-          listing.character_guid,
-          listing.character_name,
-          listing.item_entry,
-          listing.item_count,
-          'MARKETPLACE_LISTING',
-          listingId,
-          3 // Alta prioridade (remover antes de entregar)
         ]
       )
 
@@ -264,7 +243,7 @@ export default async function handler(req, res) {
             listing_id: listingId,
             item_entry: listing.item_entry,
             price: listing.price,
-            seller_id: listing.seller_account_id,
+            seller_id: listing.seller_id,
             seller_received: sellerReceives,
             fee
           }),
