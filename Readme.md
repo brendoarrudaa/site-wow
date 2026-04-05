@@ -52,6 +52,7 @@ docker exec -i ac-database mysql -uroot -ppassword < sql/00-marketplace.sql
 docker exec -i ac-database mysql -uroot -ppassword < sql/01-realmlist.sql
 docker exec -i ac-database mysql -uroot -ppassword < sql/02-admin.sql
 docker exec -i ac-database mysql -uroot -ppassword < sql/03-sample-items.sql
+docker exec -i ac-database mysql -uroot -ppassword < sql/04-daily-checkin.sql
 ```
 
 | Arquivo | O que faz |
@@ -60,6 +61,7 @@ docker exec -i ac-database mysql -uroot -ppassword < sql/03-sample-items.sql
 | `sql/01-realmlist.sql` | Configura `acore_auth.realmlist` |
 | `sql/02-admin.sql` | Promove uma conta para GM (edite `@target_username`) |
 | `sql/03-sample-items.sql` | Seed de `item_whitelist` com montarias, pets, etc. |
+| `sql/04-daily-checkin.sql` | Adiciona coluna `last_checkin` na tabela `wallets` (check-in diário) |
 
 Veja `MARKETPLACE_INSTALL.md` para instruções detalhadas e troubleshooting.
 
@@ -337,7 +339,7 @@ O painel do jogador (`/dashboard`) é protegido por sessão e oferece acesso a t
 | `/dashboard/tickets`            | TicketsPage         | Sistema de tickets de suporte                     |
 | `/dashboard/conta`              | ContaPage           | Configurações da conta e troca de senha           |
 | `/dashboard/loja`               | LojaPage            | Loja de itens (em desenvolvimento)                |
-| `/dashboard/carteira`           | CarteiraPage        | Saldo e histórico de transações DP/VP             |
+| `/dashboard/carteira`           | CarteiraPage        | Saldo e histórico de transações DP/CP             |
 | `/dashboard/leilao`             | LeilaoPage          | Leilões GM com lance e timer                      |
 | `/dashboard/mercado`            | MercadoPage         | Marketplace jogador→jogador                       |
 | `/dashboard/admin-gm`           | AdminGmPage         | Painel GM geral *(gmlevel 2+)*                    |
@@ -402,7 +404,54 @@ Sistema de tickets com criação, listagem e troca de mensagens:
 | `acore_auth`       | `account`, `account_pending_verifications`, `account_access`                                                                                       |
 | `acore_characters` | `characters`, `character_inventory`, `item_instance`, `character_talent`, `arena_team`, `arena_team_member`, `guild`, `guild_member`, `guild_rank` |
 | `acore_world`      | `item_template`                                                                                                                                    |
-| `wow_marketplace`  | `wallets`, `wallet_transactions`, `item_whitelist`, `auction_items`, `auction_bids`, `marketplace_listings`, `fulfillment_queue`, `audit_log`      |
+| `wow_marketplace`  | `wallets` (dp, vp/cp, last_checkin), `wallet_transactions`, `item_whitelist`, `auction_items`, `auction_bids`, `marketplace_listings`, `fulfillment_queue`, `audit_log` |
+
+---
+
+## Sistema de Check Points (CP)
+
+Check Points são a moeda de presença do servidor — ganhos automaticamente ao jogar, sem votação externa.
+
+### Como funciona
+
+O módulo AzerothCore **`mod-daily-checkin`** (em `../wow/modules/mod-daily-checkin/`) monitora o tempo de sessão in-game de cada jogador. Após **5 minutos contínuos online**, os CP são creditados automaticamente na wallet — uma vez por dia por conta.
+
+```
+Jogador entra no jogo
+        ↓
+OnPlayerLogin → inicia contador de diff (ms)
+        ↓
+OnPlayerUpdate → acumula diff a cada tick do worldserver
+        ↓
+Após 300.000 ms (5 min):
+  - Consulta wow_marketplace.wallets → verifica last_checkin
+  - Se já fez check-in hoje → encerra silenciosamente
+  - Se não → INSERT/UPDATE wallet + INSERT wallet_transactions
+  - Atualiza last_checkin = DATE atual
+  - Envia mensagem in-game ao jogador
+```
+
+### Recompensas
+
+| Dia | Recompensa |
+|-----|-----------|
+| Segunda a Sexta | +10 CP |
+| Sábado e Domingo | +20 CP (bônus de fim de semana) |
+
+### Ativar o módulo (rebuild necessário)
+
+```bash
+cd ../wow
+docker compose build ac-worldserver
+docker compose up -d ac-worldserver
+```
+
+### Tabelas envolvidas
+
+| Tabela | Campo | Uso |
+|--------|-------|-----|
+| `wow_marketplace.wallets` | `vp`, `last_checkin` | Saldo de CP e controle de data |
+| `wow_marketplace.wallet_transactions` | `type = 'DAILY_CHECKIN'` | Histórico de check-ins |
 
 ---
 
@@ -413,7 +462,8 @@ sql/
 ├── 00-marketplace.sql     # Cria wow_marketplace + 8 tabelas + 3 views
 ├── 01-realmlist.sql       # Configura acore_auth.realmlist
 ├── 02-admin.sql           # Promove conta para GM (account_access)
-└── 03-sample-items.sql    # Seed de item_whitelist
+├── 03-sample-items.sql    # Seed de item_whitelist
+└── 04-daily-checkin.sql   # Adiciona last_checkin na tabela wallets
 src/
 ├── lib/
 │   ├── db.js                  # Pool de conexão MySQL

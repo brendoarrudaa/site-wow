@@ -4,13 +4,14 @@ import DashboardLayout from '../../components/Dashboard/DashboardLayout'
 import SEO from '../../components/SEO'
 import WalletCard from '../../components/Dashboard/WalletCard'
 import { getSession, type SessionUser } from '../../lib/session'
-import { ArrowDownCircle, ArrowUpCircle, Clock, FileText } from 'lucide-react'
+import { ArrowDownCircle, ArrowUpCircle, Clock, FileText, CheckCircle, Calendar, Zap } from 'lucide-react'
 
 const TRANSACTION_LABELS = {
   CREDIT_DP: 'Crédito de DP',
-  CREDIT_VP: 'Crédito de VP',
+  CREDIT_VP: 'Crédito de CP',
   DEBIT_DP: 'Débito de DP',
-  DEBIT_VP: 'Débito de VP',
+  DEBIT_VP: 'Débito de CP',
+  DAILY_CHECKIN: 'Check-in Diário',
   BID_PLACED: 'Lance em Leilão',
   BID_REFUND: 'Reembolso de Lance',
   AUCTION_WIN: 'Leilão Ganho',
@@ -51,6 +52,9 @@ export default function CarteiraPage({ user }: { user: SessionUser }) {
   }
 
   const getTransactionIcon = (type: string) => {
+    if (type === 'DAILY_CHECKIN') {
+      return <CheckCircle className="h-5 w-5 text-primary" />
+    }
     if (
       type.includes('CREDIT') ||
       type.includes('SALE') ||
@@ -88,12 +92,62 @@ export default function CarteiraPage({ user }: { user: SessionUser }) {
         <div>
           <h1 className="text-3xl font-bold text-primary">Carteira</h1>
           <p className="text-base-content/70 mt-2">
-            Gerencie seus Donation Points e Vote Points
+            Gerencie seus Donation Points e Check Points
           </p>
         </div>
 
         {/* Saldo Cards */}
         <WalletCard />
+
+        {/* Como ganhar Check Points */}
+        <div className="card bg-linear-to-br from-primary/10 to-primary/5 border border-primary/20 shadow-md">
+          <div className="card-body">
+            <div className="flex items-center gap-2 mb-4">
+              <CheckCircle className="h-5 w-5 text-primary" />
+              <h2 className="text-lg font-bold text-primary">Como ganhar Check Points</h2>
+            </div>
+            <p className="text-sm text-base-content/70 mb-4">
+              Check Points (CP) são ganhos automaticamente ao jogar. Fique online por pelo menos
+              <span className="font-semibold text-base-content"> 5 minutos</span> no jogo e
+              os pontos serão creditados na sua carteira — uma vez por dia por conta.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="flex items-start gap-3 bg-base-100/60 rounded-xl p-3">
+                <div className="p-2 bg-primary/15 rounded-lg shrink-0">
+                  <Clock className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold">5 min online</p>
+                  <p className="text-xs text-base-content/60">
+                    Fique 5 minutos in-game para receber os pontos automaticamente
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 bg-base-100/60 rounded-xl p-3">
+                <div className="p-2 bg-primary/15 rounded-lg shrink-0">
+                  <Zap className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold">+10 CP por dia</p>
+                  <p className="text-xs text-base-content/60">
+                    De segunda a sexta você ganha 10 CP a cada check-in diário
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 bg-base-100/60 rounded-xl p-3">
+                <div className="p-2 bg-primary/15 rounded-lg shrink-0">
+                  <Calendar className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold">+20 CP no fim de semana</p>
+                  <p className="text-xs text-base-content/60">
+                    Sábado e domingo o bônus é dobrado — aproveite!
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Histórico de Transações */}
         <div className="card bg-base-200 shadow-xl">

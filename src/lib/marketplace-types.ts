@@ -27,6 +27,7 @@ export type TransactionType =
   | 'MARKETPLACE_SALE'
   | 'MARKETPLACE_FEE'
   | 'ADMIN_ADJUSTMENT'
+  | 'DAILY_CHECKIN'
 
 export type CurrencyType = 'DP' | 'VP'
 

@@ -94,7 +94,7 @@ export default function WalletCard() {
                 <TrendingUp className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-base-content/70">Vote Points</p>
+                <p className="text-sm text-base-content/70">Check Points</p>
                 <h3 className="text-3xl font-bold text-primary">
                   {balance?.vp?.toLocaleString() || 0}
                 </h3>
@@ -103,7 +103,7 @@ export default function WalletCard() {
           </div>
           <div className="mt-2">
             <p className="text-xs text-base-content/60">
-              Ganhe votando diariamente
+              Ganhe ficando online diariamente
             </p>
           </div>
         </div>
