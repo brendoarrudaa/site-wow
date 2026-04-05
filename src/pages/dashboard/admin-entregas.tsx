@@ -68,7 +68,7 @@ export default function EntregasPage({ user }: { user: SessionUser }) {
     }
   }
 
-  const markAsDelivered = async (id: number, notes: string) => {
+  const markAsDelivered = async (id: number) => {
     try {
       setProcessing(id)
       setError(null)
@@ -79,20 +79,15 @@ export default function EntregasPage({ user }: { user: SessionUser }) {
           'Content-Type': 'application/json',
           'Idempotency-Key': buildIdempotencyKey('admin-fulfillment', id)
         },
-        body: JSON.stringify({
-          fulfillment_id: id,
-          delivery_method: 'MANUAL_GM',
-          delivery_notes: notes || null
-        })
+        body: JSON.stringify({ fulfillment_id: id })
       })
 
       const result = await response.json()
 
       if (result.success) {
-        alert('Marcado como entregue!')
         fetchFulfillmentQueue()
       } else {
-        setError(result.error || 'Erro ao marcar entrega')
+        setError(result.error || 'Erro ao entregar item')
       }
     } catch (err) {
       setError('Erro de conexão. Tente novamente.')
@@ -276,15 +271,7 @@ export default function EntregasPage({ user }: { user: SessionUser }) {
                           {item.status !== 'DELIVERED' && (
                             <button
                               className="btn btn-sm btn-success"
-                              onClick={() => {
-                                const notes = prompt(
-                                  'Notas da entrega (opcional):',
-                                  ''
-                                )
-                                if (notes !== null) {
-                                  markAsDelivered(item.id, notes)
-                                }
-                              }}
+                              onClick={() => markAsDelivered(item.id)}
                               disabled={processing === item.id}
                             >
                               {processing === item.id ? (
@@ -325,16 +312,11 @@ export default function EntregasPage({ user }: { user: SessionUser }) {
         <div className="alert alert-info">
           <AlertCircle className="h-5 w-5" />
           <div className="text-sm">
-            <strong>Como entregar itens:</strong>
+            <strong>Como funciona a entrega automática:</strong>
             <ol className="list-decimal ml-5 mt-2">
-              <li>Entre no jogo com GM</li>
-              <li>
-                Use o comando:{' '}
-                <code className="bg-base-300 px-1 rounded">
-                  .send items {`{character_name}`} {`{item_entry}`} {`{count}`}
-                </code>
-              </li>
-              <li>Volte aqui e marque como "Entregue"</li>
+              <li>Clique em <strong>Entregar</strong> no item desejado</li>
+              <li>O sistema envia o item pelo correio do jogo automaticamente via SOAP</li>
+              <li>O cliente recebe na caixa de correio do personagem na próxima vez que logar</li>
             </ol>
           </div>
         </div>

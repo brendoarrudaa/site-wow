@@ -1,12 +1,13 @@
 // ============================================================================
 // API: GET/POST /api/admin-fulfillment
 // ============================================================================
-// Lista fila de fulfillment e marca itens como entregues (GM level 1+)
+// Lista fila de fulfillment e entrega itens automaticamente via SOAP (GM level 1+)
 
 import { getSession } from '../../lib/session'
 import { getPool } from '../../lib/db'
 import { assertSameOrigin } from '../../lib/requestSecurity'
 import rateLimit from '../../lib/rateLimit'
+import { soapCommand } from '../../lib/soap'
 import {
   acquireIdempotencyLock,
   releaseIdempotencyLock
@@ -69,21 +70,18 @@ export default async function handler(req, res) {
 
       return res.status(200).json({
         success: true,
-        data: {
-          queue,
-          total: queue.length
-        }
+        data: { queue, total: queue.length }
       })
     }
 
-    // POST - Marca como entregue
+    // POST - Entrega item via SOAP e marca como entregue
     if (req.method === 'POST') {
-      const { fulfillment_id, delivery_method, delivery_notes } = req.body
+      const { fulfillment_id, delivery_notes } = req.body
 
-      if (!fulfillment_id || !delivery_method) {
+      if (!fulfillment_id) {
         return res.status(400).json({
           success: false,
-          error: 'Missing required fields: fulfillment_id, delivery_method'
+          error: 'Missing required field: fulfillment_id'
         })
       }
 
@@ -95,49 +93,87 @@ export default async function handler(req, res) {
 
       if (!idempotencyLock) return
 
-      // Busca fulfillment
+      // Busca fulfillment com dados do personagem
       const [items] = await connection.query(
-        "SELECT * FROM wow_marketplace.fulfillment_queue WHERE id = ? AND status IN ('PENDING', 'IN_PROGRESS')",
+        `SELECT fq.*, c.name AS character_name
+         FROM wow_marketplace.fulfillment_queue fq
+         LEFT JOIN acore_characters.characters c ON c.guid = fq.character_guid
+         WHERE fq.id = ? AND fq.status IN ('PENDING', 'IN_PROGRESS')`,
         [fulfillment_id]
       )
 
       if (items.length === 0) {
         return res.status(404).json({
           success: false,
-          error: 'Fulfillment item not found or already delivered'
+          error: 'Item não encontrado ou já entregue'
         })
       }
 
-      // Atualiza
+      const item = items[0]
+
+      if (!item.character_name) {
+        return res.status(400).json({
+          success: false,
+          error: 'Personagem não encontrado no banco'
+        })
+      }
+
+      // Marca como IN_PROGRESS
       await connection.query(
         `UPDATE wow_marketplace.fulfillment_queue
-         SET status = 'DELIVERED', assigned_to = ?, delivered_at = NOW(),
-             delivery_method = ?, delivery_notes = ?
+         SET status = 'IN_PROGRESS', assigned_to = ?
          WHERE id = ?`,
-        [
-          session.user.id,
-          delivery_method,
-          delivery_notes || null,
-          fulfillment_id
-        ]
+        [session.user.id, fulfillment_id]
       )
 
-      // Log de auditoria
-      const ipAddress =
-        req.headers['x-forwarded-for'] || req.socket.remoteAddress
+      // Envia item via SOAP: .send items CharacterName "Assunto" "Corpo" entry:count
+      const subject = 'Entrega do Marketplace'
+      const body = delivery_notes?.trim() || 'Item solicitado no marketplace.'
+      const command = `send items ${item.character_name} "${subject}" "${body}" ${item.item_entry}:${item.item_count}`
+
+      let soapResult
+      try {
+        soapResult = await soapCommand(command)
+      } catch (soapError) {
+        // Reverte para PENDING em caso de falha
+        await connection.query(
+          `UPDATE wow_marketplace.fulfillment_queue
+           SET status = 'PENDING', assigned_to = NULL
+           WHERE id = ?`,
+          [fulfillment_id]
+        )
+        return res.status(503).json({
+          success: false,
+          error: `Falha ao enviar via SOAP: ${soapError.message}`
+        })
+      }
+
+      // Marca como DELIVERED
+      await connection.query(
+        `UPDATE wow_marketplace.fulfillment_queue
+         SET status = 'DELIVERED', delivered_at = NOW(),
+             delivery_method = 'SOAP_AUTO', delivery_notes = ?
+         WHERE id = ?`,
+        [delivery_notes || null, fulfillment_id]
+      )
+
+      // Audit log
+      const ipAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress
       await connection.query(
         `INSERT INTO wow_marketplace.audit_log
          (account_id, action_type, entity_type, entity_id, details, ip_address)
          VALUES (?, ?, ?, ?, ?, ?)`,
         [
           session.user.id,
-          'MARK_DELIVERED',
+          'DELIVER_SOAP',
           'fulfillment_queue',
           fulfillment_id,
           JSON.stringify({
             fulfillment_id,
-            delivery_method,
-            delivery_notes,
+            character: item.character_name,
+            item_entry: item.item_entry,
+            item_count: item.item_count,
+            soap_result: soapResult,
             gm: session.user.username
           }),
           ipAddress
@@ -146,8 +182,8 @@ export default async function handler(req, res) {
 
       return res.status(200).json({
         success: true,
-        message: 'Item marked as delivered',
-        data: { fulfillment_id }
+        message: `Item enviado para ${item.character_name} via correio do jogo.`,
+        data: { fulfillment_id, soap_result: soapResult }
       })
     }
 
@@ -155,10 +191,7 @@ export default async function handler(req, res) {
   } catch (error) {
     if (idempotencyLock) await releaseIdempotencyLock(idempotencyLock)
     console.error('Error in fulfillment endpoint:', error)
-    return res.status(500).json({
-      success: false,
-      error: 'Internal server error'
-    })
+    return res.status(500).json({ success: false, error: 'Internal server error' })
   } finally {
     connection.release()
   }
