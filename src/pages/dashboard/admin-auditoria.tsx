@@ -474,7 +474,7 @@ export default function AuditoriaPage({ user }: { user: SessionUser }) {
               <div className="overflow-x-auto">
                 <table className="table table-xs w-full">
                   <thead>
-                    <tr className="bg-base-300 text-base-content/70 text-xs uppercase tracking-wide">
+                    <tr className="bg-base-300 text-base-content/70 uppercase tracking-wide h-10">
                       <th className="w-12">#</th>
                       <th>Ator</th>
                       <th>Papel</th>
