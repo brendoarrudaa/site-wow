@@ -13,7 +13,7 @@ import {
   Clock,
   User,
   X,
-  Loader2,
+  Loader2
 } from 'lucide-react'
 
 type DashboardUser = {
@@ -39,7 +39,7 @@ const RARITY_COLOR: Record<string, string> = {
   UNCOMMON: 'text-green-400',
   RARE: 'text-blue-400',
   EPIC: 'text-purple-400',
-  LEGENDARY: 'text-orange-400',
+  LEGENDARY: 'text-orange-400'
 }
 
 const RARITY_BG: Record<string, string> = {
@@ -47,7 +47,7 @@ const RARITY_BG: Record<string, string> = {
   UNCOMMON: 'bg-green-500/20 border-green-500/30',
   RARE: 'bg-blue-500/20 border-blue-500/30',
   EPIC: 'bg-purple-500/20 border-purple-500/30',
-  LEGENDARY: 'bg-orange-500/20 border-orange-500/30',
+  LEGENDARY: 'bg-orange-500/20 border-orange-500/30'
 }
 
 export default function AprovacoesPage({ user }: { user: DashboardUser }) {
@@ -55,7 +55,9 @@ export default function AprovacoesPage({ user }: { user: DashboardUser }) {
   const [loading, setLoading] = useState(true)
   const [processing, setProcessing] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [rejectTarget, setRejectTarget] = useState<MarketplaceListing | null>(null)
+  const [rejectTarget, setRejectTarget] = useState<MarketplaceListing | null>(
+    null
+  )
   const [rejectReason, setRejectReason] = useState('')
 
   useEffect(() => {
@@ -65,7 +67,9 @@ export default function AprovacoesPage({ user }: { user: DashboardUser }) {
   const fetchPendingListings = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/marketplace-list?status=PENDING_APPROVAL')
+      const response = await fetch(
+        '/api/marketplace-list?status=PENDING_APPROVAL'
+      )
       const result = await response.json()
       if (result.success) setListings(result.data.listings || [])
     } catch (err) {
@@ -83,9 +87,12 @@ export default function AprovacoesPage({ user }: { user: DashboardUser }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Idempotency-Key': buildIdempotencyKey('marketplace-approve', listingId),
+          'Idempotency-Key': buildIdempotencyKey(
+            'marketplace-approve',
+            listingId
+          )
         },
-        body: JSON.stringify({ listing_id: listingId }),
+        body: JSON.stringify({ listing_id: listingId })
       })
       const result = await response.json()
       if (result.success) {
@@ -113,9 +120,15 @@ export default function AprovacoesPage({ user }: { user: DashboardUser }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Idempotency-Key': buildIdempotencyKey('marketplace-reject', rejectTarget.id),
+          'Idempotency-Key': buildIdempotencyKey(
+            'marketplace-reject',
+            rejectTarget.id
+          )
         },
-        body: JSON.stringify({ listing_id: rejectTarget.id, reason: rejectReason }),
+        body: JSON.stringify({
+          listing_id: rejectTarget.id,
+          reason: rejectReason
+        })
       })
       const result = await response.json()
       if (result.success) {
@@ -159,13 +172,15 @@ export default function AprovacoesPage({ user }: { user: DashboardUser }) {
             {loading ? (
               <Loader2 className="h-5 w-5 animate-spin text-base-content/20" />
             ) : (
-              <p className="text-2xl font-bold text-warning">{listings.length}</p>
+              <p className="text-2xl font-bold text-warning">
+                {listings.length}
+              </p>
             )}
           </div>
         </div>
 
         {/* Listings */}
-        <div className="card-fantasy overflow-hidden">
+        <div className="card-fantasy overflow-hidden static">
           <div className="border-b border-base-300 p-4">
             <h2 className="font-bold">Fila de Aprovação</h2>
           </div>
@@ -178,7 +193,9 @@ export default function AprovacoesPage({ user }: { user: DashboardUser }) {
             ) : listings.length === 0 ? (
               <div className="text-center py-12">
                 <CheckCircle className="h-16 w-16 text-success mx-auto mb-4" />
-                <p className="text-base-content/60">Nenhuma aprovação pendente</p>
+                <p className="text-base-content/60">
+                  Nenhuma aprovação pendente
+                </p>
                 <p className="text-sm text-base-content/40 mt-1">
                   Todas as listagens foram processadas
                 </p>
@@ -193,12 +210,18 @@ export default function AprovacoesPage({ user }: { user: DashboardUser }) {
                     <div className="card-body">
                       <div className="flex justify-between items-start gap-4">
                         <div className="flex-1 min-w-0">
-                          <h3 className={`text-lg font-bold ${RARITY_COLOR[listing.rarity] ?? ''}`}>
+                          <h3
+                            className={`text-lg font-bold ${RARITY_COLOR[listing.rarity] ?? ''}`}
+                          >
                             {listing.item_name || `Item #${listing.item_entry}`}
                           </h3>
                           <div className="flex flex-wrap gap-2 mt-1 mb-3">
-                            <span className="badge badge-sm">{listing.category}</span>
-                            <span className={`badge badge-sm badge-outline ${RARITY_COLOR[listing.rarity] ?? ''}`}>
+                            <span className="badge badge-sm">
+                              {listing.category}
+                            </span>
+                            <span
+                              className={`badge badge-sm badge-outline ${RARITY_COLOR[listing.rarity] ?? ''}`}
+                            >
                               {listing.rarity}
                             </span>
                           </div>
@@ -206,7 +229,9 @@ export default function AprovacoesPage({ user }: { user: DashboardUser }) {
                             <div className="flex items-center gap-2">
                               <User className="h-4 w-4 shrink-0" />
                               Vendedor:{' '}
-                              <span className="font-semibold">{listing.character_name}</span>
+                              <span className="font-semibold">
+                                {listing.character_name}
+                              </span>
                             </div>
                             <div className="flex items-center gap-2">
                               <Package className="h-4 w-4 shrink-0" />
@@ -214,20 +239,27 @@ export default function AprovacoesPage({ user }: { user: DashboardUser }) {
                             </div>
                             <div className="flex items-center gap-2">
                               <Clock className="h-4 w-4 shrink-0" />
-                              {new Date(listing.created_at).toLocaleString('pt-BR')}
+                              {new Date(listing.created_at).toLocaleString(
+                                'pt-BR'
+                              )}
                             </div>
                           </div>
                         </div>
 
                         <div className="text-right shrink-0">
                           <div className="mb-3">
-                            <p className="text-xs text-base-content/50 mb-0.5">Preço</p>
+                            <p className="text-xs text-base-content/50 mb-0.5">
+                              Preço
+                            </p>
                             <p className="text-xl font-bold text-primary">
                               {listing.price.toLocaleString()} DP
                             </p>
                             <p className="text-xs text-base-content/40">
                               Vendedor recebe:{' '}
-                              {Math.floor(listing.price * 0.95).toLocaleString()} DP
+                              {Math.floor(
+                                listing.price * 0.95
+                              ).toLocaleString()}{' '}
+                              DP
                             </p>
                           </div>
                           <div className="flex gap-2 justify-end">
@@ -277,7 +309,10 @@ export default function AprovacoesPage({ user }: { user: DashboardUser }) {
       {/* ── Modal: Rejeitar ─────────────────────────────────────────────── */}
       {rejectTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="fixed inset-0 bg-black/50" onClick={() => setRejectTarget(null)} />
+          <div
+            className="fixed inset-0 bg-black/50"
+            onClick={() => setRejectTarget(null)}
+          />
           <div className="relative z-50 w-full max-w-md rounded-lg border border-base-300 bg-base-100 p-6 shadow-2xl">
             <button
               className="btn btn-ghost btn-xs btn-square absolute right-3 top-3"
@@ -290,7 +325,9 @@ export default function AprovacoesPage({ user }: { user: DashboardUser }) {
             <div
               className={`p-4 rounded-lg border ${RARITY_BG[rejectTarget.rarity] ?? 'bg-base-200'} mb-4`}
             >
-              <h4 className={`font-bold ${RARITY_COLOR[rejectTarget.rarity] ?? ''}`}>
+              <h4
+                className={`font-bold ${RARITY_COLOR[rejectTarget.rarity] ?? ''}`}
+              >
                 {rejectTarget.item_name || `Item #${rejectTarget.item_entry}`}
               </h4>
               <p className="text-sm text-base-content/60 mt-1">
@@ -312,13 +349,18 @@ export default function AprovacoesPage({ user }: { user: DashboardUser }) {
             </div>
 
             <div className="flex justify-end gap-2">
-              <button className="btn btn-ghost btn-sm" onClick={() => setRejectTarget(null)}>
+              <button
+                className="btn btn-ghost btn-sm"
+                onClick={() => setRejectTarget(null)}
+              >
                 Cancelar
               </button>
               <button
                 className="btn btn-error btn-sm gap-1"
                 onClick={confirmReject}
-                disabled={processing === rejectTarget.id || !rejectReason.trim()}
+                disabled={
+                  processing === rejectTarget.id || !rejectReason.trim()
+                }
               >
                 {processing === rejectTarget.id ? (
                   <Loader2 className="h-4 w-4 animate-spin" />

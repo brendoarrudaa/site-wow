@@ -22,7 +22,7 @@ const TYPE_LABELS = {
 } as const
 
 const TYPE_COLORS = {
-  AUCTION_WIN: 'badge-primary',
+  AUCTION_WIN: 'badge-info',
   MARKETPLACE_PURCHASE: 'badge-success',
   MARKETPLACE_SELL_REMOVE: 'badge-warning'
 } as const
@@ -137,7 +137,7 @@ export default function EntregasPage({ user }: { user: SessionUser }) {
         </div>
 
         {/* Stats */}
-        <div className="stats shadow w-full bg-base-200">
+        <div className="stats static shadow w-full bg-base-200">
           <div className="stat">
             <div className="stat-figure text-warning">
               <Clock className="h-8 w-8" />
@@ -164,7 +164,7 @@ export default function EntregasPage({ user }: { user: SessionUser }) {
         </div>
 
         {/* Filtros */}
-        <div className="card bg-base-200 shadow-xl">
+        <div className="card bg-base-200 shadow-xl static">
           <div className="card-body">
             <div className="flex gap-2">
               <button
@@ -199,7 +199,7 @@ export default function EntregasPage({ user }: { user: SessionUser }) {
         </div>
 
         {/* Queue */}
-        <div className="card bg-base-200 shadow-xl">
+        <div className="card bg-base-200 shadow-xl static">
           <div className="card-body">
             <h2 className="text-2xl font-bold mb-4">Itens para Entregar</h2>
 
@@ -237,7 +237,7 @@ export default function EntregasPage({ user }: { user: SessionUser }) {
                         <td className="font-mono text-xs">#{item.id}</td>
                         <td>
                           <span
-                            className={`badge p-2 ${getTypeColor(item.type)}`}
+                            className={`badge badge-outline p-2 ${getTypeColor(item.type)}`}
                           >
                             {getTypeLabel(item.type)}
                           </span>
@@ -257,7 +257,7 @@ export default function EntregasPage({ user }: { user: SessionUser }) {
                         </td>
                         <td>
                           <span
-                            className={`badge p-2 ${getStatusColor(item.status)}`}
+                            className={`badge badge-outline p-2 ${getStatusColor(item.status)}`}
                           >
                             {getStatusLabel(item.status)}
                           </span>
@@ -314,9 +314,17 @@ export default function EntregasPage({ user }: { user: SessionUser }) {
           <div className="text-sm">
             <strong>Como funciona a entrega automática:</strong>
             <ol className="list-decimal ml-5 mt-2">
-              <li>Clique em <strong>Entregar</strong> no item desejado</li>
-              <li>O sistema envia o item pelo correio do jogo automaticamente via SOAP</li>
-              <li>O cliente recebe na caixa de correio do personagem na próxima vez que logar</li>
+              <li>
+                Clique em <strong>Entregar</strong> no item desejado
+              </li>
+              <li>
+                O sistema envia o item pelo correio do jogo automaticamente via
+                SOAP
+              </li>
+              <li>
+                O cliente recebe na caixa de correio do personagem na próxima
+                vez que logar
+              </li>
             </ol>
           </div>
         </div>
