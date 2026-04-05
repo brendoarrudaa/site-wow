@@ -1,17 +1,28 @@
 import { useEffect, useState } from 'react'
-import { Menu, Sun, Moon } from 'lucide-react'
+import { Menu, Sun, Moon, ShieldAlert, ShieldOff } from 'lucide-react'
 import AppSidebar from '@/components/Dashboard/AppSidebar'
 import ServerStatusBadge from '@/components/Dashboard/ServerStatusBadge'
 import { LanguageSelector } from '@/components/LanguageSelector'
+import { GmModeProvider, useGmMode } from '@/lib/GmModeContext'
 
 interface DashboardLayoutProps {
   children: React.ReactNode
 }
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
+  return (
+    <GmModeProvider>
+      <DashboardLayoutInner>{children}</DashboardLayoutInner>
+    </GmModeProvider>
+  )
+}
+
+const DashboardLayoutInner = ({ children }: DashboardLayoutProps) => {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
   const [theme, setTheme] = useState<'wow-dark' | 'wow-light'>('wow-dark')
+  const [isAdmin, setIsAdmin] = useState(false)
+  const { gmMode, setGmMode } = useGmMode()
 
   // Restore persisted preferences
   useEffect(() => {
@@ -22,6 +33,14 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     const savedCollapsed = localStorage.getItem('sidebar-collapsed')
     if (savedTheme) setTheme(savedTheme)
     if (savedCollapsed === 'true') setCollapsed(true)
+  }, [])
+
+  // Check if user is GM
+  useEffect(() => {
+    fetch('/api/account/session')
+      .then(r => r.json())
+      .then(data => { if (data.isAdmin) setIsAdmin(true) })
+      .catch(() => {})
   }, [])
 
   // Apply theme to <html>
@@ -72,11 +91,31 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           </button>
 
           <div className="flex flex-1 items-center justify-end gap-2">
-            <div>
-              GM OF
-              <input type="checkbox" defaultChecked className="toggle" />
-              GM ON
-            </div>
+            {/* GM Mode Toggle */}
+            {isAdmin && (
+              <label
+                className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                  gmMode
+                    ? 'border-warning/40 bg-warning/10 text-warning'
+                    : 'border-base-300 bg-base-200 text-base-content/50'
+                }`}
+                title={gmMode ? 'Modo GM ativo — clique para ver como usuário' : 'Modo usuário ativo — clique para voltar ao modo GM'}
+              >
+                {gmMode ? (
+                  <ShieldAlert className="h-3.5 w-3.5" />
+                ) : (
+                  <ShieldOff className="h-3.5 w-3.5" />
+                )}
+                <span>{gmMode ? 'GM' : 'Usuário'}</span>
+                <input
+                  type="checkbox"
+                  className="toggle toggle-xs toggle-warning"
+                  checked={gmMode}
+                  onChange={e => setGmMode(e.target.checked)}
+                />
+              </label>
+            )}
+
             <ServerStatusBadge />
 
             <div className="h-5 w-px bg-base-300" />

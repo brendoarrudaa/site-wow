@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { useGmMode } from '@/lib/GmModeContext'
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -122,6 +123,7 @@ const AppSidebar = ({ collapsed, onToggleCollapse }: AppSidebarProps) => {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [user, setUser] = useState<SessionUser | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
+  const { gmMode } = useGmMode()
   const [notifs, setNotifs] = useState<Notifs>({
     tickets: 0,
     approvals: 0,
@@ -214,7 +216,7 @@ const AppSidebar = ({ collapsed, onToggleCollapse }: AppSidebarProps) => {
       {/* Scrollable nav */}
       <div className="flex-1 overflow-x-hidden overflow-y-auto">
         <nav className="mt-3 px-2">
-          {isAdmin && (
+          {isAdmin && gmMode && (
             <NavGroup
               label="Admin"
               items={adminNavItems}
