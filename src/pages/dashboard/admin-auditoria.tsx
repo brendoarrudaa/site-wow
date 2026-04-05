@@ -151,11 +151,26 @@ function CallyDatePicker({
   value: string
   onChange: (v: string) => void
 }) {
+  const calendarRef = useRef<any>(null)
+  const btnId = id
+  const popoverId = `${id}-popover`
+
   useEffect(() => {
     import('cally')
   }, [])
 
-  const popoverId = `cally-popover-${id}`
+  useEffect(() => {
+    const el = calendarRef.current
+    if (!el) return
+    const handler = (e: any) => {
+      const btn = document.getElementById(btnId)
+      if (btn) btn.textContent = e.target.value
+      onChange(e.target.value)
+      ;(document.getElementById(popoverId) as any)?.hidePopover?.()
+    }
+    el.addEventListener('change', handler)
+    return () => el.removeEventListener('change', handler)
+  }, [btnId, onChange, popoverId])
 
   return (
     <div className="form-control">
@@ -163,30 +178,23 @@ function CallyDatePicker({
         <span className="label-text text-xs">{label}</span>
       </label>
       <button
-        {...({ popovertarget: popoverId } as any)}
-        id={id}
+        id={btnId}
+        {...({ popoverTarget: popoverId } as any)}
+        className="input input-sm input-bordered w-full text-left"
         style={{ anchorName: `--${id}` } as any}
-        className="input input-sm input-bordered w-full text-left text-sm"
       >
         {value || 'Selecionar'}
       </button>
       <div
-        {...({ popover: '' } as any)}
         id={popoverId}
-        className="dropdown bg-base-100 rounded-box shadow-lg p-0 border border-base-300"
+        {...({ popover: '' } as any)}
+        className="dropdown bg-base-100 rounded-box shadow-lg"
         style={{ positionAnchor: `--${id}` } as any}
       >
         {/* @ts-ignore */}
-        <calendar-date
-          className="cally"
-          value={value}
-          onChange={(e: any) => {
-            onChange(e.target.value)
-            ;(document.getElementById(popoverId) as any)?.hidePopover?.()
-          }}
-        >
-          <svg aria-label="Anterior" className="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
-          <svg aria-label="Próximo" className="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+        <calendar-date ref={calendarRef} className="cally" value={value}>
+          <svg aria-label="Previous" className="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
+          <svg aria-label="Next" className="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
           {/* @ts-ignore */}
           <calendar-month />
           {/* @ts-ignore */}
