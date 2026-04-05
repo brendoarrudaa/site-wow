@@ -50,7 +50,7 @@ const ServerStatusBadge = () => {
         </div>
 
         <span
-          className={`badge gap-1 text-xs font-medium p-2 ${
+          className={`badge rounded-lg gap-1 text-xs font-medium p-2 ${
             online ? 'border-success bg-success/10 text-success' : 'badge-error'
           }`}
         >
@@ -69,7 +69,7 @@ const ServerStatusBadge = () => {
       </div>
 
       {tooltipOpen && (
-        <div className="absolute bottom-full right-0 z-50 mb-2 min-w-[180px] rounded-lg border border-base-300 bg-base-100 px-3 py-2 shadow-lg">
+        <div className="absolute right-0 z-50 mb-2 min-w-[180px] rounded-lg border border-base-300 bg-base-100 px-3 py-2 shadow-lg">
           <p className="text-sm">
             <span className="font-semibold">Realm:</span> {status.name}
           </p>

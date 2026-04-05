@@ -249,7 +249,7 @@ export default function EntregasPage({ user }: { user: SessionUser }) {
                         </td>
                         <td>
                           <span
-                            className={`badge ${getStatusColor(item.status)}`}
+                            className={`badge p-2 ${getStatusColor(item.status)}`}
                           >
                             {item.status}
                           </span>

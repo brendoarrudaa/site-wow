@@ -1027,13 +1027,17 @@ export default function AdminGmPage({ user, gmLevel }: AdminGmPageProps) {
             <div className="flex flex-wrap gap-4 mt-6 pt-4 border-t border-base-300 text-xs text-base-content/50">
               <span className="flex items-center gap-1.5">
                 <Database className="h-3 w-3 text-success" />
-                <span className="badge badge-xs badge-success">DB</span>{' '}
+                <span className="p-2 text-white badge badge-xs badge-success">
+                  DB
+                </span>{' '}
                 Funciona mesmo com servidor offline
               </span>
               <span className="flex items-center gap-1.5">
                 <Wifi className="h-3 w-3 text-info" />
-                <span className="badge badge-xs badge-info">SOAP</span> Requer
-                worldserver online e SOAP habilitado
+                <span className="p-2 badge badge-xs badge-info text-white">
+                  SOAP
+                </span>{' '}
+                Requer worldserver online e SOAP habilitado
               </span>
             </div>
           </div>

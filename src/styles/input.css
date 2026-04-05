@@ -380,3 +380,6 @@
 .btn:not(.btn-outline) {
   border-width: 0;
 }
+.btn{
+  border-radius: 8px;
+}
