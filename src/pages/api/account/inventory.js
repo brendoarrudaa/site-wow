@@ -37,21 +37,22 @@ export default async function handler(req, res) {
     }
 
     // Query inventory items
-    // Join with item_template to get item details
+    // Join with item_instance to get itemEntry/count, then item_template for details
     // Filter by whitelist (only show items that can be sold)
     const items = await query(
       `SELECT
-        ci.guid as item_guid,
-        ci.itemEntry as item_entry,
-        ci.count,
+        ii.guid as item_guid,
+        ii.itemEntry as item_entry,
+        ii.count,
         it.name as item_name,
         it.Quality as quality,
         wl.category,
         wl.rarity
        FROM acore_characters.character_inventory ci
-       INNER JOIN acore_world.item_template it ON ci.itemEntry = it.entry
-       INNER JOIN wow_marketplace.item_whitelist wl ON ci.itemEntry = wl.item_entry
-       WHERE ci.owner_guid = ?
+       INNER JOIN acore_characters.item_instance ii ON ci.item = ii.guid
+       INNER JOIN acore_world.item_template it ON ii.itemEntry = it.entry
+       INNER JOIN wow_marketplace.item_whitelist wl ON ii.itemEntry = wl.item_entry
+       WHERE ci.guid = ?
        AND ci.bag = 0
        AND ci.slot BETWEEN 0 AND 22
        ORDER BY it.Quality DESC, it.name ASC`,

@@ -72,6 +72,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           </button>
 
           <div className="flex flex-1 items-center justify-end gap-2">
+            <div>
+              GM OF
+              <input type="checkbox" defaultChecked className="toggle" />
+              GM ON
+            </div>
             <ServerStatusBadge />
 
             <div className="h-5 w-px bg-base-300" />

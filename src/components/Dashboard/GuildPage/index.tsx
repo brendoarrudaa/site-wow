@@ -1,5 +1,13 @@
-import { useEffect, useState } from "react"
-import { Shield, Users, Crown, Clock, Star, Loader2, MessageSquare } from "lucide-react"
+import { useEffect, useState } from 'react'
+import {
+  Shield,
+  Users,
+  Crown,
+  Clock,
+  Star,
+  Loader2,
+  MessageSquare
+} from 'lucide-react'
 
 interface GuildMember {
   name: string
@@ -13,7 +21,7 @@ interface GuildMember {
 
 interface GuildData {
   name: string
-  faction: "Horda" | "Aliança"
+  faction: 'Horda' | 'Aliança'
   motd: string
   memberCount: number
   myRank: string
@@ -21,16 +29,16 @@ interface GuildData {
 }
 
 const CLASS_COLORS: Record<string, string> = {
-  "Death Knight": "text-red-500",
-  Druid: "text-orange-400",
-  Hunter: "text-green-400",
-  Mage: "text-cyan-400",
-  Paladin: "text-pink-400",
-  Priest: "text-white",
-  Rogue: "text-yellow-400",
-  Shaman: "text-blue-400",
-  Warlock: "text-purple-400",
-  Warrior: "text-amber-600",
+  'Death Knight': 'text-red-500',
+  Druid: 'text-orange-400',
+  Hunter: 'text-green-400',
+  Mage: 'text-cyan-400',
+  Paladin: 'text-pink-400',
+  Priest: 'text-white',
+  Rogue: 'text-yellow-400',
+  Shaman: 'text-blue-400',
+  Warlock: 'text-purple-400',
+  Warrior: 'text-amber-600'
 }
 
 const GuildPage = () => {
@@ -38,9 +46,9 @@ const GuildPage = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch("/api/account/guild")
-      .then((r) => r.json())
-      .then((data) => {
+    fetch('/api/account/guild')
+      .then(r => r.json())
+      .then(data => {
         if (data.guild) setGuild(data.guild)
       })
       .catch(() => {})
@@ -51,8 +59,12 @@ const GuildPage = () => {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold font-serif glow-text">Minha Guild</h1>
-          <p className="text-sm text-base-content/60">Informações sobre sua guilda</p>
+          <h1 className="text-2xl font-bold font-serif glow-text">
+            Minha Guild
+          </h1>
+          <p className="text-sm text-base-content/60">
+            Informações sobre sua guilda
+          </p>
         </div>
         <div className="flex items-center justify-center py-16 text-base-content/30">
           <Loader2 className="h-6 w-6 animate-spin mr-2" />
@@ -66,33 +78,39 @@ const GuildPage = () => {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold font-serif glow-text">Minha Guild</h1>
-          <p className="text-sm text-base-content/60">Informações sobre sua guilda</p>
+          <h1 className="text-2xl font-bold font-serif glow-text">
+            Minha Guild
+          </h1>
+          <p className="text-sm text-base-content/60">
+            Informações sobre sua guilda
+          </p>
         </div>
         <div className="card-fantasy flex flex-col items-center justify-center py-16 text-center">
           <Shield className="h-16 w-16 text-base-content/20" />
           <h3 className="mt-4 text-xl font-semibold">Sem Guild</h3>
           <p className="mt-2 max-w-sm text-base-content/60">
-            Você não está em nenhuma guild atualmente. Entre no jogo e junte-se a
-            uma para ver as informações aqui.
+            Você não está em nenhuma guild atualmente. Entre no jogo e junte-se
+            a uma para ver as informações aqui.
           </p>
         </div>
       </div>
     )
   }
 
-  const onlineCount = guild.members.filter((m) => m.online).length
-  const maxLevelCount = guild.members.filter((m) => m.level === 80).length
-  const leaderCount = guild.members.filter((m) => m.isLeader).length
+  const onlineCount = guild.members.filter(m => m.online).length
+  const maxLevelCount = guild.members.filter(m => m.level === 80).length
+  const leaderCount = guild.members.filter(m => m.isLeader).length
   const officerLike = guild.members.filter(
-    (m) => m.isLeader || m.rank.toLowerCase().includes("ofic")
+    m => m.isLeader || m.rank.toLowerCase().includes('ofic')
   ).length
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold font-serif glow-text">Minha Guild</h1>
-        <p className="text-sm text-base-content/60">Informações sobre sua guilda</p>
+        <p className="text-sm text-base-content/60">
+          Informações sobre sua guilda
+        </p>
       </div>
 
       {/* Guild banner */}
@@ -107,9 +125,9 @@ const GuildPage = () => {
                 <h2 className="text-2xl font-bold font-serif">{guild.name}</h2>
                 <span
                   className={`badge badge-outline text-xs ${
-                    guild.faction === "Horda"
-                      ? "border-red-500 text-red-500"
-                      : "border-blue-500 text-blue-500"
+                    guild.faction === 'Horda'
+                      ? 'border-red-500 text-red-500'
+                      : 'border-blue-500 text-blue-500'
                   }`}
                 >
                   {guild.faction}
@@ -169,8 +187,8 @@ const GuildPage = () => {
                 <tbody>
                   {guild.members.map((member, i) => {
                     const classColor =
-                      CLASS_COLORS[member.class] ?? "text-base-content"
-                    const accentBg = classColor.replace("text-", "bg-")
+                      CLASS_COLORS[member.class] ?? 'text-base-content'
+                    const accentBg = classColor.replace('text-', 'bg-')
 
                     return (
                       <tr
@@ -186,9 +204,7 @@ const GuildPage = () => {
                             </div>
                             <div>
                               <p className="font-medium">{member.name}</p>
-                              <p
-                                className={`text-xs sm:hidden ${classColor}`}
-                              >
+                              <p className={`text-xs sm:hidden ${classColor}`}>
                                 {member.class}
                               </p>
                             </div>
@@ -202,8 +218,8 @@ const GuildPage = () => {
                             <span
                               className={
                                 member.isLeader
-                                  ? "font-medium text-primary"
-                                  : ""
+                                  ? 'font-medium text-primary'
+                                  : ''
                               }
                             >
                               {member.rank}
@@ -220,7 +236,7 @@ const GuildPage = () => {
                         </td>
                         <td className="px-4 py-3 text-right">
                           {member.online ? (
-                            <span className="badge badge-success badge-sm gap-1">
+                            <span className="badge badge-success badge-sm p-2 gap-1">
                               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success-content" />
                               Online
                             </span>
@@ -248,12 +264,12 @@ const GuildPage = () => {
             </h3>
             {[
               {
-                label: "Membros Online",
+                label: 'Membros Online',
                 value: onlineCount,
-                color: "text-success",
+                color: 'text-success'
               },
-              { label: "Membros Level 80", value: maxLevelCount, color: "" },
-              { label: "Total de Membros", value: guild.memberCount, color: "" },
+              { label: 'Membros Level 80', value: maxLevelCount, color: '' },
+              { label: 'Total de Membros', value: guild.memberCount, color: '' }
             ].map(({ label, value, color }) => (
               <div
                 key={label}
